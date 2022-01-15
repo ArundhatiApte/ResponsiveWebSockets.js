@@ -16,7 +16,9 @@ console.log("response body: ", message.slice(startIndex));
 ```
 ### Установка
 
-`npm install rws`
+`npm install github:ArundhatiApte/ResponsiveWebSockets-JS`
+или  
+yarn add github:ArundhatiApte/ResponsiveWebSockets-JS`
 
 ### Использование
 
@@ -28,9 +30,9 @@ console.log("response body: ", message.slice(startIndex));
 import {
   Server as ResponsiveWebSocketServer,
   WebSocketClient
-} from "rws";
+} from "ResponsiveWebSockets";
 
-import ResponsiveWebSocketClient from "rws/Client";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
 (async () => {
   const server = new ResponsiveWebSocketServer(),

@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "name": "ResponsiveWebSockets",
   "exports": {
     "import": "./esExportInNodeJS.mjs",
     "require": "./indexInNodeJS.js",
