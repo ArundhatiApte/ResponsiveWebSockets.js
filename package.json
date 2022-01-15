@@ -2,8 +2,7 @@
   "name": "ResponsiveWebSockets",
   "exports": {
     "import": "./esExportInNodeJS.mjs",
-    "require": "./indexInNodeJS.js",
-    "es": "./esExportInNodeJS.mjs"
+    "require": "./exportInNodeJS.js"
   },
   "devDependencies": {
     "tester": "github:ArundhatiApte/Tester-JS",
