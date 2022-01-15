@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "exports": {
+    "import": "./esExportInNodeJS.mjs",
+    "require": "./indexInNodeJS.js",
+    "es": "./esExportInNodeJS.mjs"
+  },
+  "devDependencies": {
+    "tester": "github:ArundhatiApte/Tester-JS",
+    "webpack": "^5.65.0"
+  },
+  "dependencies": {
+    "install": "^0.13.0",
+    "npm": "^8.3.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.3.0",
+    "ws": "^8.4.0"
+  },
+  "scripts": {
+    "tests": "node ./src/tests/tests.js"
+  },
+  "version": "1.0.0"
+}
