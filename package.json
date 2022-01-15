@@ -1,8 +1,7 @@
 {
   "name": "ResponsiveWebSockets",
   "exports": {
-    "import": "./esExportInNodeJS.mjs",
-    "require": "./exportInNodeJS.js",
+    ".": "./exportInNodeJS.js",
     "./Client": "./Client.js"
   },
   "devDependencies": {
