@@ -3,7 +3,7 @@
   "exports": {
     "import": "./esExportInNodeJS.mjs",
     "require": "./exportInNodeJS.js",
-    "Client": "./Client.js"
+    "./Client": "./Client.js"
   },
   "devDependencies": {
     "tester": "github:ArundhatiApte/Tester-JS",
