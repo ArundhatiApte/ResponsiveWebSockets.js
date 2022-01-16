@@ -12,10 +12,6 @@ const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
     return this[_connection].url;
   }
   
-  _setupListeners() {
-    this._setupOnMessageListener();
-  }
-  
   close() {
     return this[_connection].close();
   }

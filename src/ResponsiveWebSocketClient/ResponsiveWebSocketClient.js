@@ -8,16 +8,12 @@ const {_connection, _onError} = ResponsiveWebSoket._namesOfPrivateProperties;
 const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
   constructor(webSocketClient) {
     super(webSocketClient || new WebSocketClient());
+    this._setupOnLoadListener();
+    this._setupOnErrorListener();
   }
 
   setLoadListener(listener) {
     this[_onLoad] = listener;
-  }
-  
-  _setupListeners() {
-    this._setupOnLoadListener();
-    this._setupOnErrorListener();
-    this._setupOnMessageListener();
   }
   
   _setupOnLoadListener() {

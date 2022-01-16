@@ -28,7 +28,7 @@ const ResponsiveWebSocketConnection = class {
     this[_onAwaitingResponseTextMessage] = null;
     this[_onUnrequestingTextMessage] = null;
 
-    this._setupListeners();
+    this._setupOnMessageListeners();
   }
   
   set maxTimeMSToWaitResponse(ms) {
@@ -63,7 +63,7 @@ const ResponsiveWebSocketConnection = class {
     };
   }
   
-  _setupOnMessageListener() {
+  _setupOnMessageListeners() {
     const connection = this[_connection];
     
     let listener = this._emitEventByIncomingBinaryMessage.bind(this);
