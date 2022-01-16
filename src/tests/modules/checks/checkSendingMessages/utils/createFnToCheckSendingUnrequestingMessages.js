@@ -1,7 +1,12 @@
 "use strict";
 
-const expectDeepEqual = require("assert").deepStrictEqual,
-      wait = require("stuff").wait;
+const expectDeepEqual = require("assert").deepStrictEqual;
+
+const wait = function(timeMS) {
+  return new Promise(function(resplve) {
+    return setTimeout(resolve, timeMS);
+  });
+};
 
 const createFnToCheckSendingUnrequestingMessages = function(
   sendedMessages, setUnrequestingMessageEventListener,

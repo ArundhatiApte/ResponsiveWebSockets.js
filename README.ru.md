@@ -97,7 +97,7 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 ```js
 "use strict";
 
-import ResponsiveWebSocketClient from "rws/Client";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 // компилируется webpack'ом
 // ...
