@@ -1,12 +1,12 @@
 "use strict";
 
 import Server from "./src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js";
-import WebSocketClient from "./src/W3CWebSocketClient/W3CWebSocketClient.js";
+import W3CWebSocketClient from "./src/W3CWebSocketClient/W3CWebSocketClient.js";
 
 const exports = {
   Server,
-  WebSocketClient
+  W3CWebSocketClient
 };
 
 export default exports;
-export {Server, WebSocketClient};
+export {Server, W3CWebSocketClient};

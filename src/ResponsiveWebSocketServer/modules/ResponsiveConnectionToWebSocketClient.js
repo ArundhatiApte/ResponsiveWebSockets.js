@@ -12,12 +12,22 @@ const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
     return this[_connection].url;
   }
   
-  close() {
-    return this[_connection].close();
+  close(code, reason) {
+    return this[_connection].close(code, reason);
   }
 
+  terminate() {
+    return this[_connection].terminate();
+  }
+  
   getRemoteAddress() {
     return this[_connection].getRemoteAddress();
+  }
+
+  setCloseListener(listener) {
+    this[_connection].onClose = (event) => {
+      return listener.call(this, event);
+    };
   }
 };
 

@@ -52,15 +52,7 @@ const ResponsiveWebSocketConnection = class {
   }
 
   setErrorListener(listener) {
-    this[_connection].onError = (event) => {
-      return listener.call(this, event);
-    };
-  }
-  
-  setCloseListener(listener) {
-    this[_connection].onClose = (event) => {
-      return listener.call(this, event);
-    };
+    this[_connection].onError = listener.bind(this);
   }
   
   _setupOnMessageListeners() {

@@ -95,9 +95,9 @@ const _emitClientsTextMessageEvent = function(connectionToClient, message) {
   wrappedConnectionAPI._emitOnTextMessage(message);
 };
 
-const _emitClientsCloseEvent = function(connectionToClient, reason, code) {
+const _emitClientsCloseEvent = function(connectionToClient, code, reason) {
   let wrappedConnectionAPI = connectionToClient[_wrapper];
-  wrappedConnectionAPI._emitOnClose(reason, code);
+  wrappedConnectionAPI._emitOnClose(code, reason);
 };
 
 const _upgradeToWebSocket = function(response, request, usSocketContext) {

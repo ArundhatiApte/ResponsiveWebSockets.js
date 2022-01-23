@@ -18,20 +18,21 @@ const {
 const checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages =
   require("./checks/checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages");
 
-const executeTests = function(nameOfTest, getConnectionToClientAndClientAndServer) {
-  return createTester(nameOfTest, getConnectionToClientAndClientAndServer).run();
+const checkClosingConnections = require("./checks/checkClosingConnections");
+
+const executeTests = function(nameOfTest, server, createConnectionToClientAndClient) {
+  return createTester(nameOfTest, server, createConnectionToClientAndClient).run();
 };
 
-const createTester = function(nameOfTest, getConnectionToClientAndClientAndServer) {
+const createTester = function(nameOfTest, server, createConnectionToClientAndClient) {
   const tester = new Tester(nameOfTest);
-    
-  let connectionToClient, client, server;
+  
+  let connectionToClient, client;
     
   tester.onBeforeAllTestsStarted.addListener(async function() {
-    const cons = await getConnectionToClientAndClientAndServer();
+    const cons = await createConnectionToClientAndClient();
     connectionToClient = cons.connectionToClient;
     client = cons.client;
-    server = cons.server;
   });
 
   tester.onAllTestsEnded.addListener(function closeConnections() {
@@ -52,8 +53,9 @@ const createTester = function(nameOfTest, getConnectionToClientAndClientAndServe
     };
   };
 
-  addTestsToTester(tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
-
+  addSendingMessagesTestsToTester(tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
+  addClosingConnectionTestsToTester(tester, createConnectionToClientAndClient);
+  
   return tester;
 };
 
@@ -61,7 +63,7 @@ const runTest = function(check, sender, recivier) {
   return check(sender, recivier);
 };
 
-const addTestsToTester = function(
+const addSendingMessagesTestsToTester = function(
   tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer
 ) {
   const checkToNameOfTest = [
@@ -96,5 +98,44 @@ const addTestFormOneSideToAnotherToTester = function(
         name = nameOfTest + postfixOfTestName;
   tester.addTest(test, {name});
 };
+
+const addClosingConnectionTestsToTester = (function () {
+  const addClosingConnectionTestsToTester = function(tester, createConnectionToClientAndClient) {
+    tester.addTest(
+      createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "client", "connectionToClient"),
+      {name: "testClosingConnectionByClient"}
+    );
+    tester.addTest(
+      createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "connectionToClient" , "client"),
+      {name: "testClosingConnectionByServer"}
+    );
+  };
+
+  const createFnToCheckClosingConnectionAndCloseIfFail = function(
+    createConnectionToClientAndClient,
+    closingSide,
+    acceptingSide
+  ) {
+    return executeTestAndCloseConnectionsIfFail.bind(null, createConnectionToClientAndClient, closingSide, acceptingSide);
+  };
+
+  const executeTestAndCloseConnectionsIfFail = async function(
+    createConnectionToClientAndClient,
+    closingSide,
+    acceptingSide
+  ) {
+    const cons = await createConnectionToClientAndClient();
+    const closer = cons[closingSide],
+          acceptor = cons[acceptingSide]
+    try {
+      await checkClosingConnections(closer, acceptor);
+    } catch(error) {
+      closer.close();
+      throw error;
+    }
+  };
+  
+  return addClosingConnectionTestsToTester;
+})();
 
 module.exports = executeTests;

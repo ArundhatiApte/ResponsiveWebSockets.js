@@ -5,7 +5,7 @@ const createFnToCheckendingManyMessagesAtOnce = require("./_createFnToCheckSendi
 const {
   numberToInt32Bytes,
   int32BytesToNumber
-} = require("./../../bytesInNumbers");
+} = require("./../../../modules/bytesInNumbers");
 
 const createSendedMessage = function() {
   return Math.floor(Math.random() * 10000) + 1;
@@ -15,8 +15,10 @@ const createExpectedResponse = function(number) {
   return number * 4;
 };
 
+const maxTimeMSForWaiting = 6000;
+
 const sendMessage = function(sender, number) {
-  return sender.sendAwaitingResponseBinaryMessage(numberToInt32Bytes(number));
+  return sender.sendAwaitingResponseBinaryMessage(numberToInt32Bytes(number), maxTimeMSForWaiting);
 };
 
 const setListenerToSendResponseOnIncomingMessage = function(recivier) {

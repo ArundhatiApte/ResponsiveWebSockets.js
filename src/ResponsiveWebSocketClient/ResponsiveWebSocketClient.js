@@ -3,19 +3,22 @@
 const WebSocketClient = require("./modules/WebSocketClient"),
       ResponsiveWebSoket = require("./../common/ResponsiveWebSocketConnection");
       
-const {_connection, _onError} = ResponsiveWebSoket._namesOfPrivateProperties;
+const {_connection} = ResponsiveWebSoket._namesOfPrivateProperties;
 
 const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
   constructor(webSocketClient) {
     super(webSocketClient || new WebSocketClient());
     this._setupOnLoadListener();
-    this._setupOnErrorListener();
   }
 
   setLoadListener(listener) {
     this[_onLoad] = listener;
   }
-  
+
+  setCloseListener(listener) {
+    this[_connection].onClose = listener.bind(this);
+  }
+    
   _setupOnLoadListener() {
     this[_connection].onLoad = () => {
       this[_connection].onLoad = null;
@@ -25,20 +28,16 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
     };
   }
   
-  _setupOnErrorListener() {
-    this[_connection].onError = (error) => {
-      if (this[_onError]) {
-        this[_onError](error);
-      }
-    };
-  }
-  
   connect(url) {
     return this[_connection].connect(url);
   }
   
-  close() {
-    return this[_connection].close();
+  close(code, reason) {
+    return this[_connection].close(code, reason);
+  }
+
+  terminate() {
+    return this[_connection].terminate();
   }
 };
 

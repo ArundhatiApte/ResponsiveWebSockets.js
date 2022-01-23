@@ -49,8 +49,8 @@ const WebSocketClient = class {
     webSocket.onerror = this._emitOnError.bind(this);
   }
   
-  close(reason, code) {
-    return this[_webSocketClient].close(reason, code);
+  close(code, reason) {
+    return this[_webSocketClient].close(code, reason);
   }
 };
 
@@ -116,7 +116,7 @@ const _createMethodToEmitEvent = function(nameOfEventProperty) {
 
 Proto._emitOnLoad = _createMethodToEmitEvent("onLoad");
 Proto._emitOnError = _createMethodToEmitEvent("onError");
-Proto._emitOnClose = _createMethodToEmitEvent("onCLose");
+Proto._emitOnClose = _createMethodToEmitEvent("onClose");
       
 WebSocketClient.setWebSocketClientClass = function(WebSocketClient) {
   W3CWebSocketClientClass = WebSocketClient;

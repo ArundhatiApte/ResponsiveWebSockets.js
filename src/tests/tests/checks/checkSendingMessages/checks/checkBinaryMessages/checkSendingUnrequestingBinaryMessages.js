@@ -5,7 +5,7 @@ const createFnToCheckSendingUnrequestingMessages = require("./../../utils/create
 const {
   numberToInt32Bytes,
   int32BytesToNumber
-} = require("./../../../../bytesInNumbers");
+} = require("./../../../../../modules/bytesInNumbers");
 
 const sendedMessages = [1, 600, 1200, 98, 1872612, 12904];
 

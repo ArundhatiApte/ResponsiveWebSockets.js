@@ -2,7 +2,7 @@
 
 import {
   Server,
-  WebSocketClient
+  W3CWebSocketClient
 } from "./../esExportInNodeJS.mjs";
 
 import ResponsiveWebSocketClient from "./../Client.js";
@@ -12,7 +12,7 @@ import ResponsiveWebSocketClient from "./../Client.js";
         port = 4443;
   await server.listen(port);
 
-  ResponsiveWebSocketClient.setWebSocketClientClass(WebSocketClient);
+  ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const client = new ResponsiveWebSocketClient();
   
   const connectionToClient = await new Promise(function(resolve, reject) {

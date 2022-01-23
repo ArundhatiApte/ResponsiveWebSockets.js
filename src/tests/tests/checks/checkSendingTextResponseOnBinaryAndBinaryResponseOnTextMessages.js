@@ -6,7 +6,7 @@ const expectEqual = require("assert").strictEqual,
 const {
   numberToInt32Bytes,
   int32BytesToNumber
-} = require("./../bytesInNumbers");
+} = require("./../../modules/bytesInNumbers");
 
 const checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages = async function(
   sender, receiver

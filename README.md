@@ -32,7 +32,7 @@ or
 
 import {
   Server as ResponsiveWebSocketServer,
-  WebSocketClient
+  W3CWebSocketClient
 } from "ResponsiveWebSockets";
 
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
@@ -42,7 +42,7 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
         port = 8443;
   await server.listen(port);
 
-  ResponsiveWebSocketClient.setWebSocketClientClass(WebSocketClient);
+  ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const client = new ResponsiveWebSocketClient();
   
   const connectionToClient = await new Promise((resolve, reject) => {

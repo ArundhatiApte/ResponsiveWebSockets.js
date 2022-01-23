@@ -167,6 +167,10 @@ Cм. sendTextRequest
 
 Исключение возникает, когда ответ не пришел за время maxTimeMSToWaitResponse.
 
+### terminate()
+
+Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутсвует.
+
 ## Класс ResponsiveWebSocketClient
 
 ### new ResponsiveWebSocketClient()

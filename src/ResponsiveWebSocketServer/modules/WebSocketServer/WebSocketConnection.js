@@ -35,9 +35,14 @@ const WebSocketConnection = class {
     return this[_onTextMessage];
   }
   
-  _emitOnClose(reason, code) {
+  _emitOnClose(code, reason) {
     if (this.onClose) {
-      this.onClose({reason, code}); 
+      if ((!reason) || reason.byteLength === 0) {
+        this.onClose({code});   
+      } else {
+        reason = textDecoder.decode(reason);
+        this.onClose({code, reason});
+      }
     }
   }
   
@@ -57,8 +62,12 @@ const WebSocketConnection = class {
     return this[_connection].send(text);
   }
   
-  close(reason, code) {
-    return this[_connection].close(reason, code);
+  close(code, reason) {
+    return this[_connection].end(code, reason);
+  }
+
+  terminate() {
+    return this[_connection].close();
   }
 };
 

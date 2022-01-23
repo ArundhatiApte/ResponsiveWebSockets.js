@@ -15,7 +15,7 @@
     "ws": "^8.4.0"
   },
   "scripts": {
-    "tests": "node ./src/tests/tests.js"
+    "tests": "node ./src/tests/tests/tests.js"
   },
   "version": "1.0.0"
 }

@@ -16,6 +16,7 @@
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
     * static class TimeoutToReceiveResponseExeption
+    * terminate
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -38,7 +39,7 @@ Provides methods for sending awaiting response messages and messages without wai
 
 ### close([code, reason])
 
-* `code` `<integer>`
+* `code` `<number>`
 * `reason` `<string>`
 
 Closes connection.
@@ -175,6 +176,10 @@ Example of usage: [sendingUnrequestingMessages.mjs](./examples/sendingUnrequesti
 ### Static class TimeoutToReceiveResponseExeption
 
 Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMSToWaitResponse`.
+
+### terminate()
+
+Forcibly close the connection. ResponsiveWebSocketClient in browser does not implement this method.
 
 ## Class ResponsiveWebSocketClient
 

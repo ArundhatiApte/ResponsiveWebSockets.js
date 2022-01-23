@@ -6,7 +6,7 @@ const createFnToCheckSendingMessagesWithResponse =
 const {
   numberToInt32Bytes,
   int32BytesToNumber
-} = require("./../../../../bytesInNumbers");
+} = require("./../../../../../modules/bytesInNumbers");
 
 const multiplier = 42;
 
