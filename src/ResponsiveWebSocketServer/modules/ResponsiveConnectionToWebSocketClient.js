@@ -23,12 +23,6 @@ const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
   getRemoteAddress() {
     return this[_connection].getRemoteAddress();
   }
-
-  setCloseListener(listener) {
-    this[_connection].onClose = (event) => {
-      return listener.call(this, event);
-    };
-  }
 };
 
 ResponsiveConnectionToWebSocketClient.contentTypesOfMessages = ResponsiveWebSoket.contentTypesOfMessages;

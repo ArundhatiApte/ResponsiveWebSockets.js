@@ -40,7 +40,7 @@ const WebSocketConnection = class {
       if ((!reason) || reason.byteLength === 0) {
         this.onClose({code});   
       } else {
-        reason = textDecoder.decode(reason);
+        reason = decodeBytesToText(reason);
         this.onClose({code, reason});
       }
     }
@@ -51,7 +51,7 @@ const WebSocketConnection = class {
   }
 
   _emitOnTextMessage(bytes) {
-    return this[_onTextMessage](textDecoder.decode(bytes));
+    return this[_onTextMessage](decodeBytesToText(bytes));
   }
   
   sendBinaryMessage(bytesArrayBuffer) {
@@ -71,6 +71,6 @@ const WebSocketConnection = class {
   }
 };
 
-const textDecoder = new TextDecoder("utf8");
+const decodeBytesToText = TextDecoder.prototype.decode.bind(new TextDecoder("utf8"));
 
 module.exports = WebSocketConnection;

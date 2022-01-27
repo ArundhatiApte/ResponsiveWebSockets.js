@@ -14,10 +14,6 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
   setLoadListener(listener) {
     this[_onLoad] = listener;
   }
-
-  setCloseListener(listener) {
-    this[_connection].onClose = listener.bind(this);
-  }
     
   _setupOnLoadListener() {
     this[_connection].onLoad = () => {

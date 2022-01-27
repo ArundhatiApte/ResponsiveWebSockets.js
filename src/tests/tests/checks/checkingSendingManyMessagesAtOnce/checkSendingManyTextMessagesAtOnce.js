@@ -10,7 +10,7 @@ const createExpectedResponse = function(message) {
   return message + "#";
 };
 
-const maxTimeMSForWaiting = 6000;
+const maxTimeMSForWaiting = 8000;
 
 const sendMessage = function(sender, message) {
   return sender.sendAwaitingResponseTextMessage(message, maxTimeMSForWaiting);
