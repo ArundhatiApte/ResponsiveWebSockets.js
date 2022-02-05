@@ -2,12 +2,12 @@
 
 const stringFromCharCodes = String.fromCharCode;
 
-const uInt16To2Chars8BitString = function(uInt16) {
+const uInt16ToCharPlus2Chars8BitString = function(codeOfHeaderSymbol, uInt16) {
   const bytes = new Uint16Array([uInt16]).buffer;
   const uInt8s = new Uint8Array(bytes),
         firstByte = uInt8s[0],
         secondByte = uInt8s[1];
-  return stringFromCharCodes(firstByte, secondByte);
+  return stringFromCharCodes(codeOfHeaderSymbol, firstByte, secondByte);
 };
 
 const extractUInt16FromString = function(startIndex, string) {
@@ -24,6 +24,6 @@ const extractUInt16FromString = function(startIndex, string) {
 };
 
 module.exports = {
-  uInt16To2Chars8BitString,
+  uInt16ToCharPlus2Chars8BitString,
   extractUInt16FromString
 };

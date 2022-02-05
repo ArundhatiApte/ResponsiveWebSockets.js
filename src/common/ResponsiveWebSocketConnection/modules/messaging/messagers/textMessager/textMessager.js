@@ -10,27 +10,26 @@ const {
 } = typesOfIncomingMessages;
 
 const {
-  uInt16To2Chars8BitString,
+  uInt16ToCharPlus2Chars8BitString,
   extractUInt16FromString
-} = require("./uInt16ViewIn2Char");
+} = require("./uInt16ViewIn2Char/uInt16ViewIn2Char");
 
 const header_awaitingResponseTextMessage = "\t",
       header_withoutWaitingResponseTextMessage = "\n",
       header_responseTextMessage = "\r";
 
+const codeOfHeader_awaitingResponseTextMessage = header_awaitingResponseTextMessage.charCodeAt(0);
+const codeOfHeader_responseTextMessage = header_responseTextMessage.charCodeAt(0);
+
 const textMessager = {
   createAwaitingResponseTextMessage(idOfMessage, text) {
-    return header_awaitingResponseTextMessage +
-      uInt16To2Chars8BitString(idOfMessage) +
-      text;
+    return uInt16ToCharPlus2Chars8BitString(codeOfHeader_awaitingResponseTextMessage, idOfMessage) + text;
   },
   createUnrequestingTextMessage(text) {
     return header_withoutWaitingResponseTextMessage + text;
   },
   createTextResponseToAwaitingResponseMessage(idOfMessage, text) {
-    return header_responseTextMessage +
-      uInt16To2Chars8BitString(idOfMessage) +
-      text;
+    return uInt16ToCharPlus2Chars8BitString(codeOfHeader_responseTextMessage, idOfMessage) + text;
   },
   parseTextMessage(message) {
     const header = message[0];
