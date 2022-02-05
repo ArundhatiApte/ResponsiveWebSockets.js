@@ -1,14 +1,17 @@
 "use strict";
 
+const createEnum = require("createEnum");
+
 const {
   binaryMessager,
   textMessager,
   ExeptionAtParsing
-} = require("./modules/messaging");
+} = require("./modules/messaging/messaging");
 
-const createEnum = require("./modules/createEnum"),
-      SenderOfResponse = require("./modules/SenderOfResponse"),
-      MessageIdGen = require("./modules/createClassOfGeneratorOfSequenceIntegers")(Uint16Array);
+const SenderOfResponse = require("./modules/SenderOfResponse");
+const MessageIdGen = require(
+  "./modules/createClassOfGeneratorOfSequenceIntegers/createClassOfGeneratorOfSequenceIntegers"
+)(Uint16Array);
 
 const messageContentTypes = createEnum("binary", "text");
       

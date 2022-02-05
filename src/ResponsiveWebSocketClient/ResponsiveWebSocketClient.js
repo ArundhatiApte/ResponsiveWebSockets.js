@@ -1,7 +1,7 @@
 "use strict";
 
 const WebSocketClient = require("./modules/WebSocketClient"),
-      ResponsiveWebSoket = require("./../common/ResponsiveWebSocketConnection");
+      ResponsiveWebSoket = require("./../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
       
 const {_connection} = ResponsiveWebSoket._namesOfPrivateProperties;
 

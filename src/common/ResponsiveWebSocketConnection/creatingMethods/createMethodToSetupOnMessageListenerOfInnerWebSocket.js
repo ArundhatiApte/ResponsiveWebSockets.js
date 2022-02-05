@@ -4,7 +4,7 @@ const {
   response: typesOfIncomingMessages_response,
   incomingWithoutWaitingResponse: typesOfIncomingMessages_incomingWithoutWaitingResponse,
   incomingAwaitingResponse: typesOfIncomingMessages_incomingAwaitingResponse 
-} = require("./../modules/messaging").typesOfIncomingMessages;
+} = require("./../modules/messaging/messaging").typesOfIncomingMessages;
 
 const {
   _idOfAwaitingResponseMessageToPromise

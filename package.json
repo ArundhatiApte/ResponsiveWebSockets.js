@@ -9,6 +9,7 @@
     "webpack": "^5.65.0"
   },
   "dependencies": {
+    "createEnum": "github:ArundhatiApte/createEnum-JS",
     "install": "^0.13.0",
     "npm": "^8.3.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.3.0",

@@ -1,6 +1,6 @@
 "use strict";
 
-const createEnum = require("./../../createEnum");
+const createEnum = require("createEnum");
 
 module.exports = createEnum(
   "incomingAwaitingResponse",

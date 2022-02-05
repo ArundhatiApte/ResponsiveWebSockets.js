@@ -3,7 +3,7 @@
 const {
   binaryMessager,
   textMessager
-} = require("./messaging");
+} = require("./messaging/messaging");
 
 const SenderOfResponse = class {
   constructor(nonResponsiveWebSocketConnection, idOfMessage) {

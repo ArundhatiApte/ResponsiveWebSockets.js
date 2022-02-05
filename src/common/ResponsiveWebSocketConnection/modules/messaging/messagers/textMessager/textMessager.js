@@ -1,7 +1,6 @@
 "use strict";
 
-const createEnum = require("./../../../createEnum"),
-      typesOfIncomingMessages = require("./../typesOfIncomingMessages"),
+const typesOfIncomingMessages = require("./../typesOfIncomingMessages"),
       ExeptionAtParsing = require("./../ExeptionAtParsing");
 
 const {

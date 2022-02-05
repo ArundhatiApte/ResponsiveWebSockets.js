@@ -1,6 +1,6 @@
 "use strict";
 
-const ResponsiveWebSoket = require("./../../common/ResponsiveWebSocketConnection"),
+const ResponsiveWebSoket = require("./../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"),
       {_connection} = ResponsiveWebSoket._namesOfPrivateProperties;
  
 const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
