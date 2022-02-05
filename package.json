@@ -2,7 +2,7 @@
   "name": "ResponsiveWebSockets",
   "exports": {
     ".": "./exportInNodeJS.js",
-    "./Client": "./Client.js"
+    "./Client": "./src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js"
   },
   "devDependencies": {
     "tester": "github:ArundhatiApte/Tester-JS",
