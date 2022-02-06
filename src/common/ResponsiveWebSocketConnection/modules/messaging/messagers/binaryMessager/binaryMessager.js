@@ -1,7 +1,12 @@
 "use strict";
 
+const {
+  incomingAwaitingResponse: typesOfIncomingMessages_incomingAwaitingResponse,
+  incomingWithoutWaitingResponse: typesOfIncomingMessages_incomingWithoutWaitingResponse,
+  response: typesOfIncomingMessages_response
+} = require("./../typesOfIncomingMessages");
+
 const ExeptionAtParsing = require("./../ExeptionAtParsing"),
-      typesOfIncomingMessages = require("./../typesOfIncomingMessages"),
       insertArrayBufferToAnotherUnsafe = require("./insertArrayBufferToAnotherUnsafe");
       
 const headers_withoutWaitingResponseBinary = 0b01100000,
@@ -39,29 +44,29 @@ const messager = {
   createAwaitingResponseBinaryMessage: createFnToSendMessageWithId(headers_awaitingResponseBinary),
   createBinaryResponseToAwaitingResponseMessage: createFnToSendMessageWithId(headers_incomingBinaryResponse),
   
-  parseBinaryMessage(message, startIndex = 0) {
+  parseBinaryMessage(message) {
     const dataView = new DataView(message),
-          header1stByte = dataView.getUint8(startIndex);
+          header1stByte = dataView.getUint8(0);
     
     if (header1stByte === headers_incomingBinaryResponse) {
-      const messageNum = dataView.getUint16(startIndex + 1);
+      const messageNum = dataView.getUint16(1);
       return {
-        type: typesOfIncomingMessages.response,
-        startIndex: startIndex + 3,
+        type: typesOfIncomingMessages_response,
+        startIndex: 3,
         idOfMessage: messageNum
       };
     }
     if (header1stByte === headers_withoutWaitingResponseBinary) {
       return {
-        type: typesOfIncomingMessages.incomingWithoutWaitingResponse,
-        startIndex: startIndex + 1
+        type: typesOfIncomingMessages_incomingWithoutWaitingResponse,
+        startIndex: 1
       };
     }
     if (header1stByte === headers_awaitingResponseBinary) {
-      const messageNum = dataView.getUint16(startIndex + 1);
+      const messageNum = dataView.getUint16(1);
       return {
-        type: typesOfIncomingMessages.incomingAwaitingResponse,
-        startIndex: startIndex + 3,
+        type: typesOfIncomingMessages_incomingAwaitingResponse,
+        startIndex: 3,
         idOfMessage: messageNum
       };
     }
@@ -69,7 +74,9 @@ const messager = {
     throw new ExeptionAtParsing("Hеизвестный заголовок сообщения.");
   },
 
-  typesOfIncomingMessages
+  startIndexOfAwaitingResponseMessageBody: 3,
+  startIndexOfUnrequestingMessageBody: 1,
+  startIndexOfResponseMessageBody: 3
 };
 
 module.exports = messager;

@@ -1,66 +1,66 @@
 "use strict";
 
-const typesOfIncomingMessages = require("./../typesOfIncomingMessages"),
-      ExeptionAtParsing = require("./../ExeptionAtParsing");
-
 const {
   incomingAwaitingResponse: typeOfIncomingMessage_incomingAwaitingResponse,
   incomingWithoutWaitingResponse: typeOfIncomingMessage_incomingWithoutWaitingResponse,
   response: typeOfIncomingMessage_response
-} = typesOfIncomingMessages;
+} = require("./../typesOfIncomingMessages");
+
+const ExeptionAtParsing = require("./../ExeptionAtParsing");
 
 const {
   uInt16ToCharPlus2Chars8BitString,
   extractUInt16FromString
 } = require("./uInt16ViewIn2Char/uInt16ViewIn2Char");
 
-const header_awaitingResponseTextMessage = "\t",
-      header_withoutWaitingResponseTextMessage = "\n",
-      header_responseTextMessage = "\r";
+const charCodeOfHeader_awaitingResponseTextMessage = 1,
+      charCodeOfHeader_withoutWaitingResponseTextMessage = 2,
+      charCodeOfHeader_responseTextMessage = 3;
 
-const codeOfHeader_awaitingResponseTextMessage = header_awaitingResponseTextMessage.charCodeAt(0);
-const codeOfHeader_responseTextMessage = header_responseTextMessage.charCodeAt(0);
+const header_withoutWaitingResponseTextMessage = String.fromCharCode(
+  charCodeOfHeader_withoutWaitingResponseTextMessage);
 
 const textMessager = {
   createAwaitingResponseTextMessage(idOfMessage, text) {
-    return uInt16ToCharPlus2Chars8BitString(codeOfHeader_awaitingResponseTextMessage, idOfMessage) + text;
+    return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_awaitingResponseTextMessage, idOfMessage) + text;
   },
   createUnrequestingTextMessage(text) {
     return header_withoutWaitingResponseTextMessage + text;
   },
   createTextResponseToAwaitingResponseMessage(idOfMessage, text) {
-    return uInt16ToCharPlus2Chars8BitString(codeOfHeader_responseTextMessage, idOfMessage) + text;
+    return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_responseTextMessage, idOfMessage) + text;
   },
   parseTextMessage(message) {
-    const header = message[0];
+    const charCodeOfHeader = message[0].charCodeAt(0);
 
-    if (header === header_awaitingResponseTextMessage) {
+    if (charCodeOfHeader === charCodeOfHeader_awaitingResponseTextMessage) {
       const startIndexOfId = 1,
             idOfMessage = extractIdOfMessage(startIndexOfId, message);
       return {
         idOfMessage,
-        type: typeOfIncomingMessage_incomingAwaitingResponse,
-        startIndex: 3
+        type: typeOfIncomingMessage_incomingAwaitingResponse
       };
     }
-    if (header === header_withoutWaitingResponseTextMessage) {
+    if (charCodeOfHeader === charCodeOfHeader_withoutWaitingResponseTextMessage) {
       return {
-        type: typeOfIncomingMessage_incomingWithoutWaitingResponse,
-        startIndex: 1
+        type: typeOfIncomingMessage_incomingWithoutWaitingResponse
       };
     }
-    if (header === header_responseTextMessage) {
+    if (charCodeOfHeader === charCodeOfHeader_responseTextMessage) {
       const startIndexOfId = 1,
             idOfMessage = extractIdOfMessage(startIndexOfId, message);
       return {
         idOfMessage,
-        type: typeOfIncomingMessage_response,
-        startIndex: 3
+        type: typeOfIncomingMessage_response
       };
     }
 
     throw new ExeptionAtParsing("Неизвестный заголовок сообщения.");
-  }
+  },
+  
+  startIndexOfAwaitingResponseMessageBody: 3,
+  startIndexOfUnrequestingMessageBody: 1,
+  startIndexOfResponseMessageBody: 3
 };
 
 const extractIdOfMessage = function(startIndex, message) {

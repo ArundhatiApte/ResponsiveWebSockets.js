@@ -16,9 +16,16 @@ const {
 } = require("./entryAboutAwaitingPromise");
 
 const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
-  parseMessage, typeOfMessageContent,
+  parseMessage,
+  typeOfMessageContent,
+  
   nameOfUnrequestingMessageEventListener,
-  nameOfAwaitingResponseMessageEventListener
+  startIndexOfUnrequestingMessageBody,
+  
+  nameOfAwaitingResponseMessageEventListener,
+  startIndexOfAwaitingResponseMessageBody,
+
+  startIndexOfResponseMessageBody
 ) {
 
   const _emitEventByIncomingMessage = function(message) {
@@ -55,7 +62,7 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
     clearTimeout(awaitingPromise[entryAboutAwaitingPromise_nameOfTimeout]);
     const dataForCallback = {
       contentType: typeOfMessageContent,
-      startIndex: infoAboutMessage.startIndex,
+      startIndex: startIndexOfResponseMessageBody,
       message: rawPayload
     };
 
@@ -65,7 +72,7 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
 
   const _emitUnrequestingMessageEvent = function(infoAboutMessage, rawPayload) {
     if (this[nameOfUnrequestingMessageEventListener]) {
-      this[nameOfUnrequestingMessageEventListener](rawPayload, infoAboutMessage.startIndex);
+      this[nameOfUnrequestingMessageEventListener](rawPayload, startIndexOfUnrequestingMessageBody);
     }
   };
   
@@ -74,7 +81,7 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
       const senderOfResponse = this._createSenderOfMessageResponse(infoAboutMessage.idOfMessage);
       
       this[nameOfAwaitingResponseMessageEventListener](
-        rawPayload, infoAboutMessage.startIndex, senderOfResponse
+        rawPayload, startIndexOfAwaitingResponseMessageBody, senderOfResponse
       );
     }
   };

@@ -7,14 +7,17 @@ const createFnToCheckCreatingAndParsingMessageWithId = function(idOfMessage, typ
 };
 
 const checkCreatingAndParsingMessageWithId = function(
-  idOfMessage, typeOfMessage,
-  message, createMessage,
-  parseMessage, extractMessageFromMessageWithHeader
+  idOfMessage,
+  typeOfMessage,
+  startIndex,
+  message,
+  createMessage,
+  parseMessage,
+  extractMessageFromMessageWithHeader
 ) {
   const messageWithHeader = createMessage(idOfMessage, message);
   const {
     idOfMessage: parsedIdOfMessage,
-    startIndex,
     type
   }= parseMessage(messageWithHeader);
 

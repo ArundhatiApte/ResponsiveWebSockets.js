@@ -11,7 +11,10 @@ const {
   createAwaitingResponseBinaryMessage,
   createUnrequestingBinaryMessage,
   createBinaryResponseToAwaitingResponseMessage,
-  parseBinaryMessage
+  parseBinaryMessage,
+  startIndexOfAwaitingResponseMessageBody,
+  startIndexOfUnrequestingMessageBody,
+  startIndexOfResponseMessageBody
 } = require("./binaryMessager");
 
 const messages = [12, 1923, 1237, 9, 9128];
@@ -41,6 +44,9 @@ testMessager({
     createBinaryResponseToAwaitingResponseMessage
   ),
   parseMessage: parseBinaryMessage,
+  startIndexOfAwaitingResponseMessageBody,
+  startIndexOfUnrequestingMessageBody,
+  startIndexOfResponseMessageBody,
   extractMessageFromMessageWithHeader(rawMessage, startIndex) {
     return int32BytesToNumber(rawMessage, startIndex);
   },

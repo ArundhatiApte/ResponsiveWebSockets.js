@@ -5,7 +5,10 @@ const {
   createAwaitingResponseTextMessage,
   createUnrequestingTextMessage,
   createTextResponseToAwaitingResponseMessage,
-  parseTextMessage
+  parseTextMessage,
+  startIndexOfAwaitingResponseMessageBody,
+  startIndexOfUnrequestingMessageBody,
+  startIndexOfResponseMessageBody
 } = require("./textMessager");
 
 const messages = ["ansi", "utf8◈ℱ"],
@@ -14,9 +17,16 @@ const messages = ["ansi", "utf8◈ℱ"],
 testMessager({
   nameOfTest: "test text messager",
   messages,
+  
   createAwaitingResponseMessage: createAwaitingResponseTextMessage,
+  startIndexOfAwaitingResponseMessageBody,
+  
   createUnrequestingMessage: createUnrequestingTextMessage,
+  startIndexOfUnrequestingMessageBody,
+    
   createResponseMessage: createTextResponseToAwaitingResponseMessage,
+  startIndexOfResponseMessageBody,
+  
   parseMessage: parseTextMessage,
   extractMessageFromMessageWithHeader(rawMessage, startIndex) {
     return rawMessage.slice(startIndex);

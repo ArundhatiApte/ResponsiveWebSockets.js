@@ -11,8 +11,8 @@ const checkCreatingAndParsingUnrequestingMessages =
 const checkCreatingAndParsingResponseMessages =
   require("./checks/checkCreatingAndParsingResponseMessages");
 
-const createCheckingThrowingExeptionAtParsingFn =
-  require("./checks/createCheckingThrowingExeptionAtParsingFn");
+const checkThrowingExeptionAtParsing =
+  require("./checks/checkThrowingExeptionAtParsing");
 
 const testMessager = function(options) {
   return createTester(options).run();
@@ -22,9 +22,16 @@ const createTester = function(options) {
   const {
     nameOfTest,
     messages,
+    
     createAwaitingResponseMessage,
+    startIndexOfAwaitingResponseMessageBody,
+    
     createUnrequestingMessage,
+    startIndexOfUnrequestingMessageBody,
+    
     createResponseMessage,
+    startIndexOfResponseMessageBody,
+    
     parseMessage,
     extractMessageFromMessageWithHeader,
     brokenMessage
@@ -35,40 +42,44 @@ const createTester = function(options) {
   const checkigFnToCreatingMessageFnAndNameOfTest = [
     [
       checkCreatingAndParsingAwaitingResponseMessages,
+      startIndexOfAwaitingResponseMessageBody,
       createAwaitingResponseMessage,
       "checkCreatingAndParsingAwaitingResponseMessages"
     ],
     [
       checkCreatingAndParsingUnrequestingMessages,
+      startIndexOfUnrequestingMessageBody,
       createUnrequestingMessage,
       "testCreatingAndParsingUnResponsedMessages"
     ],
     [
       checkCreatingAndParsingResponseMessages,
+      startIndexOfResponseMessageBody,
       createResponseMessage,
       "testCreatingAndParsingResponseMessages"
     ]
   ];
-
-  const createTest = function(
-    check, messages, createMessage, parseMessage, extractMessageFromMessageWithHeader
-  ) {
-    return function() {
-      return check(messages, createMessage,
-        parseMessage, extractMessageFromMessageWithHeader);
-    };
-  };
   
-  for (const [check, createMessage, name] of checkigFnToCreatingMessageFnAndNameOfTest) {
-    const test = createTest(check, messages, createMessage, parseMessage, extractMessageFromMessageWithHeader);
+  for (const [check, startIndexOfBody, createMessage, name] of checkigFnToCreatingMessageFnAndNameOfTest) {
+    const test = createTest(
+      check,
+      startIndexOfBody,
+      messages,
+      createMessage,
+      parseMessage,
+      extractMessageFromMessageWithHeader
+    );
     tester.addTest(test, {name});
   }
 
-  const testThrowingExeptionAtParsing = createCheckingThrowingExeptionAtParsingFn(
-    brokenMessage, parseMessage);
+  const testThrowingExeptionAtParsing = createTest(checkThrowingExeptionAtParsing, brokenMessage, parseMessage);
 
   tester.addTest(testThrowingExeptionAtParsing);
   return tester;
+};
+
+const createTest = function(check, ...args) {
+  return check.bind(null, ...args);
 };
 
 module.exports = testMessager;

@@ -4,11 +4,11 @@ const typesOfIncomingMessages = require("./../../typesOfIncomingMessages"),
       createFnToCheckCreatingMessages = require("./_createFnToCheckCreatingMessages"),
       createFnToCheckCreatingMessageWithId = require("./_createFnToCheckCreatingMessageWithId");
 
-const checkCreatingAndParsingAwaitingResponseMessagesMessage = createFnToCheckCreatingMessageWithId(
+const checkCreatingAndParsingAwaitingResponseMessage = createFnToCheckCreatingMessageWithId(
   244, typesOfIncomingMessages.incomingAwaitingResponse
 );
 
 const checkCreatingAndParsingAwaitingResponseMessages =
-  createFnToCheckCreatingMessages(checkCreatingAndParsingAwaitingResponseMessagesMessage);
+  createFnToCheckCreatingMessages(checkCreatingAndParsingAwaitingResponseMessage);
 
 module.exports = checkCreatingAndParsingAwaitingResponseMessages;

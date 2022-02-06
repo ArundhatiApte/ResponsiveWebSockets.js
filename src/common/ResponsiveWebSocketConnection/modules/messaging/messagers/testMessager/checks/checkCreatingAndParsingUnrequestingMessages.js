@@ -5,16 +5,17 @@ const expectEqual = require("assert").equal,
       createFnToCheckCreatingMessages = require("./_createFnToCheckCreatingMessages");
 
 const checkCreatingAndParsingUnrequestingMessage = function(
-  message, createnUnResponsedMessage,
-   parseMessage, extractMessageFromMessageWithHeader
+  startIndexOfBody,
+  message,
+  createUnResponsedMessage,
+  parseMessage,
+  extractMessageFromMessageWithHeader
 ) {
-  const messageWithHeader = createnUnResponsedMessage(message);
-  const {
-    type, startIndex
-  } = parseMessage(messageWithHeader);
+  const messageWithHeader = createUnResponsedMessage(message);
+  const {type} = parseMessage(messageWithHeader);
   expectEqual(type, typesOfIncomingMessages.incomingWithoutWaitingResponse);
 
-  const body = extractMessageFromMessageWithHeader(messageWithHeader, startIndex);
+  const body = extractMessageFromMessageWithHeader(messageWithHeader, startIndexOfBody);
   expectEqual(message, body);
 };
 
