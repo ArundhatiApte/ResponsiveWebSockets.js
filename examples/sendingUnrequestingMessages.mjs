@@ -1,7 +1,9 @@
 "use strict";
 
-import packageForNodeJS from "./../exportInNodeJS.js";
-const {Server: ResponsiveWebSocketServer, W3CWebSocketClient} = packageForNodeJS;
+import {
+  Server as ResponsiveWebSocketServer,
+  W3CWebSocketClient
+} from "./../exports/esExportInNodeJS.mjs";
 
 import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js";
 

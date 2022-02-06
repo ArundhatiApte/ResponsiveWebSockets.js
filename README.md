@@ -30,8 +30,11 @@ or
 ```js
 "use strict";
 
-import packageForNodeJS from "ResponsiveWebSockets";
-const {Server: ResponsiveWebSocketServer, W3CWebSocketClient} = packageForNodeJS;
+import {
+  Server as ResponsiveWebSocketServer,
+  W3CWebSocketClient
+} from "ResponsiveWebSockets/esm";
+// const {Server, W3CWebSocketClient} = require("ResponsiveWebSockets"); // commonJS
 
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
