@@ -1,6 +1,6 @@
-## ResposiveWebSockets
+## Resposive Web Sockets
 
-### Introduction
+### Overview
 
 Standard web socket has method for sending messages and event of incoming message, hasn`t opportunity to send request,
 and this code will be wrong:
