@@ -10,13 +10,10 @@ const uInt16ToCharPlus2Chars8BitString = function(codeOfHeaderSymbol, uInt16) {
   return stringFromCharCodes(codeOfHeaderSymbol, firstByte, secondByte);
 };
 
-const extractUInt16FromString = function(startIndex, string) {
+const extractUInt16FromStringUnsafe = function(startIndex, stringWithEnoughLength) {
   const indexOfSecondByte = startIndex + 1;
-  if (string.length <= indexOfSecondByte) {
-    return null;
-  }
-  const firstCharCode = string.charCodeAt(startIndex),
-        secondCharCode = string.charCodeAt(indexOfSecondByte),
+  const firstCharCode = stringWithEnoughLength.charCodeAt(startIndex),
+        secondCharCode = stringWithEnoughLength.charCodeAt(indexOfSecondByte),
         bytes = new Uint8Array([firstCharCode, secondCharCode]).buffer;
   
   const out = new Uint16Array(bytes)[0];
@@ -25,5 +22,5 @@ const extractUInt16FromString = function(startIndex, string) {
 
 module.exports = {
   uInt16ToCharPlus2Chars8BitString,
-  extractUInt16FromString
+  extractUInt16FromStringUnsafe
 };

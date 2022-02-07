@@ -10,7 +10,7 @@ const ExeptionAtParsing = require("./../ExeptionAtParsing");
 
 const {
   uInt16ToCharPlus2Chars8BitString,
-  extractUInt16FromString
+  extractUInt16FromStringUnsafe
 } = require("./uInt16ViewIn2Char/uInt16ViewIn2Char");
 
 const charCodeOfHeader_awaitingResponseTextMessage = 1,
@@ -64,11 +64,11 @@ const textMessager = {
 };
 
 const extractIdOfMessage = function(startIndex, message) {
-  const number = extractUInt16FromString(startIndex, message);
-  if (number === null) {
-    throw new ExeptionAtParsing("Cant extract id of message");
+  const minLengthOfMessage = 3;
+  if (message.length < minLengthOfMessage) {
+    throw new ExeptionAtParsing("Message is too short");
   }
-  return number;
+  return extractUInt16FromStringUnsafe(startIndex, message);
 };
 
 module.exports = textMessager;

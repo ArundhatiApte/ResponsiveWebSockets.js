@@ -2,7 +2,7 @@
 
 const {
   Server: ResponsiveWebSocketServer
-} = require("./../../../exportInNodeJS");
+} = require("./../../../exports/commonJSExportInNodeJS");
 
 const server = new ResponsiveWebSocketServer({url: "/*"}),
       port = 4443;

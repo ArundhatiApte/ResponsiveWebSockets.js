@@ -4,7 +4,7 @@ const expectEqual = require("assert").equal;
 
 const {
   uInt16ToCharPlus2Chars8BitString,
-  extractUInt16FromString
+  extractUInt16FromStringUnsafe
 } = require("./uInt16ViewIn2Char");
 
 const test = function() {
@@ -21,7 +21,7 @@ const checkCreatingAndParsingString = function(uInt16) {
         codeOfFirstSymbol = 42,
         startIndex = prefix.length + 1,
         string = prefix + uInt16ToCharPlus2Chars8BitString(codeOfFirstSymbol, uInt16),
-        number = extractUInt16FromString(startIndex, string);
+        number = extractUInt16FromStringUnsafe(startIndex, string);
 
   if (number === null) {
     throw new Error("Cant parse view of " + uInt16);
