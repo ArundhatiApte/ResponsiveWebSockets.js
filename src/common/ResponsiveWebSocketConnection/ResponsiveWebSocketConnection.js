@@ -8,7 +8,6 @@ const {
   ExeptionAtParsing
 } = require("./modules/messaging/messaging");
 
-const SenderOfResponse = require("./modules/SenderOfResponse");
 const MessageIdGen = require(
   "./modules/createClassOfGeneratorOfSequenceIntegers/createClassOfGeneratorOfSequenceIntegers"
 )(Uint16Array);
@@ -72,21 +71,11 @@ const ResponsiveWebSocketConnection = class {
     connection.onTextMessage = listener;
   }
   
-  _createSenderOfMessageResponse(numOfMessage) {
-    return new SenderOfResponse(this[_connection], numOfMessage);
-  }
-  
   _createTimeoutToReceiveResponse(idOfMessage, rejectPromise, maxTimeMSToWaitResponse) {
     return setTimeout(
       _rejectMessageResponsePromiseAndDeleteEntry.bind(this, rejectPromise, idOfMessage),
       maxTimeMSToWaitResponse
     );
-  }
-  
-  _rejectMessageResponsePromiseAndDeleteEntry(rejectPromise, idOfMessage) {
-    this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
-    rejectPromise(new TimeoutToReceiveResponseExeption(
-      "ResponsiveWebSocketConnection:: timeout for receiving response."));
   }
 };
 
@@ -171,7 +160,11 @@ Proto.sendAwaitingResponseTextMessage = Proto.sendTextRequest = createMethodToSe
   textMessager.createAwaitingResponseTextMessage, "sendTextMessage"
 );
 
-const _rejectMessageResponsePromiseAndDeleteEntry = Proto._rejectMessageResponsePromiseAndDeleteEntry;
+const _rejectMessageResponsePromiseAndDeleteEntry = function(rejectPromise, idOfMessage) {
+  this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
+  rejectPromise(new TimeoutToReceiveResponseExeption(
+    "ResponsiveWebSocketConnection:: timeout for receiving response."));
+};
 
 ResponsiveWebSocketConnection.contentTypesOfMessages = messageContentTypes;
 ResponsiveWebSocketConnection.TimeoutToReceiveResponseExeption = TimeoutToReceiveResponseExeption;

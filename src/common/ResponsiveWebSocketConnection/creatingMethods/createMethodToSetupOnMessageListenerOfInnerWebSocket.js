@@ -6,7 +6,10 @@ const {
   incomingAwaitingResponse: typesOfIncomingMessages_incomingAwaitingResponse 
 } = require("./../modules/messaging/messaging").typesOfIncomingMessages;
 
+const SenderOfResponse = require("./../modules/SenderOfResponse");
+
 const {
+  _connection,
   _idOfAwaitingResponseMessageToPromise
 } = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
 
@@ -78,7 +81,7 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
   
   const _emitAwaitingResponseMessageEvent = function(infoAboutMessage, rawPayload) {
     if (this[nameOfAwaitingResponseMessageEventListener]) {
-      const senderOfResponse = this._createSenderOfMessageResponse(infoAboutMessage.idOfMessage);
+      const senderOfResponse = _createSenderOfMessageResponse(this, infoAboutMessage.idOfMessage);
       
       this[nameOfAwaitingResponseMessageEventListener](
         rawPayload, startIndexOfAwaitingResponseMessageBody, senderOfResponse
@@ -87,6 +90,10 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
   };
 
   return _emitEventByIncomingMessage;
+};
+
+const _createSenderOfMessageResponse = function(responsiveWebSocketConnection, idOfMessage) {
+  return new SenderOfResponse(responsiveWebSocketConnection[_connection], idOfMessage);
 };
 
 module.exports = createMethodToSetupOnMessageListenerOfInnerWebSocket; 
