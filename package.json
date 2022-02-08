@@ -1,9 +1,10 @@
 {
   "name": "ResponsiveWebSockets",
   "exports": {
-    ".": "./exports/commonJSExportInNodeJS.js",
-    "./esm": "./exports/esExportInNodeJS.mjs",
-    "./Client": "./src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js"
+    ".": "./src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js",
+    "./Server": "./src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js",
+    "./Client": "./src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js",
+    "./W3CWebSocketClient": "./src/W3CWebSocketClient/W3CWebSocketClient.js"
   },
   "devDependencies": {
     "tester": "github:ArundhatiApte/Tester-JS",

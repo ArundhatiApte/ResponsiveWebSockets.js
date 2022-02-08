@@ -27,13 +27,13 @@ console.log("response body: ", message.slice(startIndex));
 ```js
 "use strict";
 
-import {
-  Server as ResponsiveWebSocketServer,
-  W3CWebSocketClient
-} from "ResponsiveWebSockets/esm";
-// const {Server, W3CWebSocketClient} = require("ResponsiveWebSockets"); // commonJS
-
+import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
+import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
+
+// const ResponsiveWebSocketServer = require("ResponsiveWebSockets/Server");
+// const W3CWebSocketClient = requre("ResponsiveWebSockets/W3CWebSocketClient"); // commonJS
+// const ResponsiveWebSocketClient = require("ResponsiveWebSockets/Client");
 
 (async () => {
   const server = new ResponsiveWebSocketServer(),
