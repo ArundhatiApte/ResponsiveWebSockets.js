@@ -9,22 +9,30 @@ const wait = function(timeMS) {
 };
 
 const createFnToCheckSendingUnrequestingMessages = function(
-  sendedMessages, setUnrequestingMessageEventListener,
-  sendMessage, extractMessageFromMessageWithHeader
+  sendedMessages,
+  setUnrequestingMessageEventListener,
+  sendMessage,
+  extractMessageFromMessageWithHeader
 ) {
   return function(sender, receiver) {
     return createFnToCheckSendingUnrequestingMessages(
-      sender, receiver,
-      sendedMessages, setUnrequestingMessageEventListener,
-      sendMessage, extractMessageFromMessageWithHeader
+      sender,
+      receiver,
+      sendedMessages,
+      setUnrequestingMessageEventListener,
+      sendMessage,
+      extractMessageFromMessageWithHeader
     );
   };
 };
 
 const checkSendingUnrequestingMessages = async function(
-  sender, receiver,
-  sendedMessages, setUnrequestingMessageEventListener,
-  sendMessage, extractMessageFromMessageWithHeader
+  sender,
+  receiver,
+  sendedMessages,
+  setUnrequestingMessageEventListener,
+  sendMessage,
+  extractMessageFromMessageWithHeader
 ) {
   const receivedMessages = [];
         

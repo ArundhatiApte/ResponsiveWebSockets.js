@@ -5,12 +5,15 @@ const expectDeepEqual = require("assert").deepStrictEqual;
 const maxValueOfCounterOfAwaitedResponseMessages = Math.pow(2, 16) - 1;
 
 const checkSendingManyMessagesAtOnce = async function(
-  sender, recivier,
-  createSendedMessage, createExpectedResponse,
-  sendMessage, setListenerToSendResponseOnIncomingMessage,
+  sender,
+  receiver,
+  createSendedMessage,
+  createExpectedResponse,
+  sendMessage,
+  setListenerToSendResponseOnIncomingMessage,
   extractMessageFromResponse
 ) {
-  setListenerToSendResponseOnIncomingMessage(recivier);
+  setListenerToSendResponseOnIncomingMessage(receiver);
   
   const expectedResponses = [],
         sendingMessages = [];
@@ -21,7 +24,12 @@ const checkSendingManyMessagesAtOnce = async function(
           expectedResponse = createExpectedResponse(sendedMessage);
 
     expectedResponses.push(expectedResponse);
-    sendingMessages.push(sendMessageAndReciveResponse(sender, sendMessage, sendedMessage, extractMessageFromResponse));
+    sendingMessages.push(sendMessageAndReciveResponse(
+      sender,
+      sendMessage,
+      sendedMessage,
+      extractMessageFromResponse
+    ));
   }
   
   const reciviedResponses = await Promise.all(sendingMessages);
@@ -29,7 +37,12 @@ const checkSendingManyMessagesAtOnce = async function(
   const sendedMessage = createSendedMessage(),
         expectedResponse = createExpectedResponse(sendedMessage);
   expectedResponses.push(expectedResponse);
-  reciviedResponses.push(await sendMessageAndReciveResponse(sender, sendMessage, sendedMessage, extractMessageFromResponse));
+  reciviedResponses.push(await sendMessageAndReciveResponse(
+    sender,
+    sendMessage,
+    sendedMessage,
+    extractMessageFromResponse
+  ));
 
   //console.log(expectedResponses, reciviedResponses);
 
@@ -40,7 +53,10 @@ const checkSendingManyMessagesAtOnce = async function(
 };
 
 const sendMessageAndReciveResponse = async function(
-  sender, sendMessage, message, extractMessageFromResponse
+  sender,
+  sendMessage,
+  message,
+  extractMessageFromResponse
 ) {
   const {
     message: reciviedMessage, startIndex
@@ -49,15 +65,20 @@ const sendMessageAndReciveResponse = async function(
 };
 
 const createFnToCheckSendingManyMessagesAtOnce = function(
-  createSendedMessage, createExpectedResponse,
-  sendMessage, setListenerToSendResponseOnIncomingMessage,
+  createSendedMessage,
+  createExpectedResponse,
+  sendMessage,
+  setListenerToSendResponseOnIncomingMessage,
   extractMessageFromResponse
 ) {
-  return function(sender, recivier) {
+  return function(sender, receiver) {
     return checkSendingManyMessagesAtOnce(
-      sender, recivier,
-      createSendedMessage, createExpectedResponse,
-      sendMessage, setListenerToSendResponseOnIncomingMessage,
+      sender,
+      receiver,
+      createSendedMessage,
+      createExpectedResponse,
+      sendMessage,
+      setListenerToSendResponseOnIncomingMessage,
       extractMessageFromResponse
     );
   };

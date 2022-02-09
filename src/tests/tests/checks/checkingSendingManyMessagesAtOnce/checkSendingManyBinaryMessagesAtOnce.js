@@ -18,11 +18,11 @@ const createExpectedResponse = function(number) {
 const maxTimeMSForWaiting = 6000;
 
 const sendMessage = function(sender, number) {
-  return sender.sendAwaitingResponseBinaryMessage(numberToInt32Bytes(number), maxTimeMSForWaiting);
+  return sender.sendBinaryRequest(numberToInt32Bytes(number), maxTimeMSForWaiting);
 };
 
 const setListenerToSendResponseOnIncomingMessage = function(recivier) {
-  return recivier.setAwaitingResponseBinaryMessageListener(sendResponseOnIncomingMessage);
+  return recivier.setBinaryRequestListener(sendResponseOnIncomingMessage);
 };
 
 const sendResponseOnIncomingMessage = function(bytes, startIndex, senderOfResponse) {
@@ -34,7 +34,9 @@ const sendResponseOnIncomingMessage = function(bytes, startIndex, senderOfRespon
 const extractMessageFromResponse = int32BytesToNumber;
 
 module.exports = createFnToCheckendingManyMessagesAtOnce(
-  createSendedMessage, createExpectedResponse,
-  sendMessage, setListenerToSendResponseOnIncomingMessage,
+  createSendedMessage,
+  createExpectedResponse,
+  sendMessage,
+  setListenerToSendResponseOnIncomingMessage,
   extractMessageFromResponse
 );

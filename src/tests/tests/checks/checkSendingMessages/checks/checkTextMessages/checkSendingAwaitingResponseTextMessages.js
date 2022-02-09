@@ -10,11 +10,11 @@ const sendedMessageToExpectedResponse = new Map([
 }));
 
 const sendAwaitingResponseTextMessage = function(sender, message) {
-  return sender.sendAwaitingResponseTextMessage(message);
+  return sender.sendTextRequest(message);
 };
 
 const setAwaitingResponseMessageListener = function(receiver, listener) {
-  return receiver.setAwaitingResponseTextMessageListener(listener);
+  return receiver.setTextRequestListener(listener);
 };
 
 const sendResponseOnAwaitingResponseMessage = function(
@@ -33,8 +33,10 @@ const extractMessageFromResponse = function(dataAboutResponse) {
 };
 
 const checkSendingAwaitingResponseTextMessages = createFnToCheckSendingMessagesWithResponse(
-  sendedMessageToExpectedResponse, setAwaitingResponseMessageListener,
-  sendAwaitingResponseTextMessage, sendResponseOnAwaitingResponseMessage,
+  sendedMessageToExpectedResponse,
+  setAwaitingResponseMessageListener,
+  sendAwaitingResponseTextMessage,
+  sendResponseOnAwaitingResponseMessage,
   extractMessageFromResponse
 );
 

@@ -8,8 +8,8 @@ const {
 } = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
 
 const {
-  create: entryAboutAwaitingPromise_create
-} = require("./entryAboutAwaitingPromise");
+  create: entryAboutPromiseOfRequest_create
+} = require("./entryAboutPromiseOfRequest");
 
 const createMethodToSendAwaitingResponseMessage = function(
   createAwaitingResponseMessage, nameOfSendingMessageMethod
@@ -24,7 +24,7 @@ const createMethodToSendAwaitingResponseMessage = function(
         idOfMessage, reject, maxTimeMSToWaitResponse
       );
       
-      const entryAboutPromise = entryAboutAwaitingPromise_create(resolve, timeoutToReject);
+      const entryAboutPromise = entryAboutPromiseOfRequest_create(resolve, timeoutToReject);
       this[_idOfAwaitingResponseMessageToPromise].set(idOfMessage, entryAboutPromise);
       const messageWithHeader = createAwaitingResponseMessage(idOfMessage, message);
       this[_connection][nameOfSendingMessageMethod](messageWithHeader);

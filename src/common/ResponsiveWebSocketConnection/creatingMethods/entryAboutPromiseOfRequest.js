@@ -1,11 +1,14 @@
 "use strict";
 
 const create = function(resolvePromise, timeoutToWait) {
-  return [resolvePromise, timeoutToWait];
+  return {
+    a: resolvePromise,
+    b: timeoutToWait
+  };
 };
 
-const nameOfPromiseResolver = 0,
-      nameOfTimeout = 1;
+const nameOfPromiseResolver = "a",
+      nameOfTimeout = "b";
 
 module.exports = {
   create,

@@ -22,12 +22,12 @@ const checkSendingTextResponsesOnBinaryMessage = async function(sender, receiver
   const binaryMessage = numberToInt32Bytes(123456),
         textResponse = "n:123456";
 
-  receiver.setAwaitingResponseBinaryMessageListener(function(messageWithHeader, startIndex, senderOfResponse) {
+  receiver.setBinaryRequestListener(function(messageWithHeader, startIndex, senderOfResponse) {
     return senderOfResponse.sendTextResponse(textResponse);
   });
   const {
     message, startIndex, contentType
-  } = await sender.sendAwaitingResponseBinaryMessage(binaryMessage);
+  } = await sender.sendBinaryRequest(binaryMessage);
 
   expectEqual(contentType, contentTypesOfMessages.text);
   expectEqual(textResponse, message.slice(startIndex));
@@ -37,7 +37,7 @@ const checkSendingBinaryResponsesOnTextMessage = async function(sender, receiver
   const textMessage = "textMessage",
         numberInBinaryResponse = 123456;
 
-  receiver.setAwaitingResponseTextMessageListener(function(messageWithHeader, startIndex, senderOfResponse) {
+  receiver.setTextRequestListener(function(messageWithHeader, startIndex, senderOfResponse) {
     return senderOfResponse.sendBinaryResponse(numberToInt32Bytes(numberInBinaryResponse));
   });
   const {

@@ -7,8 +7,8 @@ const server = new ResponsiveWebSocketServer({url: "/*"}),
 
 const setupSendersOfResponsesOnConnection = function(connectionToClient) {
   console.log("connection url: ", connectionToClient.url);
-  connectionToClient.setAwaitingResponseBinaryMessageListener(sendMultipliedX4Int32);
-  connectionToClient.setAwaitingResponseTextMessageListener(sendTextInUpperCase);
+  connectionToClient.setBinaryRequestListener(sendMultipliedX4Int32);
+  connectionToClient.setTextRequestListener(sendTextInUpperCase);
 };
 
 server.setConnectionListener(setupSendersOfResponsesOnConnection);

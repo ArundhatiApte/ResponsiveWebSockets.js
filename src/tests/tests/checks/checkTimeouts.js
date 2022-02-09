@@ -10,7 +10,7 @@ const checkTimeouts = async function(sender, reciever) {
         response = new Uint8Array([1]).buffer;
 
   let timeout;
-  reciever.setAwaitingResponseBinaryMessageListener(function(message, startIdx, senderOfResponse) {
+  reciever.setBinaryRequestListener(function(message, startIdx, senderOfResponse) {
     timeout = setTimeout(() => {
       senderOfResponse.sendBinaryResponse(response);
     }, msToWait + 200);
@@ -18,7 +18,7 @@ const checkTimeouts = async function(sender, reciever) {
   
   let hasError;
   try {
-    const response = await sender.sendAwaitingResponseBinaryMessage(message, msToWait);
+    const response = await sender.sendBinaryRequest(message, msToWait);
     hasError = false;
   } catch(error) {
     clearTimeout(timeout);

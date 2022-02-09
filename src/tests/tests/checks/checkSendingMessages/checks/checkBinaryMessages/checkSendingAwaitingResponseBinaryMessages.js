@@ -15,12 +15,12 @@ const sendedMessageToExpectedResponse = new Map([-4, -3, -2, -1, 0, 1, 2, 3, 4].
 }));
 
 const setAwaitingResponseMessageListener = function(recivier, listener) {
-  return recivier.setAwaitingResponseBinaryMessageListener(listener);
+  return recivier.setBinaryRequestListener(listener);
 };
 
 const sendAwaitingResponseBinaryMessage = function(sender, number) {
   const bytes = numberToInt32Bytes(number);
-  return sender.sendAwaitingResponseBinaryMessage(bytes);
+  return sender.sendBinaryRequest(bytes);
 };
 
 const sendResponseOnAwaitingResponseMessage = function(bytesWithHeader, startIndex, senderOfResponse) {
@@ -39,8 +39,10 @@ const extractMessageFromResponse = function(dataAboutResponse) {
 };
 
 const checkSendingAwaitingResponseBinaryMessages = createFnToCheckSendingMessagesWithResponse(
-  sendedMessageToExpectedResponse, setAwaitingResponseMessageListener,
-  sendAwaitingResponseBinaryMessage, sendResponseOnAwaitingResponseMessage,
+  sendedMessageToExpectedResponse,
+  setAwaitingResponseMessageListener,
+  sendAwaitingResponseBinaryMessage,
+  sendResponseOnAwaitingResponseMessage,
   extractMessageFromResponse
 );
 

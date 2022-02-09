@@ -3,14 +3,10 @@
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
     * статичное свойтсво contentTypesOfMessages
-    * sendAwaitingResponseBinaryMessage(bytes[, maxTimeMSToWaitResponse])           
-    * sendAwaitingResponseTextMessage(text[, maxTimeMSToWaitResponse])
     * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
     * sendTextRequest(text[, maxTimeMSToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
-    * setAwaitingResponseBinaryMessageListener(listener)
-    * setAwaitingResponseTextMessageListener(listener)
     * setBinaryRequestListener(listener)
     * setCloseListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
@@ -54,14 +50,6 @@
 Объект со следующими свойствами:
 * `binary <number>` тип двоичного сообщения
 * `text <number>` тип текстового сообщения
-
-### sendAwaitingResponseBinaryMessage(bytes[, maxTimeMSToWaitResponse])
-
-Cм. sendBinaryRequest
-
-### sendAwaitingResponseTextMessage(text[, maxTimeMSToWaitResponse])
-
-Cм. sendTextRequest
     
 ### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
 
@@ -93,14 +81,6 @@ Cм. sendTextRequest
 * `text <string>`
 
 Отправляет текстовое сообщение без ожидания ответа. При поступлении сообщения получателю, генерируется событие UnrequestingTextMessage.
-
-### setAwaitingResponseBinaryMessageListener(listener)
-
-Псевдоним для `setBinaryRequestListener`
-  
-### setAwaitingResponseTextMessageListener(listener)
-
-Псевдоним для `setTextRequestListener`
 
 ### setBinaryRequestListener(listener)
 

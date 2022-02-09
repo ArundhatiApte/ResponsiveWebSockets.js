@@ -1,6 +1,6 @@
 "use strict";
 
-import ResponsiveWebSocketClient from "./../../ResponsiveWebSocketClient/ResponsiveWebSocketClient";
+import ResponsiveWebSocketClient from "./../../ResponsiveWebSocketClient/ResponsiveWebSocketClient.js";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
@@ -14,7 +14,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
   const sendTextAndReceiveResponse = async function(client, sendedText) {
     const {
       message, startIndex
-    } = await client.sendAwaitingResponseTextMessage(sendedText);
+    } = await client.sendTextRequest(sendedText);
     return message.slice(startIndex);
   };
 
@@ -25,7 +25,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
     const {
       message: response, startIndex
-    } = await client.sendAwaitingResponseBinaryMessage(message);
+    } = await client.sendBinaryRequest(message);
     dataView = new DataView(response);
     return dataView.getInt32(startIndex);
   };

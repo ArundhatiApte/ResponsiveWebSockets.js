@@ -14,9 +14,9 @@ const {
 } = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
 
 const {
-  nameOfTimeout: entryAboutAwaitingPromise_nameOfTimeout,
-  nameOfPromiseResolver: entryAboutAwaitingPromise_nameOfPromiseResolver
-} = require("./entryAboutAwaitingPromise");
+  nameOfTimeout: entryAboutPromiseOfRequest_nameOfTimeout,
+  nameOfPromiseResolver: entryAboutPromiseOfRequest_nameOfPromiseResolver
+} = require("./entryAboutPromiseOfRequest");
 
 const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
   parseMessage,
@@ -59,18 +59,17 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
           numOfMessage = infoAboutMessage.idOfMessage,
           awaitingPromise = table.get(numOfMessage);
     
-    if (!awaitingPromise) {
-      return;
+    if (awaitingPromise) {
+      clearTimeout(awaitingPromise[entryAboutPromiseOfRequest_nameOfTimeout]);
+      const dataForCallback = {
+        contentType: typeOfMessageContent,
+        startIndex: startIndexOfResponseMessageBody,
+        message: rawPayload
+      };
+  
+      table.delete(numOfMessage);
+      awaitingPromise[entryAboutPromiseOfRequest_nameOfPromiseResolver](dataForCallback);
     }
-    clearTimeout(awaitingPromise[entryAboutAwaitingPromise_nameOfTimeout]);
-    const dataForCallback = {
-      contentType: typeOfMessageContent,
-      startIndex: startIndexOfResponseMessageBody,
-      message: rawPayload
-    };
-
-    table.delete(numOfMessage);
-    awaitingPromise[entryAboutAwaitingPromise_nameOfPromiseResolver](dataForCallback);
   };
 
   const _emitUnrequestingMessageEvent = function(infoAboutMessage, rawPayload) {

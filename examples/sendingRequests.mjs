@@ -52,10 +52,10 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
       dataView.setUint8(0, 42);
       responseSender.sendBinaryResponse(response);
     };
-    client.setAwaitingResponseTextMessageListener(sendMagicNumber);
+    client.setTextRequestListener(sendMagicNumber);
 
     const question = "What is 'magic' number in some books about programming?",
-          responseStats = await connectionToClient.sendAwaitingResponseTextMessage(question);
+          responseStats = await connectionToClient.sendTextRequest(question);
     const {
       contentType, message, startIndex
     } = responseStats;
@@ -77,7 +77,7 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
       dataView.setUint16(0, countOfProducts);
       responseSender.sendBinaryResponse(response);
     };
-    connectionToClient.setAwaitingResponseBinaryMessageListener(sendCountOfProducts);
+    connectionToClient.setBinaryRequestListener(sendCountOfProducts);
 
     const idOfProductToCount = new Map([
       [1111, 2222], [333, 444]
@@ -92,7 +92,7 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
 
       dataView.setUint16(0, idOfProduct);
 
-      const responseStats = await connection.sendAwaitingResponseBinaryMessage(request);
+      const responseStats = await connection.sendBinaryRequest(request);
       const {message, startIndex} = responseStats;
       const count = new DataView(message).getUint16(startIndex);
       console.log("Count of products (id: ", idOfProduct, "): ", count);

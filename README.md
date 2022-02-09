@@ -1,4 +1,4 @@
-## Resposive Web Sockets
+## ResposiveWebSockets
 
 ### Overview
 

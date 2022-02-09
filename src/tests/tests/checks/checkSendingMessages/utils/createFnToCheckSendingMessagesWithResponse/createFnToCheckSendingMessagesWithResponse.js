@@ -4,20 +4,23 @@ const expect = require("assert"),
       areMapsEqual = require("./areMapsEqual");
 
 const checkSendingMessagesWithResponse =  async function(
-  sender, recivier,
+  sender, receiver,
   sendedMessageToExpectedResponse, setAwaitedResponseMessageListener,
   sendMessage, sendResponseOnAwaitedResponseMessage,
   extractMessageFromResponse
 ) {
   const sendedMessageToResponse = new Map();
 
-  setAwaitedResponseMessageListener(recivier, sendResponseOnAwaitedResponseMessage);
+  setAwaitedResponseMessageListener(receiver, sendResponseOnAwaitedResponseMessage);
 
   const sendingMessages = [];
   for (const message of sendedMessageToExpectedResponse.keys()) {
     const sendingMessage = sendMessageToRecivierAndAddResponseToMap(
-      sender, sendMessage, message,
-      extractMessageFromResponse, sendedMessageToResponse
+      sender,
+      sendMessage,
+      message,
+      extractMessageFromResponse,
+      sendedMessageToResponse
     );
     sendingMessages.push(sendingMessage);
   }
@@ -26,7 +29,11 @@ const checkSendingMessagesWithResponse =  async function(
 };
 
 const sendMessageToRecivierAndAddResponseToMap = async function(
-  sender, sendMessage, uniqueMessage, extractMessageFromResponse, sendedMessageToResponse
+  sender,
+  sendMessage,
+  uniqueMessage,
+  extractMessageFromResponse,
+  sendedMessageToResponse
 ) {
   const dataAboutResponse = await sendMessage(sender, uniqueMessage),
         response = extractMessageFromResponse(dataAboutResponse);
@@ -34,15 +41,20 @@ const sendMessageToRecivierAndAddResponseToMap = async function(
 };
 
 const createFnToCheckSendingMessagesWithResponse = function(
-  sendedMessageToExpectedResponse, setAwaitedResponseMessageListener,
-  sendMessage, sendResponseOnAwaitedResponseMessage,
+  sendedMessageToExpectedResponse,
+  setAwaitedResponseMessageListener,
+  sendMessage,
+  sendResponseOnAwaitedResponseMessage,
   extractMessageFromResponse
 ) {
-  return function(sender, recivier) {
+  return function(sender, receiver) {
     return checkSendingMessagesWithResponse(
-      sender, recivier,
-      sendedMessageToExpectedResponse, setAwaitedResponseMessageListener,
-      sendMessage, sendResponseOnAwaitedResponseMessage,
+      sender,
+      receiver,
+      sendedMessageToExpectedResponse,
+      setAwaitedResponseMessageListener,
+      sendMessage,
+      sendResponseOnAwaitedResponseMessage,
       extractMessageFromResponse
     );
   };

@@ -3,14 +3,10 @@
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
-    * sendAwaitingResponseBinaryMessage(bytes[, maxTimeMSToWaitResponse])           
-    * sendAwaitingResponseTextMessage(text[, maxTimeMSToWaitResponse])
     * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
     * sendTextRequest(text[, maxTimeMSToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
-    * setAwaitingResponseBinaryMessageListener(listener)
-    * setAwaitingResponseTextMessageListener(listener)
     * setBinaryRequestListener(listener)
     * setCloseListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
@@ -57,14 +53,6 @@ By default 4000.
 * `<Object>`
     * `binary <number>` type of binary message
     * `text <number>` type of text message
-
-### sendAwaitingResponseBinaryMessage(bytes[, maxTimeMSToWaitResponse])
-
-Alias for sendBinaryRequest.
-
-### sendAwaitingResponseTextMessage(text[, maxTimeMSToWaitResponse])
-
-Alias for sendTextRequest.
     
 ### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
 
@@ -103,14 +91,6 @@ When a message arrives to the recipient, the 'unrequestingBinaryMessage' event i
 
 Sends text message without waiting response.
 When a message arrives to the recipient, the 'unrequestingTextMessage' event is generated.
-
-### setAwaitingResponseBinaryMessageListener(listener)
-
-Alias for `setBinaryRequestListener`
-  
-### setAwaitingResponseTextMessageListener(listener)
-
-Alias for `setTextRequestListener`
 
 ### setBinaryRequestListener(listener)
 

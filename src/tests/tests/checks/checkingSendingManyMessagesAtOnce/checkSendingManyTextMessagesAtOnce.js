@@ -13,11 +13,11 @@ const createExpectedResponse = function(message) {
 const maxTimeMSForWaiting = 8000;
 
 const sendMessage = function(sender, message) {
-  return sender.sendAwaitingResponseTextMessage(message, maxTimeMSForWaiting);
+  return sender.sendTextRequest(message, maxTimeMSForWaiting);
 };
 
 const setListenerToSendResponseOnIncomingMessage = function(recivier) {
-  return recivier.setAwaitingResponseTextMessageListener(sendResponseOnIncomingMessage);
+  return recivier.setTextRequestListener(sendResponseOnIncomingMessage);
 };
 
 const sendResponseOnIncomingMessage = function(stringWithHeader, startIndex, senderOfResponse) {
@@ -30,7 +30,9 @@ const extractMessageFromResponse = function(stringWithHeader, startIndex) {
 };
 
 module.exports = createFnToCheckendingManyMessagesAtOnce(
-  createSendedMessage, createExpectedResponse,
-  sendMessage, setListenerToSendResponseOnIncomingMessage,
+  createSendedMessage,
+  createExpectedResponse,
+  sendMessage,
+  setListenerToSendResponseOnIncomingMessage,
   extractMessageFromResponse
 );
