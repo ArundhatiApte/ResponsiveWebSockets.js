@@ -4,18 +4,18 @@ const createEnum = require("createEnum");
 
 const {
   binaryMessager,
-  textMessager,
-  ExeptionAtParsing
+  textMessager
 } = require("./modules/messaging/messaging");
+
+const startIndexOfBodyInTextResponse = textMessager.startIndexOfResponseMessageBody;
+const startIndexOfBodyInBinaryResponse = binaryMessager.startIndexOfResponseMessageBody;
 
 const MessageIdGen = require(
   "./modules/createClassOfGeneratorOfSequenceIntegers/createClassOfGeneratorOfSequenceIntegers"
 )(Uint16Array);
 
 const messageContentTypes = createEnum("binary", "text");
-      
 const _defaultMaxTimeMSToWaitResponse = 4000;
-
 const TimeoutToReceiveResponseExeption = class extends Error {};
 
 const ResponsiveWebSocketConnection = class {
@@ -31,6 +31,17 @@ const ResponsiveWebSocketConnection = class {
     this[_onUnrequestingTextMessage] = null;
 
     this._setupOnMessageListeners();
+  }
+
+  static contentTypesOfMessages = messageContentTypes;
+  static TimeoutToReceiveResponseExeption = TimeoutToReceiveResponseExeption;
+  
+  get startIndexOfBodyInBinaryResponse() {
+    return startIndexOfBodyInBinaryResponse;
+  }
+  
+  get startIndexOfBodyInTextResponse() {
+    return startIndexOfBodyInTextResponse;
   }
   
   set maxTimeMSToWaitResponse(ms) {
@@ -69,13 +80,6 @@ const ResponsiveWebSocketConnection = class {
 
     listener = this._emitEventByIncomingTextMessage.bind(this);
     connection.onTextMessage = listener;
-  }
-  
-  _createTimeoutToReceiveResponse(idOfMessage, rejectPromise, maxTimeMSToWaitResponse) {
-    return setTimeout(
-      _rejectMessageResponsePromiseAndDeleteEntry.bind(this, rejectPromise, idOfMessage),
-      maxTimeMSToWaitResponse
-    );
   }
 };
 
@@ -122,8 +126,7 @@ Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOf
   _onUnrequestingBinaryMessage,
   binaryMessager.startIndexOfUnrequestingMessageBody,
   _onAwaitingResponseBinaryMessage,
-  binaryMessager.startIndexOfAwaitingResponseMessageBody,
-  binaryMessager.startIndexOfResponseMessageBody
+  binaryMessager.startIndexOfAwaitingResponseMessageBody
 );
 
 Proto._emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
@@ -132,8 +135,7 @@ Proto._emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfIn
   _onUnrequestingTextMessage,
   textMessager.startIndexOfUnrequestingMessageBody,
   _onAwaitingResponseTextMessage,
-  textMessager.startIndexOfAwaitingResponseMessageBody,
-  textMessager.startIndexOfResponseMessageBody
+  textMessager.startIndexOfAwaitingResponseMessageBody
 );
 
 const createMethodToSendUnrequestingMessage = function(createUnrequestingMessage, nameOfMethodToSendMessage) {
@@ -159,12 +161,3 @@ Proto.sendAwaitingResponseBinaryMessage = Proto.sendBinaryRequest = createMethod
 Proto.sendAwaitingResponseTextMessage = Proto.sendTextRequest = createMethodToSendAwaitingResponseMessage(
   textMessager.createAwaitingResponseTextMessage, "sendTextMessage"
 );
-
-const _rejectMessageResponsePromiseAndDeleteEntry = function(rejectPromise, idOfMessage) {
-  this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
-  rejectPromise(new TimeoutToReceiveResponseExeption(
-    "ResponsiveWebSocketConnection:: timeout for receiving response."));
-};
-
-ResponsiveWebSocketConnection.contentTypesOfMessages = messageContentTypes;
-ResponsiveWebSocketConnection.TimeoutToReceiveResponseExeption = TimeoutToReceiveResponseExeption;

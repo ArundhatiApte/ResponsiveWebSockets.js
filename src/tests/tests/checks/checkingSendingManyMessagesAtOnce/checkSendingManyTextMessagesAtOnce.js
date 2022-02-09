@@ -29,7 +29,12 @@ const extractMessageFromResponse = function(stringWithHeader, startIndex) {
   return stringWithHeader.slice(startIndex);
 };
 
+const getStartIndexOfBodyInResponseFromSender = function(sender) {
+  return sender.startIndexOfBodyInTextResponse;
+};
+
 module.exports = createFnToCheckendingManyMessagesAtOnce(
+  getStartIndexOfBodyInResponseFromSender,
   createSendedMessage,
   createExpectedResponse,
   sendMessage,

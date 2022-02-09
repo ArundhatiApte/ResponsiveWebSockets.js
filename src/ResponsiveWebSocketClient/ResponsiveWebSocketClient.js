@@ -39,7 +39,6 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
 
 const _onLoad = "_77";
 
-ResponsiveWebSocketClient.contentTypesOfMessages = ResponsiveWebSoket.contentTypesOfMessages;
 ResponsiveWebSocketClient.setWebSocketClientClass = WebSocketClient.setWebSocketClientClass;
 
 module.exports = ResponsiveWebSocketClient;

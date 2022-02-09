@@ -29,16 +29,18 @@ const sendResponseOnAwaitingResponseMessage = function(bytesWithHeader, startInd
   senderOfResponse.sendBinaryResponse(numberToInt32Bytes(response));
 };
 
-const extractMessageFromResponse = function(dataAboutResponse) {
-  const {
-    message: bytesWithHeader,
-    startIndex
-  } = dataAboutResponse;
+const extractMessageFromResponse = function(dataAboutResponse, startIndex) {
+  const {message: bytesWithHeader} = dataAboutResponse;
   const number = int32BytesToNumber(bytesWithHeader, startIndex);
   return number;
 };
 
+const getStartIndexOfBodyInResponseFromSender = function(sender) {
+  return sender.startIndexOfBodyInBinaryResponse;
+};
+
 const checkSendingAwaitingResponseBinaryMessages = createFnToCheckSendingMessagesWithResponse(
+  getStartIndexOfBodyInResponseFromSender,
   sendedMessageToExpectedResponse,
   setAwaitingResponseMessageListener,
   sendAwaitingResponseBinaryMessage,

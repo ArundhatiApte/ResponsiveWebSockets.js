@@ -33,7 +33,12 @@ const sendResponseOnIncomingMessage = function(bytes, startIndex, senderOfRespon
 
 const extractMessageFromResponse = int32BytesToNumber;
 
+const getStartIndexOfBodyInResponseFromSender = function(sender) {
+  return sender.startIndexOfBodyInBinaryResponse;
+};
+
 module.exports = createFnToCheckendingManyMessagesAtOnce(
+  getStartIndexOfBodyInResponseFromSender,
   createSendedMessage,
   createExpectedResponse,
   sendMessage,

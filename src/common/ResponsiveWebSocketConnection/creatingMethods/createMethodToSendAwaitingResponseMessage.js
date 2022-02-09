@@ -1,11 +1,14 @@
 "use strict";
 
 const {
-  _maxTimeMSToWaitResponse,
-  _genOfAwaitingResponseMessageId,
-  _idOfAwaitingResponseMessageToPromise,
-  _connection
-} = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
+  TimeoutToReceiveResponseExeption,
+  _namesOfPrivateProperties: {
+    _maxTimeMSToWaitResponse,
+    _genOfAwaitingResponseMessageId,
+    _idOfAwaitingResponseMessageToPromise,
+    _connection
+  }
+} = require("./../ResponsiveWebSocketConnection");
 
 const {
   create: entryAboutPromiseOfRequest_create
@@ -20,8 +23,8 @@ const createMethodToSendAwaitingResponseMessage = function(
         maxTimeMSToWaitResponse = this[_maxTimeMSToWaitResponse];
       }
       const idOfMessage = this[_genOfAwaitingResponseMessageId].getNext();
-      const timeoutToReject = this._createTimeoutToReceiveResponse(
-        idOfMessage, reject, maxTimeMSToWaitResponse
+      const timeoutToReject = _createTimeoutToReceiveResponse(
+        this, idOfMessage, reject, maxTimeMSToWaitResponse
       );
       
       const entryAboutPromise = entryAboutPromiseOfRequest_create(resolve, timeoutToReject);
@@ -30,6 +33,24 @@ const createMethodToSendAwaitingResponseMessage = function(
       this[_connection][nameOfSendingMessageMethod](messageWithHeader);
     });
   };
+};
+
+const _createTimeoutToReceiveResponse = function(
+  responsiveConnection,
+  idOfMessage,
+  rejectPromise,
+  maxTimeMSToWaitResponse
+) {
+  return setTimeout(
+    _rejectMessageResponsePromiseAndDeleteEntry.bind(responsiveConnection, rejectPromise, idOfMessage),
+    maxTimeMSToWaitResponse
+  );
+};
+
+const _rejectMessageResponsePromiseAndDeleteEntry = function(rejectPromise, idOfMessage) {
+  this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
+  rejectPromise(new TimeoutToReceiveResponseExeption(
+    "ResponsiveWebSocketConnection:: timeout for receiving response."));
 };
 
 module.exports = createMethodToSendAwaitingResponseMessage;

@@ -24,15 +24,17 @@ const sendResponseOnAwaitingResponseMessage = function(
   senderOfResponse.sendTextResponse("(" + message + ")");
 };
 
-const extractMessageFromResponse = function(dataAboutResponse) {
-  const {
-    message,
-    startIndex
-  } = dataAboutResponse;
+const extractMessageFromResponse = function(dataAboutResponse, startIndex) {
+  const {message} = dataAboutResponse;
   return message.slice(startIndex);
 };
 
+const getStartIndexOfBodyInResponseFromSender = function(sender) {
+  return sender.startIndexOfBodyInTextResponse;
+};
+
 const checkSendingAwaitingResponseTextMessages = createFnToCheckSendingMessagesWithResponse(
+  getStartIndexOfBodyInResponseFromSender,
   sendedMessageToExpectedResponse,
   setAwaitingResponseMessageListener,
   sendAwaitingResponseTextMessage,

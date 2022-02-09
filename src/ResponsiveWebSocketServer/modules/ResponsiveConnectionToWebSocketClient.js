@@ -25,6 +25,4 @@ const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
   }
 };
 
-ResponsiveConnectionToWebSocketClient.contentTypesOfMessages = ResponsiveWebSoket.contentTypesOfMessages;
-
 module.exports = ResponsiveConnectionToWebSocketClient;

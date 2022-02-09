@@ -12,9 +12,8 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
   await client.connect(url);
 
   const sendTextAndReceiveResponse = async function(client, sendedText) {
-    const {
-      message, startIndex
-    } = await client.sendTextRequest(sendedText);
+    const startIndex = client.startIndexOfBodyInTextResponse;
+    const {message} = await client.sendTextRequest(sendedText);
     return message.slice(startIndex);
   };
 
@@ -23,10 +22,9 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
     let dataView = new DataView(message);
     dataView.setInt32(0, sendedInt32);
 
-    const {
-      message: response, startIndex
-    } = await client.sendBinaryRequest(message);
+    const {message: response} = await client.sendBinaryRequest(message);
     dataView = new DataView(response);
+    const startIndex = client.startIndexOfBodyInBinaryResponse;
     return dataView.getInt32(startIndex);
   };
 

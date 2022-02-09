@@ -26,9 +26,7 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
   startIndexOfUnrequestingMessageBody,
   
   nameOfAwaitingResponseMessageEventListener,
-  startIndexOfAwaitingResponseMessageBody,
-
-  startIndexOfResponseMessageBody
+  startIndexOfAwaitingResponseMessageBody
 ) {
 
   const _emitEventByIncomingMessage = function(message) {
@@ -63,7 +61,6 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
       clearTimeout(awaitingPromise[entryAboutPromiseOfRequest_nameOfTimeout]);
       const dataForCallback = {
         contentType: typeOfMessageContent,
-        startIndex: startIndexOfResponseMessageBody,
         message: rawPayload
       };
   

@@ -6,6 +6,7 @@ const maxValueOfCounterOfAwaitedResponseMessages = Math.pow(2, 16) - 1;
 
 const checkSendingManyMessagesAtOnce = async function(
   sender,
+  getStartIndexOfBodyInResponseFromSender,
   receiver,
   createSendedMessage,
   createExpectedResponse,
@@ -13,11 +14,12 @@ const checkSendingManyMessagesAtOnce = async function(
   setListenerToSendResponseOnIncomingMessage,
   extractMessageFromResponse
 ) {
+  const startIndexOfBodyInResponse = getStartIndexOfBodyInResponseFromSender(sender);
   setListenerToSendResponseOnIncomingMessage(receiver);
   
   const expectedResponses = [],
         sendingMessages = [];
-        
+
   for (let i = maxValueOfCounterOfAwaitedResponseMessages; i; ) {
     i -= 1;
     const sendedMessage = createSendedMessage(),
@@ -28,6 +30,7 @@ const checkSendingManyMessagesAtOnce = async function(
       sender,
       sendMessage,
       sendedMessage,
+      startIndexOfBodyInResponse,
       extractMessageFromResponse
     ));
   }
@@ -41,6 +44,7 @@ const checkSendingManyMessagesAtOnce = async function(
     sender,
     sendMessage,
     sendedMessage,
+    startIndexOfBodyInResponse,
     extractMessageFromResponse
   ));
 
@@ -56,15 +60,15 @@ const sendMessageAndReciveResponse = async function(
   sender,
   sendMessage,
   message,
+  startIndexOfBodyInResponse,
   extractMessageFromResponse
 ) {
-  const {
-    message: reciviedMessage, startIndex
-  } = await sendMessage(sender, message);
-  return extractMessageFromResponse(reciviedMessage, startIndex);
+  const {message: reciviedMessage} = await sendMessage(sender, message);
+  return extractMessageFromResponse(reciviedMessage, startIndexOfBodyInResponse);
 };
 
 const createFnToCheckSendingManyMessagesAtOnce = function(
+  getStartIndexOfBodyInResponseFromSender,
   createSendedMessage,
   createExpectedResponse,
   sendMessage,
@@ -74,6 +78,7 @@ const createFnToCheckSendingManyMessagesAtOnce = function(
   return function(sender, receiver) {
     return checkSendingManyMessagesAtOnce(
       sender,
+      getStartIndexOfBodyInResponseFromSender,
       receiver,
       createSendedMessage,
       createExpectedResponse,

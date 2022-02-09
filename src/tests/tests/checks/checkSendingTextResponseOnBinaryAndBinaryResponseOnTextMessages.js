@@ -25,11 +25,10 @@ const checkSendingTextResponsesOnBinaryMessage = async function(sender, receiver
   receiver.setBinaryRequestListener(function(messageWithHeader, startIndex, senderOfResponse) {
     return senderOfResponse.sendTextResponse(textResponse);
   });
-  const {
-    message, startIndex, contentType
-  } = await sender.sendBinaryRequest(binaryMessage);
+  const {message, contentType} = await sender.sendBinaryRequest(binaryMessage);
 
   expectEqual(contentType, contentTypesOfMessages.text);
+  const startIndex = sender.startIndexOfBodyInBinaryResponse;
   expectEqual(textResponse, message.slice(startIndex));
 };
 
@@ -40,9 +39,8 @@ const checkSendingBinaryResponsesOnTextMessage = async function(sender, receiver
   receiver.setTextRequestListener(function(messageWithHeader, startIndex, senderOfResponse) {
     return senderOfResponse.sendBinaryResponse(numberToInt32Bytes(numberInBinaryResponse));
   });
-  const {
-    message, startIndex, contentType
-  } = await sender.sendAwaitingResponseTextMessage(textMessage);
+  const {message, contentType} = await sender.sendTextRequest(textMessage);
+  const startIndex = sender.startIndexOfBodyInTextResponse;
   const reciviedNumber = int32BytesToNumber(message, startIndex);
 
   expectEqual(contentType, contentTypesOfMessages.binary);

@@ -4,21 +4,27 @@ const expect = require("assert"),
       areMapsEqual = require("./areMapsEqual");
 
 const checkSendingMessagesWithResponse =  async function(
-  sender, receiver,
-  sendedMessageToExpectedResponse, setAwaitedResponseMessageListener,
-  sendMessage, sendResponseOnAwaitedResponseMessage,
+  sender,
+  getStartIndexOfBodyInResponseFromSender,
+  receiver,
+  sendedMessageToExpectedResponse,
+  setAwaitedResponseMessageListener,
+  sendMessage,
+  sendResponseOnAwaitedResponseMessage,
   extractMessageFromResponse
 ) {
+  const startIndexOfBodyInResponse = getStartIndexOfBodyInResponseFromSender(sender);
   const sendedMessageToResponse = new Map();
 
   setAwaitedResponseMessageListener(receiver, sendResponseOnAwaitedResponseMessage);
 
   const sendingMessages = [];
   for (const message of sendedMessageToExpectedResponse.keys()) {
-    const sendingMessage = sendMessageToRecivierAndAddResponseToMap(
+    const sendingMessage = sendMessageToReceiverAndAddResponseToMap(
       sender,
       sendMessage,
       message,
+      startIndexOfBodyInResponse,
       extractMessageFromResponse,
       sendedMessageToResponse
     );
@@ -28,19 +34,21 @@ const checkSendingMessagesWithResponse =  async function(
   expect.ok(areMapsEqual(sendedMessageToExpectedResponse, sendedMessageToResponse));
 };
 
-const sendMessageToRecivierAndAddResponseToMap = async function(
+const sendMessageToReceiverAndAddResponseToMap = async function(
   sender,
   sendMessage,
   uniqueMessage,
+  startIndexOfBodyInResponse,
   extractMessageFromResponse,
   sendedMessageToResponse
 ) {
   const dataAboutResponse = await sendMessage(sender, uniqueMessage),
-        response = extractMessageFromResponse(dataAboutResponse);
+        response = extractMessageFromResponse(dataAboutResponse, startIndexOfBodyInResponse);
   sendedMessageToResponse.set(uniqueMessage, response);
 };
 
 const createFnToCheckSendingMessagesWithResponse = function(
+  getStartIndexOfBodyInResponseFromSender,
   sendedMessageToExpectedResponse,
   setAwaitedResponseMessageListener,
   sendMessage,
@@ -50,6 +58,7 @@ const createFnToCheckSendingMessagesWithResponse = function(
   return function(sender, receiver) {
     return checkSendingMessagesWithResponse(
       sender,
+      getStartIndexOfBodyInResponseFromSender,
       receiver,
       sendedMessageToExpectedResponse,
       setAwaitedResponseMessageListener,
