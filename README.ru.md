@@ -1,5 +1,7 @@
 ## ResposiveWebSockets
 
+Отправляющие запросы и сообщения Web Sockets.
+
 ### Обзор
 
 Стандартный веб сокет имеет метод для отправки сообщения и событие входящего сообщения, без возможности запроса, т.е. такой код - ошибочный:
@@ -8,11 +10,13 @@ const connection = new WebSocket("wss://example.com/translator");
 // ...
 const response = await connection.send("translate this");
 ```
+
 Модуль предоставляет возможность для отправки запросов и получения ответов через веб сокеты и отправки сообщений без ожидания ответа:
 ```js
-const responseData = await connection.sendTextRequest("some request");
-const {message, startIndex} = responseData;
-console.log("response body: ", message.slice(startIndex));
+const responseData = await connection.sendTextRequest("запрос");
+const {message, contentType} = responseData;
+const startIndex = connection.startIndexOfBodyInTextResponse;
+console.log("ответ: ", message.slice(startIndex));
 ```
 ### Установка
 
@@ -46,10 +50,10 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   const connectionToClient = await new Promise((resolve, reject) => {
     server.setConnectionListener(async (connectionToClient) => {
       console.log("cleint connected, url: ", connectionToClient.url);
-      await connecting;
+      await connectingClient;
       resolve(connectionToClient);
     });
-    const connecting = client.connect("ws://127.0.0.1:" + port + "/room/12345");
+    const connectingClient = client.connect("ws://127.0.0.1:" + port + "/room/12345");
   });
 
   connectionToClient.setTextRequestListener((message, startIndex, responseSender) => {
@@ -70,18 +74,18 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   {
     const {
       message,
-      startIndex,
       contentType
     } = await client.sendTextRequest("get some text");
+    const startIndex = client.startIndexOfBodyInTextResponse;
     console.log("get some text -> ", message.slice(startIndex));
   }
 
   {
      const {
       message,
-      startIndex,
       contentType
     } = await client.sendTextRequest("What is the answer on everything?");
+    const startIndex = client.startIndexOfBodyInBinaryResponse;
     const number = new DataView(message).getUint8(startIndex);
     console.log("The answer on everything is ", number);
   }

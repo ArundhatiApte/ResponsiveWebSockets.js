@@ -1,5 +1,7 @@
 ## ResposiveWebSockets
 
+Sending requests and messages web sockets.
+
 ### Overview
 
 Standard web socket has method for sending messages and event of incoming message, hasn`t opportunity to send request,
@@ -9,11 +11,13 @@ const connection = new WebSocket("wss://example.com/translator");
 // ...
 const response = await connection.send("translate this to indian");
 ```
+
 ResposiveWebSockets module provide opportunity to send requests and get response via web sockets, and opportunity to send
 messages without waiting response:
 ```js
 const responseData = await connection.sendTextRequest("some request");
-const {message, startIndex} = responseData;
+const {message, contentType} = responseData;
+const startIndex = connection.startIndexOfBodyInTextResponse;
 console.log("response body: ", message.slice(startIndex));
 ```
 
@@ -49,10 +53,10 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   const connectionToClient = await new Promise((resolve, reject) => {
     server.setConnectionListener(async (connectionToClient) => {
       console.log("cleint connected, url: ", connectionToClient.url);
-      await connecting;
+      await connectingClient;
       resolve(connectionToClient);
     });
-    const connecting = client.connect("ws://127.0.0.1:" + port + "/room/12345");
+    const connectingClient = client.connect("ws://127.0.0.1:" + port + "/room/12345");
   });
 
   connectionToClient.setTextRequestListener((message, startIndex, responseSender) => {
@@ -73,18 +77,18 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   {
     const {
       message,
-      startIndex,
       contentType
     } = await client.sendTextRequest("get some text");
+    const startIndex = client.startIndexOfBodyInTextResponse;
     console.log("get some text -> ", message.slice(startIndex));
   }
 
   {
      const {
       message,
-      startIndex,
       contentType
     } = await client.sendTextRequest("What is the answer on everything?");
+    const startIndex = client.startIndexOfBodyInBinaryResponse;
     const number = new DataView(message).getUint8(startIndex);
     console.log("The answer on everything is ", number);
   }

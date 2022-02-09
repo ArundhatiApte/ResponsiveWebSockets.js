@@ -2,7 +2,8 @@
 
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
-    * статичное свойтсво contentTypesOfMessages
+    * static contentTypesOfMessages
+    * maxTimeMSToWaitResponse
     * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
     * sendTextRequest(text[, maxTimeMSToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
@@ -11,7 +12,10 @@
     * setCloseListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
-    * статичный класс TimeoutToReceiveResponseExeption
+    * startIndexOfBodyInBinaryResponse
+    * startIndexOfBodyInTextResponse
+    * terminate()
+    * static class TimeoutToReceiveResponseExeption
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -39,18 +43,18 @@
 
 Закрывает соединение.
 
+### статичное свойтсво contentTypesOfMessages
+
+Объект со следующими свойствами:
+* `binary <number>` тип двоичного сообщения
+* `text <number>` тип текстового сообщения
+
 ### maxTimeMSToWaitResponse
 
 * `<number>`
 
 Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest. Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения. По умолчанию 4000.
 
-### статичное свойтсво contentTypesOfMessages
-
-Объект со следующими свойствами:
-* `binary <number>` тип двоичного сообщения
-* `text <number>` тип текстового сообщения
-    
 ### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
 
 * `bytes <ArrayBuffer>`
@@ -143,19 +147,31 @@
 Устанавливает обработчик события, возникающего при получении текстового cообщения, без ожидания ответа отправителем.  
 Пример использования см. в [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs).
 
-### Cтатичный класс TimeoutToReceiveResponseExeption
+### startIndexOfBodyInBinaryResponse
 
-Исключение возникает, когда ответ не пришел за время maxTimeMSToWaitResponse.
+* `<number>`
+
+Первый индекс байта в ответе, с которого начинается тело сообщения.
+
+### startIndexOfBodyInTextResponse
+
+* `<number>`
+
+Первый индекс символа в ответе, с которого начинается тело сообщения.
 
 ### terminate()
 
 Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутсвует.
 
+### Cтатичный класс TimeoutToReceiveResponseExeption
+
+Исключение возникает, когда ответ не пришел за время maxTimeMSToWaitResponse.
+
 ## Класс ResponsiveWebSocketClient
 
 ### new ResponsiveWebSocketClient()
 
-создает объекта класс ResponsiveWebSocketClient, без параметров
+Cоздает объекта класс ResponsiveWebSocketClient, без параметров
 
 ### connect(url)
 
@@ -175,19 +191,15 @@
 Пример:  
 в node.js:  
 ```js
-"use strict";
-import {
-  Server,
-  WebSocketClient
-} from "./rws";
+import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
+import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
-import ResponsiveWebSocketClient from "rws/Client.js";
-
-ResponsiveWebSocketClient.setWebSocketClientClass(WebSocketClient);
+ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
 ```  
 в браузере:
 ```js
-import ResponsiveWebSocketClient from "rws/Client.js";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 ```  
@@ -278,9 +290,3 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 * `<ArrayBuffer>` или `<string>`
 
 Ответ, полученный по веб сокету, содержащий служебный заголовок и тело.
-    
-### startIndex
-
-* `<number>`
-
-Первый индекс байта или символа в ответе, с которого начинается тело сообщения.

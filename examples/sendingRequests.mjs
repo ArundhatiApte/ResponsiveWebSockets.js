@@ -32,13 +32,11 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
     };
     connectionToClient.setTextRequestListener(translateText);
 
-    const text = "send request and get data from server",
-          responseStats = await client.sendTextRequest(text);
-    const {
-      contentType, message, startIndex
-    } = responseStats;
+    const text = "send request and get data from server";
+    const { contentType, message } = await client.sendTextRequest(text);
     
     if (contentType === contentTypesOfMessages.text) {
+      const startIndex = client.startIndexOfBodyInTextResponse;
       const translatedText = message.slice(startIndex);
       console.log("Response from translation service: ", translatedText);
     }
@@ -54,13 +52,11 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
     };
     client.setTextRequestListener(sendMagicNumber);
 
-    const question = "What is 'magic' number in some books about programming?",
-          responseStats = await connectionToClient.sendTextRequest(question);
-    const {
-      contentType, message, startIndex
-    } = responseStats;
+    const question = "What is 'magic' number in some books about programming?";
+    const { contentType, message } = await connectionToClient.sendTextRequest(question);
     
     if (contentType === contentTypesOfMessages.binary) {
+      const startIndex = connectionToClient.startIndexOfBodyInBinaryResponse;
       const magicNumber = new DataView(message).getUint8(startIndex);
       console.log("The magic number is: ", magicNumber);
     }
@@ -92,8 +88,8 @@ import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/Respon
 
       dataView.setUint16(0, idOfProduct);
 
-      const responseStats = await connection.sendBinaryRequest(request);
-      const {message, startIndex} = responseStats;
+      const {message} = await connection.sendBinaryRequest(request);
+      const startIndex = connection.startIndexOfBodyInBinaryResponse;
       const count = new DataView(message).getUint16(startIndex);
       console.log("Count of products (id: ", idOfProduct, "): ", count);
     }

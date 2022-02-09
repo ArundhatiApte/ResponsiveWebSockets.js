@@ -1,8 +1,9 @@
-## Table of content
+## Table of contents
 
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
+    * maxTimeMSToWaitResponse
     * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
     * sendTextRequest(text[, maxTimeMSToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
@@ -11,8 +12,10 @@
     * setCloseListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
+    * startIndexOfBodyInBinaryResponse
+    * startIndexOfBodyInTextResponse
+    * terminate()
     * static class TimeoutToReceiveResponseExeption
-    * terminate
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -40,6 +43,12 @@ Provides methods for sending awaiting response messages and messages without wai
 
 Closes connection.
 
+### static contentTypesOfMessages
+
+* `<Object>`
+    * `binary <number>` type of binary message
+    * `text <number>` type of text message
+
 ### maxTimeMSToWaitResponse
 
 * `<number>`
@@ -48,12 +57,6 @@ Default maximum time in milliseconds for waiting response on request.
 This time can be redefined in  second parametr in `sendBinaryRequest` or `sendTextRequest` methods.
 By default 4000.
 
-### static contentTypesOfMessages
-
-* `<Object>`
-    * `binary <number>` type of binary message
-    * `text <number>` type of text message
-    
 ### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
 
 * `bytes <ArrayBuffer>`
@@ -153,13 +156,25 @@ the index of the first character in the `text` string, from which the message bo
 Sets the listener of event, that occurs when a text message is received, the sender of which is not waiting for a response.
 Example of usage: [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs)
 
-### Static class TimeoutToReceiveResponseExeption
+### startIndexOfBodyInBinaryResponse
 
-Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMSToWaitResponse`.
+* `<number>`
+
+Index of the first byte, from which the message body begins.
+
+### startIndexOfBodyInTextResponse
+
+* `<number>`
+
+Index of the first character, from which the message body begins.
 
 ### terminate()
 
 Forcibly close the connection. ResponsiveWebSocketClient in browser does not implement this method.
+
+### Static class TimeoutToReceiveResponseExeption
+
+Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMSToWaitResponse`.
 
 ## Class ResponsiveWebSocketClient
 
@@ -187,19 +202,16 @@ Method provides opportunity to use ResponsiveWebSocketClient in browser and node
 Example:  
 in node.js:  
 ```js
-"use strict";
-import {
-  Server,
-  WebSocketClient
-} from "./rws";
+import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
+import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
-import ResponsiveWebSocketClient from "rws/Client.js";
+ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
+```
 
-ResponsiveWebSocketClient.setWebSocketClientClass(WebSocketClient);
-```  
 in browser:
 ```js
-import ResponsiveWebSocketClient from "rws/Client.js";
+import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 ```  
@@ -243,7 +255,7 @@ listeners signature: `function(connection)`
 The 'connection' event occurs when the WebSocket client connects to the server.
 
 ## Class ResponsiveWebSocketServerConnection
-
+rws
 Extends ResponsiveWebSocketConnection. Connection to the client.
 
 ### getRemoteAddress()
@@ -289,9 +301,3 @@ Content type of the response. Value of `contentTypesOfMessages` enumeration,
 * `<ArrayBuffer>` or `<string>`
 
 The response received over the web socket containing the service header and body.
-    
-### startIndex
-
-* `<number>`
-
-Index of the first byte or character, from which the message body begins.
