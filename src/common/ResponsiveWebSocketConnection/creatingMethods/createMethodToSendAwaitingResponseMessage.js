@@ -42,13 +42,16 @@ const _createTimeoutToReceiveResponse = function(
   maxTimeMSToWaitResponse
 ) {
   return setTimeout(
-    _rejectMessageResponsePromiseAndDeleteEntry.bind(responsiveConnection, rejectPromise, idOfMessage),
-    maxTimeMSToWaitResponse
+    _deleteEntryAndRejectResponsePromise,
+    maxTimeMSToWaitResponse,
+    responsiveConnection,
+    idOfMessage,
+    rejectPromise
   );
 };
 
-const _rejectMessageResponsePromiseAndDeleteEntry = function(rejectPromise, idOfMessage) {
-  this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
+const _deleteEntryAndRejectResponsePromise = function(responsiveConnection, idOfMessage, rejectPromise) {
+  responsiveConnection[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
   rejectPromise(new TimeoutToReceiveResponseExeption(
     "ResponsiveWebSocketConnection:: timeout for receiving response."));
 };
