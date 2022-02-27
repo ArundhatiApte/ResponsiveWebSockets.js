@@ -67,26 +67,26 @@ const addSendingMessagesTestsToTester = function(
   tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer
 ) {
   const checkToNameOfTest = [
-    [checkSendingAwaitingResponseBinaryMessages, "testSendingAwaitingResponseBinaryMessages"],
-    [checkSendingUnrequestingBinaryMessages, "testSendingUnrequestingBinaryMessages"],
-    [checkSendingAwaitingResponseTextMessages, "testSendingAwaitingResponseTextMessages"],
-    [checkSendingUnrequestingTextMessages, "testSendingUnrequestingTextMessages"],
+    [checkSendingAwaitingResponseBinaryMessages, "sending awaiting response binary messages"],
+    [checkSendingUnrequestingBinaryMessages, "sending unrequesting binary messages"],
+    [checkSendingAwaitingResponseTextMessages, "sending awaiting response text messages"],
+    [checkSendingUnrequestingTextMessages, "sending unrequesting text messages"],
     
-    [checkSendingManyBinaryMessagesAtOnce, "testSendingManyBinaryMessagesAtOnce"],
-    [checkSendingManyTextMessagesAtOnce, "testSendingManyTextMessagesAtOnce"],
+    [checkSendingManyBinaryMessagesAtOnce, "sending many binary messages at once"],
+    [checkSendingManyTextMessagesAtOnce, "sending many text messages at once"],
     
-    [checkTimeouts, "testTimeouts"],
+    [checkTimeouts, "timeouts"],
     [
       checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
-      "testSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages"
+      "sending text response on binary and binary response on text messages"
     ]
   ];
 
   for (const [check, nameOfTest] of checkToNameOfTest) {
     addTestFormOneSideToAnotherToTester(
-      tester, check, nameOfTest, createFnToTestFromServerToClient, "FromServerToClient");
+      tester, check, nameOfTest, createFnToTestFromServerToClient, " from server to client");
     addTestFormOneSideToAnotherToTester(
-      tester, check, nameOfTest, createFnToTestFromClientToServer, "FromClientToServer");
+      tester, check, nameOfTest, createFnToTestFromClientToServer, " from client to server");
   }
   
 };
@@ -103,11 +103,11 @@ const addClosingConnectionTestsToTester = (function () {
   const addClosingConnectionTestsToTester = function(tester, createConnectionToClientAndClient) {
     tester.addTest(
       createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "client", "connectionToClient"),
-      {name: "testClosingConnectionByClient"}
+      {name: "closing connection by client"}
     );
     tester.addTest(
       createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "connectionToClient" , "client"),
-      {name: "testClosingConnectionByServer"}
+      {name: "closing connection by server"}
     );
   };
 
