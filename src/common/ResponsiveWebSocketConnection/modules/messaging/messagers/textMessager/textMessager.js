@@ -31,7 +31,7 @@ const textMessager = {
     return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_responseTextMessage, idOfMessage) + text;
   },
   parseTextMessage(message) {
-    const charCodeOfHeader = message[0].charCodeAt(0);
+    const charCodeOfHeader = message.charCodeAt(0);
 
     if (charCodeOfHeader === charCodeOfHeader_awaitingResponseTextMessage) {
       const startIndexOfId = 1,
