@@ -6,7 +6,7 @@ const {
   response: typesOfIncomingMessages_response
 } = require("./../typesOfIncomingMessages");
 
-const ExeptionAtParsing = require("./../ExeptionAtParsing"),
+const ExceptionAtParsing = require("./../ExceptionAtParsing"),
       insertArrayBufferToAnotherUnsafe = require("./insertArrayBufferToAnotherUnsafe");
       
 const headers_withoutWaitingResponseBinary = 0b01100000,
@@ -44,34 +44,21 @@ const messager = {
   createAwaitingResponseBinaryMessage: createFnToSendMessageWithId(headers_awaitingResponseBinary),
   createBinaryResponseToAwaitingResponseMessage: createFnToSendMessageWithId(headers_incomingBinaryResponse),
   
-  parseBinaryMessage(message) {
-    const dataView = new DataView(message),
-          header1stByte = dataView.getUint8(0);
-    
-    if (header1stByte === headers_incomingBinaryResponse) {
-      const messageNum = dataView.getUint16(1);
-      return {
-        type: typesOfIncomingMessages_response,
-        startIndex: 3,
-        idOfMessage: messageNum
-      };
+  extractTypeOfIncomingMessage(message) {
+    const header1stByte = new DataView(message).getUint8(0);
+
+    switch (header1stByte) {
+      case headers_incomingBinaryResponse:
+        return typesOfIncomingMessages_response;
+      case headers_withoutWaitingResponseBinary:
+        return typesOfIncomingMessages_incomingWithoutWaitingResponse;
+      case headers_awaitingResponseBinary:
+        return typesOfIncomingMessages_incomingAwaitingResponse;
     }
-    if (header1stByte === headers_withoutWaitingResponseBinary) {
-      return {
-        type: typesOfIncomingMessages_incomingWithoutWaitingResponse,
-        startIndex: 1
-      };
-    }
-    if (header1stByte === headers_awaitingResponseBinary) {
-      const messageNum = dataView.getUint16(1);
-      return {
-        type: typesOfIncomingMessages_incomingAwaitingResponse,
-        startIndex: 3,
-        idOfMessage: messageNum
-      };
-    }
-    
-    throw new ExeptionAtParsing("Hеизвестный заголовок сообщения.");
+    throw new ExceptionAtParsing("Message of unrecognized type.");
+  },
+  extractIdOfMessage(awaitingResponseOrResponseMessage) {
+    return new DataView(awaitingResponseOrResponseMessage).getUint16(1);
   },
 
   startIndexOfAwaitingResponseMessageBody: 3,

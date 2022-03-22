@@ -3,6 +3,6 @@
 module.exports = {
   binaryMessager: require("./messagers/binaryMessager/binaryMessager"),
   textMessager: require("./messagers/textMessager/textMessager"),
-  ExeptionAtParsing: require("./messagers/ExeptionAtParsing"),
+  ExceptionAtParsing: require("./messagers/ExceptionAtParsing"),
   typesOfIncomingMessages: require("./messagers/typesOfIncomingMessages")
 };

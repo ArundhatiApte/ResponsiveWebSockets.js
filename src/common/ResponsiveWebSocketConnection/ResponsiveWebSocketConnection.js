@@ -121,7 +121,9 @@ const createMethodToSetupOnMessageListenerOfInnerWebSocket =
   require("./creatingMethods/createMethodToSetupOnMessageListenerOfInnerWebSocket");
 
 Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
-  binaryMessager.parseBinaryMessage,
+  binaryMessager.extractTypeOfIncomingMessage,
+  binaryMessager.extractIdOfMessage,
+  
   messageContentTypes.binary,
   _onUnrequestingBinaryMessage,
   binaryMessager.startIndexOfUnrequestingMessageBody,
@@ -130,7 +132,9 @@ Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOf
 );
 
 Proto._emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
-  textMessager.parseTextMessage,
+  textMessager.extractTypeOfIncomingMessage,
+  textMessager.extractIdOfMessage,
+  
   messageContentTypes.text,
   _onUnrequestingTextMessage,
   textMessager.startIndexOfUnrequestingMessageBody,

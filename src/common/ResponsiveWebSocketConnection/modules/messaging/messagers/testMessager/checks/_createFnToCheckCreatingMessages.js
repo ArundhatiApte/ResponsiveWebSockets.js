@@ -2,14 +2,20 @@
 
 const createFnToCheckCreatingMessages = function(checkCreatingAndParsingMessage) {
   return function(
-    startIndexOfBody, messages, createMessage, parseMessage, extractMessageFromMessageWithHeader
+    startIndexOfBody,
+    messages,
+    createMessage,
+    extractTypeOfIncomingMessage,
+    extractIdOfMessage,
+    extractMessageFromMessageWithHeader
   ) {
     return checkCreatingAndParsingMessages(
       checkCreatingAndParsingMessage,
       startIndexOfBody,
       messages,
       createMessage,
-      parseMessage,
+      extractTypeOfIncomingMessage,
+      extractIdOfMessage,
       extractMessageFromMessageWithHeader
     );
   };
@@ -20,7 +26,8 @@ const checkCreatingAndParsingMessages = function(
   startIndexOfBody,
   messages,
   createMessage,
-  parseMessage,
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
   extractMessageFromMessageWithHeader
 ) {
   for (const message of messages) {
@@ -28,7 +35,8 @@ const checkCreatingAndParsingMessages = function(
       startIndexOfBody,
       message,
       createMessage,
-      parseMessage,
+      extractTypeOfIncomingMessage,
+      extractIdOfMessage,
       extractMessageFromMessageWithHeader
     );
   }

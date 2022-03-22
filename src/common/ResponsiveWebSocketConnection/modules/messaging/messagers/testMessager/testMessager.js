@@ -11,8 +11,8 @@ const checkCreatingAndParsingUnrequestingMessages =
 const checkCreatingAndParsingResponseMessages =
   require("./checks/checkCreatingAndParsingResponseMessages");
 
-const checkThrowingExeptionAtParsing =
-  require("./checks/checkThrowingExeptionAtParsing");
+const checkThrowingExceptionAtParsing =
+  require("./checks/checkThrowingExceptionAtParsing");
 
 const testMessager = function(options) {
   return createTester(options).run();
@@ -32,7 +32,8 @@ const createTester = function(options) {
     createResponseMessage,
     startIndexOfResponseMessageBody,
     
-    parseMessage,
+    extractTypeOfIncomingMessage,
+    extractIdOfMessage,
     extractMessageFromMessageWithHeader,
     brokenMessage
   } = options;
@@ -44,19 +45,19 @@ const createTester = function(options) {
       checkCreatingAndParsingAwaitingResponseMessages,
       startIndexOfAwaitingResponseMessageBody,
       createAwaitingResponseMessage,
-      "checkCreatingAndParsingAwaitingResponseMessages"
+      "test creating and parsing awaiting response messages"
     ],
     [
       checkCreatingAndParsingUnrequestingMessages,
       startIndexOfUnrequestingMessageBody,
       createUnrequestingMessage,
-      "testCreatingAndParsingUnResponsedMessages"
+      "test creating and parsing unrequesting messages"
     ],
     [
       checkCreatingAndParsingResponseMessages,
       startIndexOfResponseMessageBody,
       createResponseMessage,
-      "testCreatingAndParsingResponseMessages"
+      "test creating and parsing response messages"
     ]
   ];
   
@@ -66,15 +67,20 @@ const createTester = function(options) {
       startIndexOfBody,
       messages,
       createMessage,
-      parseMessage,
+      extractTypeOfIncomingMessage,
+      extractIdOfMessage,
       extractMessageFromMessageWithHeader
     );
     tester.addTest(test, {name});
   }
 
-  const testThrowingExeptionAtParsing = createTest(checkThrowingExeptionAtParsing, brokenMessage, parseMessage);
+  const testThrowingExceptionAtParsing = createTest(
+    checkThrowingExceptionAtParsing,
+    brokenMessage,
+    extractTypeOfIncomingMessage
+  );
 
-  tester.addTest(testThrowingExeptionAtParsing);
+  tester.addTest(testThrowingExceptionAtParsing);
   return tester;
 };
 

@@ -12,14 +12,13 @@ const checkCreatingAndParsingMessageWithId = function(
   startIndex,
   message,
   createMessage,
-  parseMessage,
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
   extractMessageFromMessageWithHeader
 ) {
   const messageWithHeader = createMessage(idOfMessage, message);
-  const {
-    idOfMessage: parsedIdOfMessage,
-    type
-  }= parseMessage(messageWithHeader);
+  const type = extractTypeOfIncomingMessage(messageWithHeader);
+  const parsedIdOfMessage = extractIdOfMessage(messageWithHeader);
 
   expectEqual(parsedIdOfMessage, idOfMessage);
   expectEqual(type, typeOfMessage);

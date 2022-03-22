@@ -8,11 +8,12 @@ const checkCreatingAndParsingUnrequestingMessage = function(
   startIndexOfBody,
   message,
   createUnResponsedMessage,
-  parseMessage,
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage, // unused
   extractMessageFromMessageWithHeader
 ) {
   const messageWithHeader = createUnResponsedMessage(message);
-  const {type} = parseMessage(messageWithHeader);
+  const type = extractTypeOfIncomingMessage(messageWithHeader);
   expectEqual(type, typesOfIncomingMessages.incomingWithoutWaitingResponse);
 
   const body = extractMessageFromMessageWithHeader(messageWithHeader, startIndexOfBody);

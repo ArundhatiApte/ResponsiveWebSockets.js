@@ -6,7 +6,7 @@ const {
   response: typeOfIncomingMessage_response
 } = require("./../typesOfIncomingMessages");
 
-const ExeptionAtParsing = require("./../ExeptionAtParsing");
+const ExceptionAtParsing = require("./../ExceptionAtParsing");
 
 const {
   uInt16ToCharPlus2Chars8BitString,
@@ -30,45 +30,32 @@ const textMessager = {
   createTextResponseToAwaitingResponseMessage(idOfMessage, text) {
     return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_responseTextMessage, idOfMessage) + text;
   },
-  parseTextMessage(message) {
+  extractTypeOfIncomingMessage(message) {
     const charCodeOfHeader = message.charCodeAt(0);
-
-    if (charCodeOfHeader === charCodeOfHeader_awaitingResponseTextMessage) {
-      const startIndexOfId = 1,
-            idOfMessage = extractIdOfMessage(startIndexOfId, message);
-      return {
-        idOfMessage,
-        type: typeOfIncomingMessage_incomingAwaitingResponse
-      };
+    
+    switch (charCodeOfHeader) {
+      case charCodeOfHeader_awaitingResponseTextMessage:
+        return typeOfIncomingMessage_incomingAwaitingResponse;
+      case charCodeOfHeader_withoutWaitingResponseTextMessage:
+        return typeOfIncomingMessage_incomingWithoutWaitingResponse;
+      case charCodeOfHeader_responseTextMessage:
+        return typeOfIncomingMessage_response;
     }
-    if (charCodeOfHeader === charCodeOfHeader_withoutWaitingResponseTextMessage) {
-      return {
-        type: typeOfIncomingMessage_incomingWithoutWaitingResponse
-      };
+    throw new ExceptionAtParsing("Message of unrecognized type.");
+  },
+  extractIdOfMessage(awaitingResponseMessageOrResponse) {
+    const minLengthOfMessage = 3;
+    const message = awaitingResponseMessageOrResponse;
+    if (message.length < minLengthOfMessage) {
+      throw new ExceptionAtParsing("Message is too short");
     }
-    if (charCodeOfHeader === charCodeOfHeader_responseTextMessage) {
-      const startIndexOfId = 1,
-            idOfMessage = extractIdOfMessage(startIndexOfId, message);
-      return {
-        idOfMessage,
-        type: typeOfIncomingMessage_response
-      };
-    }
-
-    throw new ExeptionAtParsing("Неизвестный заголовок сообщения.");
+    const startIndex = 1;
+    return extractUInt16FromStringUnsafe(startIndex, message);
   },
   
   startIndexOfAwaitingResponseMessageBody: 3,
   startIndexOfUnrequestingMessageBody: 1,
   startIndexOfResponseMessageBody: 3
-};
-
-const extractIdOfMessage = function(startIndex, message) {
-  const minLengthOfMessage = 3;
-  if (message.length < minLengthOfMessage) {
-    throw new ExeptionAtParsing("Message is too short");
-  }
-  return extractUInt16FromStringUnsafe(startIndex, message);
 };
 
 module.exports = textMessager;

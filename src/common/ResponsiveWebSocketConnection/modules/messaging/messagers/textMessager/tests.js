@@ -1,11 +1,15 @@
 "use strict";
 
-const testMessager = require("./../testMessager");
+const testMessager = require("./../testMessager/testMessager");
+
 const {
   createAwaitingResponseTextMessage,
   createUnrequestingTextMessage,
   createTextResponseToAwaitingResponseMessage,
-  parseTextMessage,
+  
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
+  
   startIndexOfAwaitingResponseMessageBody,
   startIndexOfUnrequestingMessageBody,
   startIndexOfResponseMessageBody
@@ -27,7 +31,9 @@ testMessager({
   createResponseMessage: createTextResponseToAwaitingResponseMessage,
   startIndexOfResponseMessageBody,
   
-  parseMessage: parseTextMessage,
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
+  
   extractMessageFromMessageWithHeader(rawMessage, startIndex) {
     return rawMessage.slice(startIndex);
   },

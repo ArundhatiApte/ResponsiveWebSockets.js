@@ -1,6 +1,6 @@
 "use strict";
 
-const testMessager = require("./../testMessager");
+const testMessager = require("./../testMessager/testMessager");
 
 const {
   numberToInt32Bytes,
@@ -11,7 +11,10 @@ const {
   createAwaitingResponseBinaryMessage,
   createUnrequestingBinaryMessage,
   createBinaryResponseToAwaitingResponseMessage,
-  parseBinaryMessage,
+
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
+  
   startIndexOfAwaitingResponseMessageBody,
   startIndexOfUnrequestingMessageBody,
   startIndexOfResponseMessageBody
@@ -43,7 +46,10 @@ testMessager({
   createResponseMessage: createFnToCreateBinaryMessageWithIdFromNumber(
     createBinaryResponseToAwaitingResponseMessage
   ),
-  parseMessage: parseBinaryMessage,
+  
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
+  
   startIndexOfAwaitingResponseMessageBody,
   startIndexOfUnrequestingMessageBody,
   startIndexOfResponseMessageBody,
