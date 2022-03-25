@@ -4,15 +4,15 @@ Sending requests and messages web sockets.
 
 ### Overview
 
-Standard web socket has method for sending messages and event of incoming message, hasn`t opportunity to send request,
-and this code will be wrong:
+Standard web socket has method for sending messages and event of incoming message.
+Sometimes thing to do simething like this may come:
 ```js
 const connection = new WebSocket("wss://example.com/translator");
 // ...
 const response = await connection.send("translate this to indian");
 ```
 
-ResposiveWebSockets module provide opportunity to send requests and get response via web sockets, and opportunity to send
+ResposiveWebSockets module provides opportunity to send requests and get response via web sockets, and opportunity to send
 messages without waiting response:
 ```js
 const responseData = await connection.sendTextRequest("some request");

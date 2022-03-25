@@ -27,10 +27,6 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
   connect(url) {
     return this[_connection].connect(url);
   }
-  
-  close(code, reason) {
-    return this[_connection].close(code, reason);
-  }
 
   terminate() {
     return this[_connection].terminate();

@@ -15,13 +15,13 @@ const MessageIdGen = require(
 )(Uint16Array);
 
 const messageContentTypes = createEnum("binary", "text");
-const _defaultMaxTimeMSToWaitResponse = 4000;
-const TimeoutToReceiveResponseExeption = class extends Error {};
+const _defaultMaxTimeMsToWaitResponse = 4000;
+const TimeoutToReceiveResponseException = class extends Error {};
 
 const ResponsiveWebSocketConnection = class {
   constructor(nonResponsiveConnection) {
     this[_connection] = nonResponsiveConnection;
-    this[_maxTimeMSToWaitResponse] = _defaultMaxTimeMSToWaitResponse;
+    this[_maxTimeMsToWaitResponse] = _defaultMaxTimeMsToWaitResponse;
     this[_genOfAwaitingResponseMessageId] = new MessageIdGen();
     this[_idOfAwaitingResponseMessageToPromise] = new Map();
     
@@ -34,7 +34,7 @@ const ResponsiveWebSocketConnection = class {
   }
 
   static contentTypesOfMessages = messageContentTypes;
-  static TimeoutToReceiveResponseExeption = TimeoutToReceiveResponseExeption;
+  static TimeoutToReceiveResponseException = TimeoutToReceiveResponseException;
   
   get startIndexOfBodyInBinaryResponse() {
     return startIndexOfBodyInBinaryResponse;
@@ -44,16 +44,20 @@ const ResponsiveWebSocketConnection = class {
     return startIndexOfBodyInTextResponse;
   }
   
-  set maxTimeMSToWaitResponse(ms) {
-    this[_maxTimeMSToWaitResponse] = ms;
+  set maxTimeMsToWaitResponse(ms) {
+    this[_maxTimeMsToWaitResponse] = ms;
   }
   
-  get maxTimeMSToWaitResponse() {
-    return this[_maxTimeMSToWaitResponse];
+  get maxTimeMsToWaitResponse() {
+    return this[_maxTimeMsToWaitResponse];
   }
 
   get url() {
     return this[_connection].url;
+  }
+
+  close(code, reason) {
+    return this[_connection].close(code, reason);
   }
 
   setUnrequestingBinaryMessageListener(listener) {
@@ -75,16 +79,24 @@ const ResponsiveWebSocketConnection = class {
   _setupOnMessageListeners() {
     const connection = this[_connection];
     
-    let listener = this._emitEventByIncomingBinaryMessage.bind(this);
+    let listener = _emitEventByIncomingBinaryMessage.bind(this);
     connection.onBinaryMessage = listener;
 
-    listener = this._emitEventByIncomingTextMessage.bind(this);
+    listener = _emitEventByIncomingTextMessage.bind(this);
     connection.onTextMessage = listener;
+  }
+
+  setBinaryRequestListener(listener) {
+    this[_onAwaitingResponseBinaryMessage] = listener;
+  }
+
+  setTextRequestListener(listener) {
+    this[_onAwaitingResponseTextMessage] = listener;
   }
 };
 
 const _connection = "_c",
-      _maxTimeMSToWaitResponse = "_m",
+      _maxTimeMsToWaitResponse = "_m",
       _genOfAwaitingResponseMessageId = "_g",
       _idOfAwaitingResponseMessageToPromise = "_t",
       
@@ -95,19 +107,11 @@ const _connection = "_c",
       
       Proto = ResponsiveWebSocketConnection.prototype;
 
-Proto.setAwaitingResponseBinaryMessageListener = Proto.setBinaryRequestListener = function(listener) {
-  this[_onAwaitingResponseBinaryMessage] = listener;
-};
-
-Proto.setAwaitingResponseTextMessageListener = Proto.setTextRequestListener = function(listener) {
-  this[_onAwaitingResponseTextMessage] = listener;
-};
-
 module.exports = ResponsiveWebSocketConnection;
 
 ResponsiveWebSocketConnection._namesOfPrivateProperties = {
   _connection,
-  _maxTimeMSToWaitResponse,
+  _maxTimeMsToWaitResponse,
   _genOfAwaitingResponseMessageId,
   _idOfAwaitingResponseMessageToPromise,
   
@@ -120,7 +124,7 @@ ResponsiveWebSocketConnection._namesOfPrivateProperties = {
 const createMethodToSetupOnMessageListenerOfInnerWebSocket =
   require("./creatingMethods/createMethodToSetupOnMessageListenerOfInnerWebSocket");
 
-Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
+const _emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
   binaryMessager.extractTypeOfIncomingMessage,
   binaryMessager.extractIdOfMessage,
   
@@ -131,7 +135,7 @@ Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOf
   binaryMessager.startIndexOfAwaitingResponseMessageBody
 );
 
-Proto._emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
+const _emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
   textMessager.extractTypeOfIncomingMessage,
   textMessager.extractIdOfMessage,
   
@@ -159,9 +163,9 @@ Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(
 const createMethodToSendAwaitingResponseMessage =
   require("./creatingMethods/createMethodToSendAwaitingResponseMessage");
 
-Proto.sendAwaitingResponseBinaryMessage = Proto.sendBinaryRequest = createMethodToSendAwaitingResponseMessage(
+Proto.sendBinaryRequest = createMethodToSendAwaitingResponseMessage(
   binaryMessager.createAwaitingResponseBinaryMessage, "sendBinaryMessage"
 );
-Proto.sendAwaitingResponseTextMessage = Proto.sendTextRequest = createMethodToSendAwaitingResponseMessage(
+Proto.sendTextRequest = createMethodToSendAwaitingResponseMessage(
   textMessager.createAwaitingResponseTextMessage, "sendTextMessage"
 );

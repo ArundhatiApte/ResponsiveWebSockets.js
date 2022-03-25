@@ -1,9 +1,9 @@
 "use strict";
 
 const {
-  TimeoutToReceiveResponseExeption,
+  TimeoutToReceiveResponseException,
   _namesOfPrivateProperties: {
-    _maxTimeMSToWaitResponse,
+    _maxTimeMsToWaitResponse,
     _genOfAwaitingResponseMessageId,
     _idOfAwaitingResponseMessageToPromise,
     _connection
@@ -17,14 +17,14 @@ const {
 const createMethodToSendAwaitingResponseMessage = function(
   createAwaitingResponseMessage, nameOfSendingMessageMethod
 ) {
-  return function sendAwaitingResponseMessage(message, maxTimeMSToWaitResponse) {
+  return function sendAwaitingResponseMessage(message, maxTimeMsToWaitResponse) {
     return new Promise((resolve, reject) => {
-      if (!maxTimeMSToWaitResponse) {
-        maxTimeMSToWaitResponse = this[_maxTimeMSToWaitResponse];
+      if (!maxTimeMsToWaitResponse) {
+        maxTimeMsToWaitResponse = this[_maxTimeMsToWaitResponse];
       }
       const idOfMessage = this[_genOfAwaitingResponseMessageId].getNext();
       const timeoutToReject = _createTimeoutToReceiveResponse(
-        this, idOfMessage, reject, maxTimeMSToWaitResponse
+        this, idOfMessage, reject, maxTimeMsToWaitResponse
       );
       
       const entryAboutPromise = entryAboutPromiseOfRequest_create(resolve, timeoutToReject);
@@ -39,11 +39,11 @@ const _createTimeoutToReceiveResponse = function(
   responsiveConnection,
   idOfMessage,
   rejectPromise,
-  maxTimeMSToWaitResponse
+  maxTimeMsToWaitResponse
 ) {
   return setTimeout(
     _deleteEntryAndRejectResponsePromise,
-    maxTimeMSToWaitResponse,
+    maxTimeMsToWaitResponse,
     responsiveConnection,
     idOfMessage,
     rejectPromise
@@ -52,7 +52,7 @@ const _createTimeoutToReceiveResponse = function(
 
 const _deleteEntryAndRejectResponsePromise = function(responsiveConnection, idOfMessage, rejectPromise) {
   responsiveConnection[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
-  rejectPromise(new TimeoutToReceiveResponseExeption(
+  rejectPromise(new TimeoutToReceiveResponseException(
     "ResponsiveWebSocketConnection:: timeout for receiving response."));
 };
 

@@ -3,9 +3,9 @@
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
-    * maxTimeMSToWaitResponse
-    * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
-    * sendTextRequest(text[, maxTimeMSToWaitResponse])
+    * maxTimeMsToWaitResponse
+    * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
+    * sendTextRequest(text[, maxTimeMsToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
@@ -15,7 +15,7 @@
     * startIndexOfBodyInBinaryResponse
     * startIndexOfBodyInTextResponse
     * terminate()
-    * static class TimeoutToReceiveResponseExeption
+    * static class TimeoutToReceiveResponseException
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -49,30 +49,30 @@
 * `binary <number>` тип двоичного сообщения
 * `text <number>` тип текстового сообщения
 
-### maxTimeMSToWaitResponse
+### maxTimeMsToWaitResponse
 
 * `<number>`
 
 Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest. Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения. По умолчанию 4000.
 
-### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
+### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
 * `bytes <ArrayBuffer>`
-* `maxTimeMSToWaitResponse <number>`  
-опционально, по умолчанию равно значению свойства maxTimeMSToWaitResponse
+* `maxTimeMsToWaitResponse <number>`  
+опционально, по умолчанию равно значению свойства maxTimeMsToWaitResponse
 * Возвращает `<Promise<ResponseData>>`
  
-Отправляет бинарное сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'binaryRequest'. Если ответ не придет в течении maxTimeMSToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseExeption.  
+Отправляет бинарное сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'binaryRequest'. Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseException.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
-### sendTextRequest(text[, maxTimeMSToWaitResponse])
+### sendTextRequest(text[, maxTimeMsToWaitResponse])
 
 * `text <string>`
-* `maxTimeMSToWaitResponse <number>`  
-опционально, по умолчанию равно значению свойства maxTimeMSToWaitResponse
+* `maxTimeMsToWaitResponse <number>`  
+опционально, по умолчанию равно значению свойства maxTimeMsToWaitResponse
 * Возвращает `<Promise<ResponseData>>`
 
-Отправляет текстовое сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'textRequest'. Если ответ не придет в течении maxTimeMSToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseExeption.  
+Отправляет текстовое сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'textRequest'. Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseException.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
@@ -163,9 +163,9 @@
 
 Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутсвует.
 
-### Cтатичный класс TimeoutToReceiveResponseExeption
+### Cтатичный класс TimeoutToReceiveResponseException
 
-Исключение возникает, когда ответ не пришел за время maxTimeMSToWaitResponse.
+Исключение возникает, когда ответ не пришел за время maxTimeMsToWaitResponse.
 
 ## Класс ResponsiveWebSocketClient
 

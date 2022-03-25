@@ -3,9 +3,9 @@
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
-    * maxTimeMSToWaitResponse
-    * sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
-    * sendTextRequest(text[, maxTimeMSToWaitResponse])
+    * maxTimeMsToWaitResponse
+    * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
+    * sendTextRequest(text[, maxTimeMsToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
@@ -15,7 +15,7 @@
     * startIndexOfBodyInBinaryResponse
     * startIndexOfBodyInTextResponse
     * terminate()
-    * static class TimeoutToReceiveResponseExeption
+    * static class TimeoutToReceiveResponseException
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -49,7 +49,7 @@ Closes connection.
     * `binary <number>` type of binary message
     * `text <number>` type of text message
 
-### maxTimeMSToWaitResponse
+### maxTimeMsToWaitResponse
 
 * `<number>`
 
@@ -57,28 +57,28 @@ Default maximum time in milliseconds for waiting response on request.
 This time can be redefined in  second parametr in `sendBinaryRequest` or `sendTextRequest` methods.
 By default 4000.
 
-### sendBinaryRequest(bytes[, maxTimeMSToWaitResponse])
+### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
 * `bytes <ArrayBuffer>`
-* `maxTimeMSToWaitResponse <number>`  
-optional, by default value of `maxTimeMSToWaitResponse` property
+* `maxTimeMsToWaitResponse <number>`  
+optional, by default value of `maxTimeMsToWaitResponse` property
 * Returns `<Promise<ResponseData>>`
 
 Sends awaiting response binary message. Receiver can give response by setting lisneter of 'binaryRequest' event.
-If response will not arrive within `maxTimeMSToWaitResponse` milliseconds, the `<Promise>` will be rejected with
-`TimeoutToReceiveResponseExeption`.  
+If response will not arrive within `maxTimeMsToWaitResponse` milliseconds, the `<Promise>` will be rejected with
+`TimeoutToReceiveResponseException`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
-### sendTextRequest(text[, maxTimeMSToWaitResponse])
+### sendTextRequest(text[, maxTimeMsToWaitResponse])
 
 * `text <string>`
-* `maxTimeMSToWaitResponse <number>`  
-optional, by default value of `maxTimeMSToWaitResponse` property.
+* `maxTimeMsToWaitResponse <number>`  
+optional, by default value of `maxTimeMsToWaitResponse` property.
 * Returns `<Promise<ResponseData>>`
 
 Sends awaiting response text message. Receiver can give response by setting lisneter of 'textRequest' event.
-If response will not arrive within `maxTimeMSToWaitResponse` milliseconds, the `<Promise>` will be rejected with
-`TimeoutToReceiveResponseExeption`.  
+If response will not arrive within `maxTimeMsToWaitResponse` milliseconds, the `<Promise>` will be rejected with
+`TimeoutToReceiveResponseException`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
@@ -172,9 +172,9 @@ Index of the first character, from which the message body begins.
 
 Forcibly close the connection. ResponsiveWebSocketClient in browser does not implement this method.
 
-### Static class TimeoutToReceiveResponseExeption
+### Static class TimeoutToReceiveResponseException
 
-Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMSToWaitResponse`.
+Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMsToWaitResponse`.
 
 ## Class ResponsiveWebSocketClient
 

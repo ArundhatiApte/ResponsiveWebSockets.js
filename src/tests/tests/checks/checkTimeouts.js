@@ -1,7 +1,7 @@
 "use strict";
 
 const expect = require("assert");
-const {TimeoutToReceiveResponseExeption} =
+const {TimeoutToReceiveResponseException} =
   require("./../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const checkTimeouts = async function(sender, reciever) {
@@ -22,7 +22,7 @@ const checkTimeouts = async function(sender, reciever) {
     hasError = false;
   } catch(error) {
     clearTimeout(timeout);
-    if (error instanceof TimeoutToReceiveResponseExeption) {
+    if (error instanceof TimeoutToReceiveResponseException) {
       return;
     }
     throw error;

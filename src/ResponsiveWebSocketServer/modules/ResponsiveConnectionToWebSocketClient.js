@@ -8,14 +8,6 @@ const ResponsiveConnectionToWebSocketClient = class extends ResponsiveWebSoket {
     super(nonResponsiveConnectionToClient);
   }
 
-  get url() {
-    return this[_connection].url;
-  }
-  
-  close(code, reason) {
-    return this[_connection].close(code, reason);
-  }
-
   terminate() {
     return this[_connection].terminate();
   }
