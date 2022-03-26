@@ -51,7 +51,7 @@ const messager = {
       case headers_incomingBinaryResponse:
         return typesOfIncomingMessages_response;
       case headers_withoutWaitingResponseBinary:
-        return TypeOfIncomingMessage.withoutWaitingResponse;
+        return typesOfIncomingMessages_incomingWithoutWaitingResponse;
       case headers_awaitingResponseBinary:
         return typesOfIncomingMessages_incomingAwaitingResponse;
     }
