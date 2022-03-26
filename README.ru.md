@@ -23,7 +23,7 @@ console.log("ответ: ", message.slice(startIndex));
 
 `npm install github:ArundhatiApte/ResponsiveWebSockets-JS`
 или  
-`yarn add github:ArundhatiApte/ResponsiveWebSockets-JS`
+`yarn add github:ArundhatiApte/ResponsiveWebSockets-JS`  
 
 ### Использование
 
