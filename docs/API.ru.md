@@ -25,6 +25,7 @@
     * close()
     * listen(port)
     * setConnectionListener(listener)
+    * setUpgradeListener(listener)
 - [Класс: ResponsiveWebSocketServerConnection](#класс-responsivewebsocketserverconnection)
     * getRemoteAddress()
     * url
@@ -53,7 +54,8 @@
 
 * `<number>`
 
-Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest. Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения. По умолчанию 4000.
+Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest. Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
+По умолчанию 4000.
 
 ### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
@@ -62,7 +64,9 @@
 опционально, по умолчанию равно значению свойства maxTimeMsToWaitResponse
 * Возвращает `<Promise<ResponseData>>`
  
-Отправляет бинарное сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'binaryRequest'. Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseException.  
+Отправляет бинарное сообщение, ожидающее ответ.
+Получатель имеет возможность отправить ответ, установив обработчик события 'binaryRequest'.
+Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключением `TimeoutToReceiveResponseException`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendTextRequest(text[, maxTimeMsToWaitResponse])
@@ -72,19 +76,23 @@
 опционально, по умолчанию равно значению свойства maxTimeMsToWaitResponse
 * Возвращает `<Promise<ResponseData>>`
 
-Отправляет текстовое сообщение, ожидающее ответ. Получатель имеет возможность отправить ответ, установив обработчик события 'textRequest'. Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseException.  
+Отправляет текстовое сообщение, ожидающее ответ.
+Получатель имеет возможность отправить ответ, установив обработчик события 'textRequest'.
+Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд, Promise завершится исключнием TimeoutToReceiveResponseException.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
 * `bytes <ArrayBuffer>`
 
-Отправляет бинарное сообщение без ожидания ответа. При поступлении сообщения получателю, генерируется событие UnrequestingBinaryMessage.
+Отправляет бинарное сообщение без ожидания ответа.
+При поступлении сообщения получателю, генерируется событие UnrequestingBinaryMessage.
  
 ### sendUnrequestingTextMessage(text)
 
 * `text <string>`
 
-Отправляет текстовое сообщение без ожидания ответа. При поступлении сообщения получателю, генерируется событие UnrequestingTextMessage.
+Отправляет текстовое сообщение без ожидания ответа.
+При поступлении сообщения получателю, генерируется событие UnrequestingTextMessage.
 
 ### setBinaryRequestListener(listener)
 
@@ -97,7 +105,9 @@
     * `responseSender <ResponseSender>`  
     объект для отправки бинарного или текстового ответа  
 
-Устанавливает обработчик события, возникающего при бинарного получении сообщения, отправитель которого ожидает ответ.  
+Устанавливает обработчик события, возникающего при бинарного получении сообщения, отправитель которого ожидает ответ.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### setCloseListener(listener)
@@ -108,6 +118,10 @@
         * `code <number>`
         * `reason <string>`
         * `wasClean <bool>`
+
+Устанавливает обработчик закрытия WebSocket соединения.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.
 
 ### setTextRequestListener(listener)
 
@@ -120,7 +134,9 @@
     * `responseSender <ResponseSender>`    
     объект для отправки текстового или бинарного ответа  
 
-Устанавливает обработчик события, возникающего при получении текстового cообщения, отправитель которого ожидает ответ.  
+Устанавливает обработчик события, возникающего при получении текстового cообщения, отправитель которого ожидает ответ.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs))
 
 ### setUnrequestingBinaryMessageListener(listener)
@@ -128,11 +144,13 @@
 * `listener <function>`  
 сигнатура обработчика: `(bytes, startIndex)`, где
     * `bytes <ArrayBuffer>`  
-сообщение, cодержащее заголовок и переданное отправителем тело
+    сообщение, cодержащее заголовок и переданное отправителем тело
     * `startIndex <number>`  
-индекс первого байта тела сообщения
+    индекс первого байта тела сообщения
 
-Устанавливает обработчик события, возникающего при получении двоичного cообщения, без ожидания ответа отправителем.  
+Устанавливает обработчик события, возникающего при получении двоичного cообщения, без ожидания ответа отправителем.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs).
 
 ### setUnrequestingTextMessageListener(listener)
@@ -140,11 +158,13 @@
 * `listener <function>`  
 сигнатура обработчика: `(text, startIndex)`, где
     * `text <string>`  
-сообщение, cодержащее заголовок и переданное отправителем тело
+    сообщение, cодержащее заголовок и переданное отправителем тело
     * `startIndex <number>`  
-индекс первого символа в строке text, с которого начинается тело сообщения
+    индекс первого символа в строке text, с которого начинается тело сообщения
 
-Устанавливает обработчик события, возникающего при получении текстового cообщения, без ожидания ответа отправителем.  
+Устанавливает обработчик события, возникающего при получении текстового cообщения, без ожидания ответа отправителем.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs).
 
 ### startIndexOfBodyInBinaryResponse
@@ -161,7 +181,7 @@
 
 ### terminate()
 
-Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутсвует.
+Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутствует.
 
 ### Cтатичный класс TimeoutToReceiveResponseException
 
@@ -235,12 +255,26 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### setConnectionListener(httpRequest, listener)
 
-* `httpRequest` <[HttpRequest](https://unetworking.github.io/uWebSockets.js/generated/interfaces/HttpRequest.html)> запрос
 * `listener <function>`  
 сигнатура обработчика: `function(connection)`
     * `connection <ResponsiveWebSocketServerConnection>` соединение с клиентом
 
 Событие 'connection' возникает при подключении WebSocket клиента к серверу.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebServer`.
+`listener` может быть `null` или `undefined`.
+
+### setUpgradeListener(listener)
+
+* `listenet <function>`
+сигнатура обработчика: `function(httpRequest, upgradeAcceptor)`
+    * `httpRequest <HttpRequest>` запрос из модуля uWebSockets.js
+    * `upgradeAcceptor <UpgradeAcceptor>`
+    объект, позволяющий принять или отклонить запрос на создание WebSocket соединения
+
+Устанавливает обработчик запроса для создания WebSocket соединения.
+По Умолчанию все запросы принимаются.
+Ссылка `this` внутри обработчика указывает на объект экземпляра `ResponsiveWebSocketServer`.
+`listener` может быть `null` или `undefined`.
 
 ## Класс ResponsiveWebSocketServerConnection
 

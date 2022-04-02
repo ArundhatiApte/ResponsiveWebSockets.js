@@ -1,10 +1,11 @@
 {
   "name": "ResponsiveWebSockets",
   "exports": {
-    ".": "./src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js",
-    "./Server": "./src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js",
-    "./Client": "./src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js",
-    "./W3CWebSocketClient": "./src/W3CWebSocketClient/W3CWebSocketClient.js"
+    ".": "./src/Server/ResponsiveWebSocketServer.js",
+    "./Server": "./src/Server/ResponsiveWebSocketServer.js",
+    "./Client": "./src/Client/ResponsiveWebSocketClient.js",
+    "./W3CWebSocketClient": "./src/W3CWebSocketClient/W3CWebSocketClient.js",
+    "./uWebSockets": "./src/uWebSockets.js"
   },
   "devDependencies": {
     "tester": "github:ArundhatiApte/Tester-JS",
@@ -15,7 +16,7 @@
     "createEnum": "github:ArundhatiApte/createEnum-JS",
     "install": "^0.13.0",
     "npm": "^8.3.0",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.3.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.4.0",
     "ws": "^8.4.0"
   },
   "scripts": {

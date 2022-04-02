@@ -247,7 +247,6 @@ Starts port listening.
 
 ### setConnectionListener(httpRequest, listener)
 
-* `httpRequest` <[HttpRequest](https://unetworking.github.io/uWebSockets.js/generated/interfaces/HttpRequest.html)>
 * `listener <function>`  
 listeners signature: `function(connection)`
     * `connection <ResponsiveWebSocketServerConnection>` connection to the client
@@ -255,7 +254,7 @@ listeners signature: `function(connection)`
 The 'connection' event occurs when the WebSocket client connects to the server.
 
 ## Class ResponsiveWebSocketServerConnection
-rws
+
 Extends ResponsiveWebSocketConnection. Connection to the client.
 
 ### getRemoteAddress()
