@@ -98,15 +98,20 @@ const _emitClientsMessageEvent = function(connectionToClient, message, isBinary)
   }
 };
 
+const {
+  _acceptBinaryMessage,
+  _acceptTextMessage 
+} = ResponsiveWrapperOfWebSocketConnection;
+
 const _emitClientsBinaryMessageEvent = function(connectionToClient, message) {
   const responsiveWrapper = connectionToClient[_wrapper];
-  responsiveWrapper._acceptBinaryMessage(responsiveWrapper, message);
+  _acceptBinaryMessage(responsiveWrapper, message);
 };
 
 const _emitClientsTextMessageEvent = function(connectionToClient, message) {
   const responsiveWrapper = connectionToClient[_wrapper];
   const string = _decodeBytesToString(message);
-  responsiveWrapper._acceptTextMessage(responsiveWrapper, string);
+  _acceptTextMessage(responsiveWrapper, string);
 };
 const _decodeBytesToString = TextDecoder.prototype.decode.bind(new TextDecoder("utf8"));
 

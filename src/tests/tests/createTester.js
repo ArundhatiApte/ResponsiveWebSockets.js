@@ -90,18 +90,18 @@ const addCheckingSendingMessagesTests = function(
   tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer
 ) {
   const checkToNameOfTest = [
-    [checkSendingAwaitingResponseBinaryMessages, "sending awaiting response binary messages"],
-    [checkSendingUnrequestingBinaryMessages, "sending unrequesting binary messages"],
-    [checkSendingAwaitingResponseTextMessages, "sending awaiting response text messages"],
-    [checkSendingUnrequestingTextMessages, "sending unrequesting text messages"],
+    [checkSendingAwaitingResponseBinaryMessages, "send awaiting response binary messages"],
+    [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
+    [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
+    [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
     
-    [checkSendingManyBinaryMessagesAtOnce, "sending many binary messages at once"],
-    [checkSendingManyTextMessagesAtOnce, "sending many text messages at once"],
+    [checkSendingManyBinaryMessagesAtOnce, "send many binary messages at once"],
+    [checkSendingManyTextMessagesAtOnce, "send many text messages at once"],
     
     [checkTimeouts, "timeouts"],
     [
       checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
-      "sending text response on binary and binary response on text messages"
+      "send text response on binary and binary response on text messages"
     ]
   ];
 

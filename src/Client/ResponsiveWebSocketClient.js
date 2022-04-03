@@ -3,9 +3,14 @@
 const ResponsiveConnection = require("./../common/ResponsiveConnection/ResponsiveConnection");
 
 const {
-  binaryMessager,
-  textMessager
+  binaryMessager: {
+    createUnrequestingMessage: createUnrequestingBinaryMessage
+  },
+  textMessager: {
+    createUnrequestingMessage: createUnrequestingTextMessage
+  },
 } = require("./modules/messaging/messaging");
+const _emitEventByIncomingMessage = require("./methods/emitEventByIncomingMessage");
 
 let W3CWebSocketClientClass = null;
 
@@ -54,7 +59,7 @@ const ResponsiveWebSocketClient = class extends ResponsiveConnection {
   _setupListenersOfEvents(webSocketClient) {
     webSocketClient.onerror = _emitOnError.bind(this);
     webSocketClient.onclose = _emitOnClose.bind(this);
-    webSocketClient.onmessage = _emitEventByIncominMessage.bind(this);
+    webSocketClient.onmessage = _emitEventByIncomingMessage.bind(this);
   }
 };
 
@@ -77,19 +82,15 @@ const _emitOnClose = function(event) {
 module.exports = ResponsiveWebSocketClient;
 
 const Proto = ResponsiveWebSocketClient.prototype;
-const _emitEventByIncominMessage = require("./methods/emitEventByIncominMessage");
 
-const createMethodToSendRequest = require("./methods/createMethodToSendRequest");
-
-Proto.sendBinaryRequest = createMethodToSendRequest(binaryMessager.createRequestMessage);
-Proto.sendTextRequest = createMethodToSendRequest(textMessager.createRequestMessage);
+Proto.sendBinaryRequest = require("./methods/sendBinaryRequest");
+Proto.sendTextRequest = require("./methods/sendTextRequest");
 
 const createMethodToSendUnrequestingMessage = function(createUnrequestingMessage) {
   return function sendUnrequestingMessage(message) {
-    const messageWithHeader = createUnrequestingMessage(message);
-    this[_connection].send(messageWithHeader);
+    return this[_connection].send(createUnrequestingMessage(message));
   };
 };
 
-Proto.sendUnrequestingBinaryMessage = createMethodToSendUnrequestingMessage(binaryMessager.createUnrequestingMessage);
-Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(textMessager.createUnrequestingMessage);
+Proto.sendUnrequestingBinaryMessage = createMethodToSendUnrequestingMessage(createUnrequestingBinaryMessage);
+Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(createUnrequestingTextMessage);

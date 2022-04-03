@@ -11,11 +11,11 @@ const addCheckingUpgradingConnetionTests = function(
 ) {
   tester.addTest(
     checkAcceptingRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient),
-    {name: "test accepting request on upgrade"}
+    {name: "accept request on upgrade"}
   );
   tester.addTest(
     checkCancelRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient),
-    {name: "test cancel request on upgrade"}
+    {name: "cancel request on upgrade"}
   );
 };
 

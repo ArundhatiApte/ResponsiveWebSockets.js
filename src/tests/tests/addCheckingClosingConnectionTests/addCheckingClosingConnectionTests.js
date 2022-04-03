@@ -5,11 +5,11 @@ const checkClosingConnections = require("./checkClosingConnections");
 const addCheckingClosingConnectionTests = function(tester, createConnectionToClientAndClient) {
   tester.addTest(
     createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "client", "connectionToClient"),
-    {name: "closing connection by client"}
+    {name: "close connection by client"}
   );
   tester.addTest(
     createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "connectionToClient" , "client"),
-    {name: "closing connection by server"}
+    {name: "close connection by server"}
   );
 };
 

@@ -9,6 +9,8 @@ const {
   }
 } = require("./messaging/messaging");
 
+const sendHeaderAndFragments = require("./sendHeaderAndFragments");
+
 const SenderOfResponse = class {
   constructor(webSocket, idOfMessage) {
     this[_connection] = webSocket;
@@ -27,6 +29,24 @@ const SenderOfResponse = class {
     const connection = this[_connection];
     connection.sendFirstFragment(createHeaderOfTextResponse(this[_idOfMessage]));
     connection.sendLastFragment(message);
+  }
+
+  sendFragmentsOfBinaryResponse() {
+    return sendHeaderAndFragments(
+      this[_connection],
+      true,
+      createHeaderOfBinaryResponse(this[_idOfMessage]),
+      arguments
+    );
+  }
+
+  sendFragmentsOfTextResponse() {
+    return sendHeaderAndFragments(
+      this[_connection],
+      false,
+      createHeaderOfTextResponse(this[_idOfMessage]),
+      arguments
+    );
   }
 };
 
