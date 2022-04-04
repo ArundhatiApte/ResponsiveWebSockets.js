@@ -1,29 +1,10 @@
 "use strict";
 
-const Tester = require("tester"),
-      checkTimeouts = require("./checksSendingMessages/checkTimeouts");
+const Tester = require("tester");
 
-const {
-  checkSendingManyBinaryMessagesAtOnce,
-  checkSendingManyTextMessagesAtOnce
-} = require("./checksSendingMessages/checkingSendingManyMessagesAtOnce");
-
-const {
-  checkSendingAwaitingResponseBinaryMessages,
-  checkSendingUnrequestingBinaryMessages,
-  checkSendingAwaitingResponseTextMessages,
-  checkSendingUnrequestingTextMessages
-} = require("./checksSendingMessages/checkSendingMessages");
-
-const checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages =
-  require("./checksSendingMessages/checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages");
-
-const addCheckingUpgradingConnetionTests = require(
-  "./addCheckingUpgradingConnetionTests/addCheckingUpgradingConnetionTests"
-);
-const addCheckingClosingConnectionTests = require(
-  "./addCheckingClosingConnectionTests/addCheckingClosingConnectionTests"
-);
+const addCheckingUpgradingConnetionTests = require("./addingTests/addCheckingUpgradingConnetionTests");
+const addCheckingSendingMessagesTests = require("./addingTests/addCheckingSendingMessagesTests");
+const addCheckingClosingConnectionTests = require("./addingTests/addCheckingClosingConnectionTests");
 
 const createTester = function(options, nameOfTest, server, createConnectionToClientAndClient) {
   const tester = new Tester(options.nameOfTester);
@@ -84,41 +65,6 @@ const _createConnectionToClientAndClient = function(responsiveServer, urlOfServe
 
 const runTest = function(check, sender, recivier) {
   return check(sender, recivier);
-};
-
-const addCheckingSendingMessagesTests = function(
-  tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer
-) {
-  const checkToNameOfTest = [
-    [checkSendingAwaitingResponseBinaryMessages, "send awaiting response binary messages"],
-    [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
-    [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
-    [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
-    
-    [checkSendingManyBinaryMessagesAtOnce, "send many binary messages at once"],
-    [checkSendingManyTextMessagesAtOnce, "send many text messages at once"],
-    
-    [checkTimeouts, "timeouts"],
-    [
-      checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
-      "send text response on binary and binary response on text messages"
-    ]
-  ];
-
-  for (const [check, nameOfTest] of checkToNameOfTest) {
-    addTestFormOneSideToAnotherToTester(
-      tester, check, nameOfTest, createFnToTestFromServerToClient, " from server to client");
-    addTestFormOneSideToAnotherToTester(
-      tester, check, nameOfTest, createFnToTestFromClientToServer, " from client to server");
-  }
-};
-
-const addTestFormOneSideToAnotherToTester = function(
-  tester, check, nameOfTest, createFnToTestOneSideToAnother, postfixOfTestName
-) {
-  const test = createFnToTestOneSideToAnother(check),
-        name = nameOfTest + postfixOfTestName;
-  tester.addTest(test, {name});
 };
 
 module.exports = createTester;

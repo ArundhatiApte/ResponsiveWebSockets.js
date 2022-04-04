@@ -3,13 +3,13 @@
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
-    * maxTimeMsToWaitResponse
     * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
     * sendTextRequest(text[, maxTimeMsToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
     * setCloseListener(listener)
+    * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
     * startIndexOfBodyInBinaryResponse
@@ -48,14 +48,6 @@ Closes connection.
 * `<Object>`
     * `binary <number>` type of binary message
     * `text <number>` type of text message
-
-### maxTimeMsToWaitResponse
-
-* `<number>`
-
-Default maximum time in milliseconds for waiting response on request.
-This time can be redefined in  second parametr in `sendBinaryRequest` or `sendTextRequest` methods.
-By default 4000.
 
 ### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
@@ -117,6 +109,14 @@ listeners signature: `(event)`
         * `code <number>`
         * `reason <string>`
         * `wasClean <bool>`
+
+### setMaxTimeMsToWaitResponse(timeMs)
+
+* `timeMs <number>`
+
+Default maximum time in milliseconds for waiting response on request.
+This time can be redefined in second parametr in `sendBinaryRequest` or `sendTextRequest` methods.
+By default 2000.
 
 ### setTextRequestListener(listener)
 

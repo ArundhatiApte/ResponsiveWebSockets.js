@@ -10,7 +10,7 @@ const {
 const sendedMessages = [1, 600, 1200, 98, 1872612, 12904];
 
 const sendMessage = function(sender, number) {
-  return sender.sendUnResponsedBinaryMessage(numberToInt32Bytes(number));
+  return sender.sendUnrequestingBinaryMessage(numberToInt32Bytes(number));
 };
 
 const setUnrequestingMessageEventListener = function(recivier, listener) {

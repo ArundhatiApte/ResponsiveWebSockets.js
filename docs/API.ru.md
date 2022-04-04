@@ -3,13 +3,13 @@
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
-    * maxTimeMsToWaitResponse
     * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
     * sendTextRequest(text[, maxTimeMsToWaitResponse])
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
     * setCloseListener(listener)
+    * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
     * startIndexOfBodyInBinaryResponse
@@ -49,13 +49,6 @@
 Объект со следующими свойствами:
 * `binary <number>` тип двоичного сообщения
 * `text <number>` тип текстового сообщения
-
-### maxTimeMsToWaitResponse
-
-* `<number>`
-
-Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest. Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
-По умолчанию 4000.
 
 ### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
@@ -122,6 +115,14 @@
 Устанавливает обработчик закрытия WebSocket соединения.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
 `listener` может быть `null` или `undefined`.
+
+### setMaxTimeMsToWaitResponse(timeMs)
+
+* `timeMs <number>`
+
+Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений с помощью методов sendBinaryRequest и sendTextRequest.
+Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
+По умолчанию 2000.
 
 ### setTextRequestListener(listener)
 
@@ -205,7 +206,8 @@ Cоздает объекта класс ResponsiveWebSocketClient, без пар
 * `W3CWebSocketClient <function>`  
 класс реализующий интерфейс WebSocketClient от W3C
 
-Устанавливает класс WebSocket, на основе которого будут создаваться объекты класса ResponsiveWebSocketClient. Метод нужно вызвать перед первым вызовом конструктора new ResponsiveWebSocketClient().
+Устанавливает класс WebSocket, на основе которого будут создаваться объекты класса ResponsiveWebSocketClient.
+Метод нужно вызвать перед первым вызовом конструктора new ResponsiveWebSocketClient().
 
 Функция позволяет использовать ResponsiveWebSocketClient в браузере и node.js.  
 Пример:  

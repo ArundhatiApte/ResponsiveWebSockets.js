@@ -1,6 +1,6 @@
 "use strict";
 
-const ResponsiveWebSocketServer = require("./../../ResponsiveWebSocketServer/ResponsiveWebSocketServer.js");
+const ResponsiveWebSocketServer = require("./../../Server/ResponsiveWebSocketServer.js");
 
 const server = new ResponsiveWebSocketServer({url: "/*"}),
       port = 4443;

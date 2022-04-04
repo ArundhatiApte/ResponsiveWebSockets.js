@@ -19,21 +19,14 @@ const createCreatingHeaderWithIdFn = function(uint8OfHeader) {
   };
 };
 
-const binaryMessager = {
-  extractTypeOfIncomingMessage: abstractMessager.extractTypeOfIncomingMessage,
-  extractIdOfMessage: abstractMessager.extractIdOfMessage,
-  
-  startIndexOfBodyInRequest: abstractMessager.startIndexOfBodyInRequest,
-  startIndexOfBodyInResponse: abstractMessager.startIndexOfBodyInResponse,
-  startIndexOfBodyInUnrequestingMessage: abstractMessager.startIndexOfBodyInUnrequestingMessage,
+const binaryMessager = abstractMessager;
 
-  createHeaderOfRequest: createCreatingHeaderWithIdFn(bytesOfHeaders_request),
-  headerOfUnrequestingMessage: (function() {
-    const arrayBuffer = new ArrayBuffer(1);
-    new DataView(arrayBuffer).setUint8(0, bytesOfHeaders_unrequestingMessage);
-    return arrayBuffer;
-  })(),
-  createHeaderOfResponse: createCreatingHeaderWithIdFn(bytesOfHeaders_response)
-};
+binaryMessager.createHeaderOfRequest = createCreatingHeaderWithIdFn(bytesOfHeaders_request);
+binaryMessager.headerOfUnrequestingMessage = (function() {
+  const arrayBuffer = new ArrayBuffer(1);
+  new DataView(arrayBuffer).setUint8(0, bytesOfHeaders_unrequestingMessage);
+  return arrayBuffer;
+})();
+binaryMessager.createHeaderOfResponse = createCreatingHeaderWithIdFn(bytesOfHeaders_response);
 
 module.exports = binaryMessager;

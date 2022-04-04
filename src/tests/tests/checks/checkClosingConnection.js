@@ -5,7 +5,7 @@ const expectEqual = require("assert").strictEqual;
 const code = 1009,
       reason = "message";
 
-const checkClosingConnections = function(closingSide, acceptor) {
+const checkClosingConnection = function(closingSide, acceptor) {
   return new Promise(function(resolve, reject) {
     acceptor.setCloseListener(function(event) {
       if (event.code === code && event.reason === reason) {
@@ -19,4 +19,4 @@ const checkClosingConnections = function(closingSide, acceptor) {
   });
 };
 
-module.exports = checkClosingConnections;
+module.exports = checkClosingConnection;

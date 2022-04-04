@@ -1,6 +1,6 @@
 "use strict";
 
-const checkClosingConnections = require("./checkClosingConnections");
+const checkClosingConnection = require("./../checks/checkClosingConnection");
 
 const addCheckingClosingConnectionTests = function(tester, createConnectionToClientAndClient) {
   tester.addTest(
@@ -28,11 +28,9 @@ const executeTestAndCloseConnectionsIfFail = async function(
 ) {
   const cons = await createConnectionToClientAndClient();
   const closer = cons[closingSide],
-        acceptor = cons[acceptingSide]
-        
-  //console.log(closer, acceptor);
+        acceptor = cons[acceptingSide];
   try {
-    await checkClosingConnections(closer, acceptor);
+    await checkClosingConnection(closer, acceptor);
   } catch(error) {
     closer.close();
     throw error;

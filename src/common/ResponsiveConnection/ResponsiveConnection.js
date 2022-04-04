@@ -33,14 +33,10 @@ const ResponsiveConnection = class {
     return startIndexOfBodyInTextResponse;
   }
   
-  set maxTimeMsToWaitResponse(ms) {
+  setMaxTimeMsToWaitResponse(ms) {
     this[_maxTimeMsToWaitResponse] = ms;
   }
   
-  get maxTimeMsToWaitResponse() {
-    return this[_maxTimeMsToWaitResponse];
-  }
-
   get url() {
     return this[_connection].url;
   }

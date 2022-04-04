@@ -1,8 +1,8 @@
 "use strict";
 
-import ResponsiveWebSocketServer from "./../src/ResponsiveWebSocketServer/ResponsiveWebSocketServer.js";
+import ResponsiveWebSocketServer from "./../src/Server/ResponsiveWebSocketServer.js";
 import W3CWebSocketClient from "./../src/W3CWebSocketClient/W3CWebSocketClient.js";
-import ResponsiveWebSocketClient from "./../src/ResponsiveWebSocketClient/ResponsiveWebSocketClient.js";
+import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient.js";
 
 (async function() {
   const server = new ResponsiveWebSocketServer(),

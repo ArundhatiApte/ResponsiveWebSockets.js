@@ -12,21 +12,14 @@ const {
   uInt16ToCharPlus2Chars8BitString
 } = require("./../../../../../../../common/messaging/textMessages/uInt16ViewIn2Char/uInt16ViewIn2Char");
 
-const textMessager = {
-  extractTypeOfIncomingMessage: abstractMessager.extractTypeOfIncomingMessage,
-  extractIdOfMessage: abstractMessager.extractIdOfMessage,
+const textMessager = abstractMessager;
 
-  startIndexOfBodyInRequest: abstractMessager.startIndexOfBodyInRequest,
-  startIndexOfBodyInResponse: abstractMessager.startIndexOfBodyInResponse,
-  startIndexOfBodyInUnrequestingMessage: abstractMessager.startIndexOfBodyInUnrequestingMessage,
-
-  createHeaderOfRequest(uint16IdOfMessage) {
-    return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, uint16IdOfMessage);
-  },
-  createHeaderOfResponse(uint16IdOfMessage) {
-    return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, uint16IdOfMessage);
-  },
-  headerOfUnrequestingMessage: String.fromCharCode(charCodesOfHeaders_unrequestingMessage)
+textMessager.createHeaderOfRequest = function(uint16IdOfMessage) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, uint16IdOfMessage);
 };
+textMessager.createHeaderOfResponse = function(uint16IdOfMessage) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, uint16IdOfMessage);
+};
+textMessager.headerOfUnrequestingMessage = String.fromCharCode(charCodesOfHeaders_unrequestingMessage);
 
 module.exports = textMessager;

@@ -1,6 +1,6 @@
 "use strict";
 
-import ResponsiveWebSocketClient from "./../../ResponsiveWebSocketClient/ResponsiveWebSocketClient.js";
+import ResponsiveWebSocketClient from "./../../Client/ResponsiveWebSocketClient.js";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 

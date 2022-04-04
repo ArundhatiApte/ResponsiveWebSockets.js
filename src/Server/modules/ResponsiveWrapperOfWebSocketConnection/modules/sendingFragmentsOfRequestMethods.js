@@ -31,7 +31,7 @@ const sendFragmentsOfRequest = function(
   isMessageBinary,
   fragments
 ) {
-  return new Promise((resolve, reject) => {
+  return new Promise(function(resolve, reject) {
     const idOfRequest = responsiveConnection[_generatorOfRequestId].getNext();
     const idOfRequestToPromise = responsiveConnection[_idOfRequestToPromise];
     const timeout = createTimeoutToReceiveResponse(
@@ -40,6 +40,7 @@ const sendFragmentsOfRequest = function(
       reject,
       responsiveConnection[_maxTimeMsToWaitResponse]
     );
+    
     const entryAboutPromise = createEntryAboutPromiseOfRequest(resolve, timeout);
     idOfRequestToPromise.set(idOfRequest, entryAboutPromise);
 

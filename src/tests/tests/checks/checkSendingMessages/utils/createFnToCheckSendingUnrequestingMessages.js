@@ -1,6 +1,6 @@
 "use strict";
 
-const expectDeepEqual = require("assert").deepStrictEqual;
+const isDeepEqual = require("util").isDeepStrictEqual;
 
 const wait = function(timeMS) {
   return new Promise(function(resplve) {
@@ -15,7 +15,7 @@ const createFnToCheckSendingUnrequestingMessages = function(
   extractMessageFromMessageWithHeader
 ) {
   return function(sender, receiver) {
-    return createFnToCheckSendingUnrequestingMessages(
+    return checkSendingUnrequestingMessages(
       sender,
       receiver,
       sendedMessages,
@@ -34,21 +34,27 @@ const checkSendingUnrequestingMessages = async function(
   sendMessage,
   extractMessageFromMessageWithHeader
 ) {
-  const receivedMessages = [];
-        
-  setUnrequestingMessageEventListener(receiver, function(rawMessage, startIndex) {
-    const message = extractMessageFromMessageWithHeader(rawMessage, startIndex);
-    receivedMessages.push(message);
-  });
-
-  for (const message of sendedMessages) {
-    sendMessage(sender, message);
-  }
+  return new Promise(function(resolve, reject) {
+    const receivedMessages = [];
+    let countOfMessages = sendedMessages.length;
+    
+    setUnrequestingMessageEventListener(receiver, function(rawMessage, startIndex) {
+      const message = extractMessageFromMessageWithHeader(rawMessage, startIndex);
+      receivedMessages.push(message);
+      countOfMessages -= 1;
+      if (countOfMessages === 0) {
+        if (isDeepEqual(sendedMessages, receivedMessages)) {
+          resolve();
+        } else {
+          reject(new Error("Different messages."));
+        }
+      }
+    });
   
-  await wait(timeMSToSend);
-  expectDeepEqual(sendedMessages, receivedMessages);
+    for (const message of sendedMessages) {
+      sendMessage(sender, message);
+    }
+  });
 };
-
-const timeMSToSend = 489;
 
 module.exports = createFnToCheckSendingUnrequestingMessages;

@@ -25,27 +25,21 @@ const createFnToSendMessageWithId = function(header8Bits) {
   };
 };
 
-const binaryMessager = {
-  createUnrequestingMessage(payload) {
-    const totalByteLength = 1 + payload.byteLength,
-          message = new ArrayBuffer(totalByteLength),
-          bytes = new Uint8Array(message);
+const binaryMessager = abstractMessager;
 
-    bytes[0] = byteOfHeaders_unrequestingMessage;
+binaryMessager.createUnrequestingMessage = function(payload) {
+  const totalByteLength = 1 + payload.byteLength,
+        message = new ArrayBuffer(totalByteLength),
+        bytes = new Uint8Array(message);
 
-    const startIndexOfPayload = 1;
-    insertArrayBufferToAnotherUnsafe(message, startIndexOfPayload, payload);
-    return message;
-  },
-  createRequestMessage: createFnToSendMessageWithId(byteOfHeaders_request),
-  createResponseMessage: createFnToSendMessageWithId(byteOfHeaders_response),
-  
-  extractTypeOfIncomingMessage: abstractMessager.extractTypeOfIncomingMessage,
-  extractIdOfMessage: abstractMessager.extractIdOfMessage,
+  bytes[0] = byteOfHeaders_unrequestingMessage;
 
-  startIndexOfBodyInRequest: abstractMessager.startIndexOfBodyInRequest,
-  startIndexOfBodyInUnrequestingMessage: abstractMessager.startIndexOfBodyInUnrequestingMessage,
-  startIndexOfBodyInResponse: abstractMessager.startIndexOfBodyInResponse
+  const startIndexOfPayload = 1;
+  insertArrayBufferToAnotherUnsafe(message, startIndexOfPayload, payload);
+  return message;
 };
+
+binaryMessager.createRequestMessage = createFnToSendMessageWithId(byteOfHeaders_request);
+binaryMessager.createResponseMessage = createFnToSendMessageWithId(byteOfHeaders_response);
 
 module.exports = binaryMessager;

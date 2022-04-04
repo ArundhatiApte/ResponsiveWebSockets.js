@@ -25,643 +25,318 @@ module.exports = createEnum;
 
 /***/ }),
 
-/***/ "../../ResponsiveWebSocketClient/ResponsiveWebSocketClient.js":
+/***/ "../../Client/ResponsiveWebSocketClient.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
-const WebSocketClient = __webpack_require__("../../ResponsiveWebSocketClient/modules/WebSocketClient.js"),
-      ResponsiveWebSoket = __webpack_require__("../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection.js");
-      
-const {_connection} = ResponsiveWebSoket._namesOfPrivateProperties;
+const ResponsiveConnection = __webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js");
 
-const ResponsiveWebSocketClient = class extends ResponsiveWebSoket {
-  constructor(webSocketClient) {
-    super(webSocketClient || new WebSocketClient());
-    this._setupOnLoadListener();
-  }
+const {
+  binaryMessager: {
+    createUnrequestingMessage: createUnrequestingBinaryMessage
+  },
+  textMessager: {
+    createUnrequestingMessage: createUnrequestingTextMessage
+  },
+} = __webpack_require__("../../Client/modules/messaging/messaging.js");
+const _emitEventByIncomingMessage = __webpack_require__("../../Client/methods/emitEventByIncomingMessage.js");
 
-  setLoadListener(listener) {
-    this[_onLoad] = listener;
-  }
-    
-  _setupOnLoadListener() {
-    this[_connection].onLoad = () => {
-      this[_connection].onLoad = null;
-      if (this[_onLoad]) {
-        this[_onLoad]();
-      }
-    };
-  }
-  
-  connect(url) {
-    return this[_connection].connect(url);
-  }
-  
-  close(code, reason) {
-    return this[_connection].close(code, reason);
-  }
+let W3CWebSocketClientClass = null;
 
-  terminate() {
-    return this[_connection].terminate();
-  }
-};
+const {
+  _connection,
+  _onClose
+} = ResponsiveConnection._namesOfPrivateProperties;
+const _onError = "_6";
 
-const _onLoad = "_77";
-
-ResponsiveWebSocketClient.setWebSocketClientClass = WebSocketClient.setWebSocketClientClass;
-
-module.exports = ResponsiveWebSocketClient;
-
-
-/***/ }),
-
-/***/ "../../ResponsiveWebSocketClient/modules/WebSocketClient.js":
-/***/ ((module) => {
-
-
-
-let W3CWebSocketClientClass;
-
-const WebSocketClient = class {
+const ResponsiveWebSocketClient = class extends ResponsiveConnection {
   constructor() {
-    this.onLoad = this.onError = this.onClose = null;
-    this[_onBinaryMessage] = this[_onTextMessage] = null;
+    super();
   }
 
-  set onBinaryMessage(listener) {
-    this[_onBinaryMessage] = listener;
+  setErrorListener(listenerOrNull) {
+    this[_onError] = listenerOrNull;
   }
 
-  get onBinaryMessage() {
-    return this[_onBinaryMessage];
-  }
-
-  set onTextMessage(listener) {
-    this[_onTextMessage] = listener;
-  }
-
-  get onTextMessage() {
-    return this[_onTextMessage];
-  }
-  
   connect(url) {
     return new Promise((resolve, reject) => {
-      const client = this[_webSocketClient] = new W3CWebSocketClientClass(url);      
+      const client = this[_connection] = new W3CWebSocketClientClass(url);      
       client.binaryType = "arrayBuffer";
       
       const self = this;
       client.onopen = function onWebSocketLoad() {
-        self._setupListenersOfEvents();
-        self._emitOnLoad();
+        self._setupListenersOfEvents(client);
+        client.onerror = _emitOnError.bind(this);
         resolve();
       };
       client.onerror = function onWebSocketFail(error) {
-        self._emitOnError(error);
+        _emitOnError.call(this, error);
         reject(error);
       };
     });
   }
-  
-  _setupListenersOfEvents() {
-    const webSocket = this[_webSocketClient];
-    webSocket.onmessage = _emitOnFirstMessage.bind(this);
-    webSocket.onclose = this._emitOnClose.bind(this);
-    webSocket.onerror = this._emitOnError.bind(this);
-  }
-  
+
   close(code, reason) {
-    return this[_webSocketClient].close(code, reason);
+    return this[_connection].close(code, reason);
+  }
+
+  // only in nodejs
+  terminate() {
+    return this[_connection].terminate();
+  }
+
+  _setupListenersOfEvents(webSocketClient) {
+    webSocketClient.onerror = _emitOnError.bind(this);
+    webSocketClient.onclose = _emitOnClose.bind(this);
+    webSocketClient.onmessage = _emitEventByIncomingMessage.bind(this);
   }
 };
 
-const _webSocketClient = "_",
-      _onBinaryMessage = "_2",
-      _onTextMessage = "_3",
-      _onError = "_4",
-      Proto = WebSocketClient.prototype;
-
-Proto.sendBinaryMessage = Proto.sendTextMessage = function sendMessage(message) {
-  return this[_webSocketClient].send(message);
+ResponsiveWebSocketClient.setWebSocketClientClass = function setWebSocketClientClass(W3CWebSocket) {
+  W3CWebSocketClientClass = W3CWebSocket;
 };
 
-const _emitOnFirstMessage = (function() {
-  
-  const _emitOnMessageWithArrayBuffer = function(event) {
-    const {data} = event;
-    if (typeof data === "string") {
-      this[_onTextMessage](data);
-      return;
-    }
-    this[_onBinaryMessage](data);
-  };
-  
-  const _emitOnMessageWithBlob = async function(event) {
-    const {data} = event;
-    if (typeof data === "string") {
-      this[_onTextMessage](data);
-      return;
-    }
-    const bytes = await data.arrayBuffer();
-    this[_onBinaryMessage](bytes);
-  };
-  
-  const _emitOnFirstMessage = async function(event) {
-    let data = event.data;
-    if (typeof data === "string") {
-      this[_onTextMessage](data);
-      return;
-    }
-    
-    if (data instanceof ArrayBuffer) {
-      this[_webSocketClient].onmessage = _emitOnMessageWithArrayBuffer.bind(this);
-    } else {
-      data = await data.arrayBuffer();
-      this[_webSocketClient].onmessage = _emitOnMessageWithBlob.bind(this);
-    }
-    
-    this[_onBinaryMessage](data);
-  };
-  
-  return _emitOnFirstMessage;
-})();
-      
-const _createMethodToEmitEvent = function(nameOfEventProperty) {
-  return function() {
-    const listener = this[nameOfEventProperty];
-    if (listener) {
-      listener.apply(this, arguments);
-    }
-  };
-};
-
-Proto._emitOnLoad = _createMethodToEmitEvent("onLoad");
-Proto._emitOnError = _createMethodToEmitEvent("onError");
-Proto._emitOnClose = _createMethodToEmitEvent("onClose");
-      
-WebSocketClient.setWebSocketClientClass = function(WebSocketClient) {
-  W3CWebSocketClientClass = WebSocketClient;
-};
-
-module.exports = WebSocketClient;
-
-
-/***/ }),
-
-/***/ "../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection.js":
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-
-
-const createEnum = __webpack_require__("../../../node_modules/createEnum/src/createEnum.js");
-
-const {
-  binaryMessager,
-  textMessager
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messaging.js");
-
-const startIndexOfBodyInTextResponse = textMessager.startIndexOfResponseMessageBody;
-const startIndexOfBodyInBinaryResponse = binaryMessager.startIndexOfResponseMessageBody;
-
-const MessageIdGen = __webpack_require__(
-  "../../common/ResponsiveWebSocketConnection/modules/createClassOfGeneratorOfSequenceIntegers/createClassOfGeneratorOfSequenceIntegers.js"
-)(Uint16Array);
-
-const messageContentTypes = createEnum("binary", "text");
-const _defaultMaxTimeMSToWaitResponse = 4000;
-const TimeoutToReceiveResponseExeption = class extends Error {};
-
-const ResponsiveWebSocketConnection = class {
-  constructor(nonResponsiveConnection) {
-    this[_connection] = nonResponsiveConnection;
-    this[_maxTimeMSToWaitResponse] = _defaultMaxTimeMSToWaitResponse;
-    this[_genOfAwaitingResponseMessageId] = new MessageIdGen();
-    this[_idOfAwaitingResponseMessageToPromise] = new Map();
-    
-    this[_onAwaitingResponseBinaryMessage] = null;
-    this[_onUnrequestingBinaryMessage] = null;
-    this[_onAwaitingResponseTextMessage] = null;
-    this[_onUnrequestingTextMessage] = null;
-
-    this._setupOnMessageListeners();
-  }
-
-  static contentTypesOfMessages = messageContentTypes;
-  static TimeoutToReceiveResponseExeption = TimeoutToReceiveResponseExeption;
-  
-  get startIndexOfBodyInBinaryResponse() {
-    return startIndexOfBodyInBinaryResponse;
-  }
-  
-  get startIndexOfBodyInTextResponse() {
-    return startIndexOfBodyInTextResponse;
-  }
-  
-  set maxTimeMSToWaitResponse(ms) {
-    this[_maxTimeMSToWaitResponse] = ms;
-  }
-  
-  get maxTimeMSToWaitResponse() {
-    return this[_maxTimeMSToWaitResponse];
-  }
-
-  get url() {
-    return this[_connection].url;
-  }
-
-  setUnrequestingBinaryMessageListener(listener) {
-    this[_onUnrequestingBinaryMessage] = listener;
-  }
-  
-  setUnrequestingTextMessageListener(listener) {
-    this[_onUnrequestingTextMessage] = listener;
-  }
-
-  setErrorListener(listener) {
-    this[_connection].onError = listener ? listener.bind(this) : null;
-  }
-
-  setCloseListener(listener) {
-    this[_connection].onClose = listener ? listener.bind(this) : null;
-  }
-  
-  _setupOnMessageListeners() {
-    const connection = this[_connection];
-    
-    let listener = this._emitEventByIncomingBinaryMessage.bind(this);
-    connection.onBinaryMessage = listener;
-
-    listener = this._emitEventByIncomingTextMessage.bind(this);
-    connection.onTextMessage = listener;
+const _emitOnError = function(error) {
+  if (this[_onError]) {
+    this[_onError](error);
   }
 };
 
-const _connection = "_c",
-      _maxTimeMSToWaitResponse = "_m",
-      _genOfAwaitingResponseMessageId = "_g",
-      _idOfAwaitingResponseMessageToPromise = "_t",
-      
-      _onAwaitingResponseBinaryMessage = "_1",
-      _onUnrequestingBinaryMessage = "_2",
-      _onAwaitingResponseTextMessage = "_3",
-      _onUnrequestingTextMessage = "_4",
-      
-      Proto = ResponsiveWebSocketConnection.prototype;
-
-Proto.setAwaitingResponseBinaryMessageListener = Proto.setBinaryRequestListener = function(listener) {
-  this[_onAwaitingResponseBinaryMessage] = listener;
+const _emitOnClose = function(event) {
+  if (this[_onClose]) {
+    this[_onClose](event);
+  }
 };
 
-Proto.setAwaitingResponseTextMessageListener = Proto.setTextRequestListener = function(listener) {
-  this[_onAwaitingResponseTextMessage] = listener;
-};
+module.exports = ResponsiveWebSocketClient;
 
-module.exports = ResponsiveWebSocketConnection;
+const Proto = ResponsiveWebSocketClient.prototype;
 
-ResponsiveWebSocketConnection._namesOfPrivateProperties = {
-  _connection,
-  _maxTimeMSToWaitResponse,
-  _genOfAwaitingResponseMessageId,
-  _idOfAwaitingResponseMessageToPromise,
-  
-  _onAwaitingResponseBinaryMessage,
-  _onUnrequestingBinaryMessage,
-  _onAwaitingResponseTextMessage,
-  _onUnrequestingTextMessage
-};
+Proto.sendBinaryRequest = __webpack_require__("../../Client/methods/sendBinaryRequest.js");
+Proto.sendTextRequest = __webpack_require__("../../Client/methods/sendTextRequest.js");
 
-const createMethodToSetupOnMessageListenerOfInnerWebSocket =
-  __webpack_require__("../../common/ResponsiveWebSocketConnection/creatingMethods/createMethodToSetupOnMessageListenerOfInnerWebSocket.js");
-
-Proto._emitEventByIncomingBinaryMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
-  binaryMessager.parseBinaryMessage,
-  messageContentTypes.binary,
-  _onUnrequestingBinaryMessage,
-  binaryMessager.startIndexOfUnrequestingMessageBody,
-  _onAwaitingResponseBinaryMessage,
-  binaryMessager.startIndexOfAwaitingResponseMessageBody
-);
-
-Proto._emitEventByIncomingTextMessage = createMethodToSetupOnMessageListenerOfInnerWebSocket(
-  textMessager.parseTextMessage,
-  messageContentTypes.text,
-  _onUnrequestingTextMessage,
-  textMessager.startIndexOfUnrequestingMessageBody,
-  _onAwaitingResponseTextMessage,
-  textMessager.startIndexOfAwaitingResponseMessageBody
-);
-
-const createMethodToSendUnrequestingMessage = function(createUnrequestingMessage, nameOfMethodToSendMessage) {
+const createMethodToSendUnrequestingMessage = function(createUnrequestingMessage) {
   return function sendUnrequestingMessage(message) {
-    const messageWithHeader = createUnrequestingMessage(message);
-    this[_connection][nameOfMethodToSendMessage](messageWithHeader);
+    return this[_connection].send(createUnrequestingMessage(message));
   };
 };
 
-Proto.sendUnrequestingBinaryMessage = createMethodToSendUnrequestingMessage(
-  binaryMessager.createUnrequestingBinaryMessage, "sendBinaryMessage"
-);
-Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(
-  textMessager.createUnrequestingTextMessage, "sendTextMessage"
-);
-
-const createMethodToSendAwaitingResponseMessage =
-  __webpack_require__("../../common/ResponsiveWebSocketConnection/creatingMethods/createMethodToSendAwaitingResponseMessage.js");
-
-Proto.sendAwaitingResponseBinaryMessage = Proto.sendBinaryRequest = createMethodToSendAwaitingResponseMessage(
-  binaryMessager.createAwaitingResponseBinaryMessage, "sendBinaryMessage"
-);
-Proto.sendAwaitingResponseTextMessage = Proto.sendTextRequest = createMethodToSendAwaitingResponseMessage(
-  textMessager.createAwaitingResponseTextMessage, "sendTextMessage"
-);
+Proto.sendUnrequestingBinaryMessage = createMethodToSendUnrequestingMessage(createUnrequestingBinaryMessage);
+Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(createUnrequestingTextMessage);
 
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/creatingMethods/createMethodToSendAwaitingResponseMessage.js":
+/***/ "../../Client/methods/emitEventByIncomingMessage.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
 const {
-  TimeoutToReceiveResponseExeption,
-  _namesOfPrivateProperties: {
-    _maxTimeMSToWaitResponse,
-    _genOfAwaitingResponseMessageId,
-    _idOfAwaitingResponseMessageToPromise,
-    _connection
+  textMessager: {
+    extractTypeOfIncomingMessage: extractTypeOfIncomingTextMessage,
+    extractIdOfMessage: extractIdOfTextMessage,
+    startIndexOfBodyInUnrequestingMessage: startIndexOfBodyInUnrequestingTextMessage,
+    startIndexOfBodyInRequest: startIndexOfBodyInTextRequest
+  },
+  binaryMessager: {
+    extractTypeOfIncomingMessage: extractTypeOfIncomingBinaryMessage,
+    extractIdOfMessage: extractIdOfBinaryMessage,
+    startIndexOfBodyInUnrequestingMessage: startIndexOfBodyInUnrequestingBinaryMessage,
+    startIndexOfBodyInRequest: startIndexOfBodyInBinaryRequest
   }
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection.js");
+} = __webpack_require__("../../Client/modules/messaging/messaging.js");
 
 const {
-  create: entryAboutPromiseOfRequest_create
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/creatingMethods/entryAboutPromiseOfRequest.js");
+  binary: contentTypesOfMessages_binary,
+  text: contentTypesOfMessages_text
+} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js").contentTypesOfMessages);
 
-const createMethodToSendAwaitingResponseMessage = function(
-  createAwaitingResponseMessage, nameOfSendingMessageMethod
-) {
-  return function sendAwaitingResponseMessage(message, maxTimeMSToWaitResponse) {
-    return new Promise((resolve, reject) => {
-      if (!maxTimeMSToWaitResponse) {
-        maxTimeMSToWaitResponse = this[_maxTimeMSToWaitResponse];
-      }
-      const idOfMessage = this[_genOfAwaitingResponseMessageId].getNext();
-      const timeoutToReject = _createTimeoutToReceiveResponse(
-        this, idOfMessage, reject, maxTimeMSToWaitResponse
-      );
-      
-      const entryAboutPromise = entryAboutPromiseOfRequest_create(resolve, timeoutToReject);
-      this[_idOfAwaitingResponseMessageToPromise].set(idOfMessage, entryAboutPromise);
-      const messageWithHeader = createAwaitingResponseMessage(idOfMessage, message);
-      this[_connection][nameOfSendingMessageMethod](messageWithHeader);
-    });
-  };
+const listenEventOfMessageToInnerWebSocket = __webpack_require__(
+  "../../common/ResponsiveConnection/utils/listenEventOfMessageToInnerWebSocket.js"
+);
+const SenderOfResponse = __webpack_require__("../../Client/modules/SenderOfResponse.js");
+
+const {
+  _connection,
+  _idOfRequestToPromise,
+  _onBinaryRequest,
+  _onTextRequest,
+  _onUnrequestingBinaryMessage,
+  _onUnrequestingTextMessage,
+} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js")._namesOfPrivateProperties);
+
+const emitEventByIncomingMessage = function(event) {
+  return _emitOnFirstMessage.call(this, event);
 };
 
-const _createTimeoutToReceiveResponse = function(
-  responsiveConnection,
-  idOfMessage,
-  rejectPromise,
-  maxTimeMSToWaitResponse
-) {
-  return setTimeout(
-    _rejectMessageResponsePromiseAndDeleteEntry.bind(responsiveConnection, rejectPromise, idOfMessage),
-    maxTimeMSToWaitResponse
+const _emitOnFirstMessage = async function(event) {
+  let data = event.data;
+  if (typeof data === "string") {
+    return _emitEventByIncomingTextMessage(this, data);
+  }
+  
+  if (data instanceof ArrayBuffer) {
+    this[_connection].onmessage = _emitOnMessageWithArrayBuffer.bind(this);
+  } else {
+    data = await data.arrayBuffer();
+    this[_connection].onmessage = _emitOnMessageWithBlob.bind(this);
+  }
+  
+  _emitEventByIncomingBinaryMessage(this, data);
+};
+
+const _emitOnMessageWithArrayBuffer = function(event) {
+  const data = event.data;
+  if (typeof data === "string") {
+    return _emitEventByIncomingTextMessage(this, data);
+  }
+  _emitEventByIncomingBinaryMessage(this, data);
+};
+
+const _emitOnMessageWithBlob = async function(event) {
+  const data = event.data;
+  if (typeof data === "string") {
+    return _emitEventByIncomingTextMessage(this, data);
+  }
+  const bytes = await data.arrayBuffer();
+  _emitEventByIncomingBinaryMessage(this, data);
+};
+
+const _emitEventByIncomingBinaryMessage = function(responsiveConnection, message) {
+  return listenEventOfMessageToInnerWebSocket(
+    extractTypeOfIncomingBinaryMessage,
+    extractIdOfBinaryMessage,
+    contentTypesOfMessages_binary,
+    
+    _onUnrequestingBinaryMessage,
+    startIndexOfBodyInUnrequestingBinaryMessage,
+    
+    _onBinaryRequest,
+    startIndexOfBodyInBinaryRequest,
+    SenderOfResponse,
+  
+    responsiveConnection,
+    message
   );
 };
 
-const _rejectMessageResponsePromiseAndDeleteEntry = function(rejectPromise, idOfMessage) {
-  this[_idOfAwaitingResponseMessageToPromise].delete(idOfMessage);
-  rejectPromise(new TimeoutToReceiveResponseExeption(
-    "ResponsiveWebSocketConnection:: timeout for receiving response."));
+const _emitEventByIncomingTextMessage = function(responsiveConnection, message) {
+  return listenEventOfMessageToInnerWebSocket(
+    extractTypeOfIncomingTextMessage,
+    extractIdOfTextMessage,
+    contentTypesOfMessages_text,
+    
+    _onUnrequestingTextMessage,
+    startIndexOfBodyInUnrequestingTextMessage,
+    
+    _onTextRequest,
+    startIndexOfBodyInTextRequest,
+    SenderOfResponse,
+  
+    responsiveConnection,
+    message
+  );
 };
 
-module.exports = createMethodToSendAwaitingResponseMessage;
+module.exports = emitEventByIncomingMessage;
 
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/creatingMethods/createMethodToSetupOnMessageListenerOfInnerWebSocket.js":
+/***/ "../../Client/methods/sendBinaryRequest.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
-const {
-  response: typesOfIncomingMessages_response,
-  incomingWithoutWaitingResponse: typesOfIncomingMessages_incomingWithoutWaitingResponse,
-  incomingAwaitingResponse: typesOfIncomingMessages_incomingAwaitingResponse 
-} = (__webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messaging.js").typesOfIncomingMessages);
+const {_connection} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js")._namesOfPrivateProperties);
+const sendRequestByResponsiveConnection = __webpack_require__(
+  "../../common/ResponsiveConnection/utils/sendRequestByResponsiveConnection.js"
+);
+const creatBinaryRequest = (__webpack_require__("../../Client/modules/messaging/messaging.js").binaryMessager.createRequestMessage);
 
-const SenderOfResponse = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/SenderOfResponse.js");
-
-const {
-  _connection,
-  _idOfAwaitingResponseMessageToPromise
-} = (__webpack_require__("../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection.js")._namesOfPrivateProperties);
-
-const {
-  nameOfTimeout: entryAboutPromiseOfRequest_nameOfTimeout,
-  nameOfPromiseResolver: entryAboutPromiseOfRequest_nameOfPromiseResolver
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/creatingMethods/entryAboutPromiseOfRequest.js");
-
-const createMethodToSetupOnMessageListenerOfInnerWebSocket = function(
-  parseMessage,
-  typeOfMessageContent,
-  
-  nameOfUnrequestingMessageEventListener,
-  startIndexOfUnrequestingMessageBody,
-  
-  nameOfAwaitingResponseMessageEventListener,
-  startIndexOfAwaitingResponseMessageBody
-) {
-
-  const _emitEventByIncomingMessage = function(message) {
-    let infoAboutMessage;
-    try {
-      infoAboutMessage = parseMessage(message);
-    } catch(error) {
-      if (error instanceof ExeptionAtParsing) {
-        return;
-      }
-      throw error;
-    }
-    const type = infoAboutMessage.type;
-    
-    if (type === typesOfIncomingMessages_response) {
-      return _resolveAwaitingResponseMessagePromise.call(this, infoAboutMessage, message);  
-    }
-    else if (type === typesOfIncomingMessages_incomingWithoutWaitingResponse) {
-      return _emitUnrequestingMessageEvent.call(this, infoAboutMessage, message);
-    }
-    else if (type === typesOfIncomingMessages_incomingAwaitingResponse) {
-      return _emitAwaitingResponseMessageEvent.call(this, infoAboutMessage, message); 
-    }
-  };
-
-  const _resolveAwaitingResponseMessagePromise = function(infoAboutMessage, rawPayload) {
-    const table = this[_idOfAwaitingResponseMessageToPromise],
-          numOfMessage = infoAboutMessage.idOfMessage,
-          awaitingPromise = table.get(numOfMessage);
-    
-    if (awaitingPromise) {
-      clearTimeout(awaitingPromise[entryAboutPromiseOfRequest_nameOfTimeout]);
-      const dataForCallback = {
-        contentType: typeOfMessageContent,
-        message: rawPayload
-      };
-  
-      table.delete(numOfMessage);
-      awaitingPromise[entryAboutPromiseOfRequest_nameOfPromiseResolver](dataForCallback);
-    }
-  };
-
-  const _emitUnrequestingMessageEvent = function(infoAboutMessage, rawPayload) {
-    if (this[nameOfUnrequestingMessageEventListener]) {
-      this[nameOfUnrequestingMessageEventListener](rawPayload, startIndexOfUnrequestingMessageBody);
-    }
-  };
-  
-  const _emitAwaitingResponseMessageEvent = function(infoAboutMessage, rawPayload) {
-    if (this[nameOfAwaitingResponseMessageEventListener]) {
-      const senderOfResponse = _createSenderOfMessageResponse(this, infoAboutMessage.idOfMessage);
-      
-      this[nameOfAwaitingResponseMessageEventListener](
-        rawPayload, startIndexOfAwaitingResponseMessageBody, senderOfResponse
-      );
-    }
-  };
-
-  return _emitEventByIncomingMessage;
+const sendBinaryRequest = function(message, maxTimeMsToWaitResponse) {
+  return sendRequestByResponsiveConnection(this, message, maxTimeMsToWaitResponse, sendMessageOfRequest);
 };
 
-const _createSenderOfMessageResponse = function(responsiveWebSocketConnection, idOfMessage) {
-  return new SenderOfResponse(responsiveWebSocketConnection[_connection], idOfMessage);
+const sendMessageOfRequest = function(responsiveConnection, idOfRequest, message) {
+  return responsiveConnection[_connection].send(creatBinaryRequest(idOfRequest, message));
 };
 
-module.exports = createMethodToSetupOnMessageListenerOfInnerWebSocket; 
+module.exports = sendBinaryRequest;
 
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/creatingMethods/entryAboutPromiseOfRequest.js":
-/***/ ((module) => {
-
-
-
-const create = function(resolvePromise, timeoutToWait) {
-  return {
-    a: resolvePromise,
-    b: timeoutToWait
-  };
-};
-
-const nameOfPromiseResolver = "a",
-      nameOfTimeout = "b";
-
-module.exports = {
-  create,
-  nameOfPromiseResolver,
-  nameOfTimeout
-};
-
-
-/***/ }),
-
-/***/ "../../common/ResponsiveWebSocketConnection/modules/SenderOfResponse.js":
+/***/ "../../Client/methods/sendTextRequest.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
-const {
-  binaryMessager,
-  textMessager
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messaging.js");
+const {_connection} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js")._namesOfPrivateProperties);
+const sendRequestByResponsiveConnection = __webpack_require__(
+  "../../common/ResponsiveConnection/utils/sendRequestByResponsiveConnection.js"
+);
+const creatTextRequest = (__webpack_require__("../../Client/modules/messaging/messaging.js").textMessager.createRequestMessage);
+
+const sendTextRequest = function(message, maxTimeMsToWaitResponse) {
+  return sendRequestByResponsiveConnection(this, message, maxTimeMsToWaitResponse, sendMessageOfRequest);
+};
+
+const sendMessageOfRequest = function(responsiveConnection, idOfRequest, message) {
+  return responsiveConnection[_connection].send(creatTextRequest(idOfRequest, message));
+};
+
+module.exports = sendTextRequest;
+
+
+/***/ }),
+
+/***/ "../../Client/modules/SenderOfResponse.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const createBinaryResponse = (__webpack_require__("../../Client/modules/messaging/messaging.js").binaryMessager.createResponseMessage);
+const createTextResponse = (__webpack_require__("../../Client/modules/messaging/messaging.js").textMessager.createResponseMessage);
 
 const SenderOfResponse = class {
   constructor(nonResponsiveWebSocketConnection, idOfMessage) {
     this[_nonResponsiveWebSocketConnection] = nonResponsiveWebSocketConnection;
     this[_idOfMessage] = idOfMessage;
   }
+
+  sendBinaryResponse(message) {
+    return this[_nonResponsiveWebSocketConnection].send(createBinaryResponse(this[_idOfMessage], message));
+  }
+
+  sendTextResponse(message) {
+    return this[_nonResponsiveWebSocketConnection].send(createTextResponse(this[_idOfMessage], message));
+  }
 };
 
 const _nonResponsiveWebSocketConnection = "_",
-      _idOfMessage = "_i",
-      Proto = SenderOfResponse.prototype;
-
-const createMethodToSendResponse = function(createResponse, nameOfSendigResponseMethod) {
-  return function sendResponse(message) {
-    const messageWithHeader = createResponse(this[_idOfMessage], message);
-    return this[_nonResponsiveWebSocketConnection][nameOfSendigResponseMethod](messageWithHeader);
-  };
-};
-
-Proto.sendBinaryResponse = createMethodToSendResponse(
-  binaryMessager.createBinaryResponseToAwaitingResponseMessage, "sendBinaryMessage");
-  
-Proto.sendTextResponse = createMethodToSendResponse(
-  textMessager.createTextResponseToAwaitingResponseMessage, "sendTextMessage");
+      _idOfMessage = "_i";
 
 module.exports = SenderOfResponse;
 
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/modules/createClassOfGeneratorOfSequenceIntegers/createClassOfGeneratorOfSequenceIntegers.js":
-/***/ ((module) => {
-
-
-
-const createClassOfGeneratorOfSequenceIntegers = function(TypedArray) {
-  return class {
-    constructor() {
-      this[_numbers] = new TypedArray(1);
-    }
-
-    getNext() {
-      return this[_numbers][0]++; //not this[_numbers][0] += 1
-      //const numbers = this[_numbers];
-      //numbers[0] += 1;
-      //return numbers[0];
-    }
-  };
-};
-
-const _numbers = "_";
-
-module.exports = createClassOfGeneratorOfSequenceIntegers;
-
-
-/***/ }),
-
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/ExeptionAtParsing.js":
-/***/ ((module) => {
-
-
-
-const ExeptionAtParsing = class extends Error {};
-
-module.exports = ExeptionAtParsing;
-
-
-/***/ }),
-
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/binaryMessager/binaryMessager.js":
+/***/ "../../Client/modules/messaging/messagers/binaryMessager/binaryMessager.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
-const {
-  incomingAwaitingResponse: typesOfIncomingMessages_incomingAwaitingResponse,
-  incomingWithoutWaitingResponse: typesOfIncomingMessages_incomingWithoutWaitingResponse,
-  response: typesOfIncomingMessages_response
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/typesOfIncomingMessages.js");
+const insertArrayBufferToAnotherUnsafe = __webpack_require__("../../Client/modules/messaging/messagers/binaryMessager/insertArrayBufferToAnotherUnsafe.js");
+const abstractMessager = __webpack_require__("../../common/messaging/binaryMessages/abstractMessager.js");
 
-const ExeptionAtParsing = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/ExeptionAtParsing.js"),
-      insertArrayBufferToAnotherUnsafe = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/binaryMessager/insertArrayBufferToAnotherUnsafe.js");
-      
-const headers_withoutWaitingResponseBinary = 0b01100000,
-      headers_awaitingResponseBinary = 0b11100000,
-      headers_incomingBinaryResponse = 0b01000000;
+const {
+  request: byteOfHeaders_request,
+  response: byteOfHeaders_response,
+  unrequestingMessage: byteOfHeaders_unrequestingMessage
+} = __webpack_require__("../../common/messaging/binaryMessages/byteHeaders.js");
 
 const createFnToSendMessageWithId = function(header8Bits) {
   return function binaryMessageCreator(idOfMessage16Bits, payload) {
@@ -679,62 +354,29 @@ const createFnToSendMessageWithId = function(header8Bits) {
   };
 };
 
-const messager = {
-  createUnrequestingBinaryMessage(payload) {
-    const totalByteLength = 1 + payload.byteLength,
-          message = new ArrayBuffer(totalByteLength),
-          bytes = new Uint8Array(message);
+const binaryMessager = abstractMessager;
 
-    bytes[0] = headers_withoutWaitingResponseBinary;
+binaryMessager.createUnrequestingMessage = function(payload) {
+  const totalByteLength = 1 + payload.byteLength,
+        message = new ArrayBuffer(totalByteLength),
+        bytes = new Uint8Array(message);
 
-    const startIndexOfPayload = 1;
-    insertArrayBufferToAnotherUnsafe(message, startIndexOfPayload, payload);
-    return message;
-  },
-  createAwaitingResponseBinaryMessage: createFnToSendMessageWithId(headers_awaitingResponseBinary),
-  createBinaryResponseToAwaitingResponseMessage: createFnToSendMessageWithId(headers_incomingBinaryResponse),
-  
-  parseBinaryMessage(message) {
-    const dataView = new DataView(message),
-          header1stByte = dataView.getUint8(0);
-    
-    if (header1stByte === headers_incomingBinaryResponse) {
-      const messageNum = dataView.getUint16(1);
-      return {
-        type: typesOfIncomingMessages_response,
-        startIndex: 3,
-        idOfMessage: messageNum
-      };
-    }
-    if (header1stByte === headers_withoutWaitingResponseBinary) {
-      return {
-        type: typesOfIncomingMessages_incomingWithoutWaitingResponse,
-        startIndex: 1
-      };
-    }
-    if (header1stByte === headers_awaitingResponseBinary) {
-      const messageNum = dataView.getUint16(1);
-      return {
-        type: typesOfIncomingMessages_incomingAwaitingResponse,
-        startIndex: 3,
-        idOfMessage: messageNum
-      };
-    }
-    
-    throw new ExeptionAtParsing("Hеизвестный заголовок сообщения.");
-  },
+  bytes[0] = byteOfHeaders_unrequestingMessage;
 
-  startIndexOfAwaitingResponseMessageBody: 3,
-  startIndexOfUnrequestingMessageBody: 1,
-  startIndexOfResponseMessageBody: 3
+  const startIndexOfPayload = 1;
+  insertArrayBufferToAnotherUnsafe(message, startIndexOfPayload, payload);
+  return message;
 };
 
-module.exports = messager;
+binaryMessager.createRequestMessage = createFnToSendMessageWithId(byteOfHeaders_request);
+binaryMessager.createResponseMessage = createFnToSendMessageWithId(byteOfHeaders_response);
+
+module.exports = binaryMessager;
 
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/binaryMessager/insertArrayBufferToAnotherUnsafe.js":
+/***/ "../../Client/modules/messaging/messagers/binaryMessager/insertArrayBufferToAnotherUnsafe.js":
 /***/ ((module) => {
 
 
@@ -761,80 +403,36 @@ module.exports = insertArrayBufferToAnotherUnsafe;
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/textMessager/textMessager.js":
+/***/ "../../Client/modules/messaging/messagers/textMessager/textMessager.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 
-const {
-  incomingAwaitingResponse: typeOfIncomingMessage_incomingAwaitingResponse,
-  incomingWithoutWaitingResponse: typeOfIncomingMessage_incomingWithoutWaitingResponse,
-  response: typeOfIncomingMessage_response
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/typesOfIncomingMessages.js");
-
-const ExeptionAtParsing = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/ExeptionAtParsing.js");
+const abstractMessager = __webpack_require__("../../common/messaging/textMessages/abstractMessager.js");
 
 const {
-  uInt16ToCharPlus2Chars8BitString,
-  extractUInt16FromStringUnsafe
-} = __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/textMessager/uInt16ViewIn2Char/uInt16ViewIn2Char.js");
+  uInt16ToCharPlus2Chars8BitString
+} = __webpack_require__("../../common/messaging/textMessages/uInt16ViewIn2Char/uInt16ViewIn2Char.js");
 
-const charCodeOfHeader_awaitingResponseTextMessage = 1,
-      charCodeOfHeader_withoutWaitingResponseTextMessage = 2,
-      charCodeOfHeader_responseTextMessage = 3;
+const {
+  request: charCodesOfHeaders_request,
+  response: charCodesOfHeaders_response,
+  unrequestingMessage: charCodesOfHeaders_unrequestingMessage
+} = __webpack_require__("../../common/messaging/textMessages/charCodesOfHeaders.js");
 
-const header_withoutWaitingResponseTextMessage = String.fromCharCode(
-  charCodeOfHeader_withoutWaitingResponseTextMessage);
+const header_unrequestingMessage = String.fromCharCode(
+  charCodesOfHeaders_unrequestingMessage);
 
-const textMessager = {
-  createAwaitingResponseTextMessage(idOfMessage, text) {
-    return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_awaitingResponseTextMessage, idOfMessage) + text;
-  },
-  createUnrequestingTextMessage(text) {
-    return header_withoutWaitingResponseTextMessage + text;
-  },
-  createTextResponseToAwaitingResponseMessage(idOfMessage, text) {
-    return uInt16ToCharPlus2Chars8BitString(charCodeOfHeader_responseTextMessage, idOfMessage) + text;
-  },
-  parseTextMessage(message) {
-    const charCodeOfHeader = message[0].charCodeAt(0);
+const textMessager = abstractMessager;
 
-    if (charCodeOfHeader === charCodeOfHeader_awaitingResponseTextMessage) {
-      const startIndexOfId = 1,
-            idOfMessage = extractIdOfMessage(startIndexOfId, message);
-      return {
-        idOfMessage,
-        type: typeOfIncomingMessage_incomingAwaitingResponse
-      };
-    }
-    if (charCodeOfHeader === charCodeOfHeader_withoutWaitingResponseTextMessage) {
-      return {
-        type: typeOfIncomingMessage_incomingWithoutWaitingResponse
-      };
-    }
-    if (charCodeOfHeader === charCodeOfHeader_responseTextMessage) {
-      const startIndexOfId = 1,
-            idOfMessage = extractIdOfMessage(startIndexOfId, message);
-      return {
-        idOfMessage,
-        type: typeOfIncomingMessage_response
-      };
-    }
-
-    throw new ExeptionAtParsing("Неизвестный заголовок сообщения.");
-  },
-  
-  startIndexOfAwaitingResponseMessageBody: 3,
-  startIndexOfUnrequestingMessageBody: 1,
-  startIndexOfResponseMessageBody: 3
+textMessager.createRequestMessage = function(idOfRequest, text) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, idOfRequest) + text;
 };
-
-const extractIdOfMessage = function(startIndex, message) {
-  const minLengthOfMessage = 3;
-  if (message.length < minLengthOfMessage) {
-    throw new ExeptionAtParsing("Message is too short");
-  }
-  return extractUInt16FromStringUnsafe(startIndex, message);
+textMessager.createUnrequestingMessage = function(text) {
+  return header_unrequestingMessage + text;
+};
+textMessager.createResponseMessage = function(idOfMessage, text) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, idOfMessage) + text;
 };
 
 module.exports = textMessager;
@@ -842,7 +440,517 @@ module.exports = textMessager;
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/textMessager/uInt16ViewIn2Char/uInt16ViewIn2Char.js":
+/***/ "../../Client/modules/messaging/messaging.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+module.exports = {
+  binaryMessager: __webpack_require__("../../Client/modules/messaging/messagers/binaryMessager/binaryMessager.js"),
+  textMessager: __webpack_require__("../../Client/modules/messaging/messagers/textMessager/textMessager.js")
+};
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/ResponsiveConnection.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const createEnum = __webpack_require__("../../../node_modules/createEnum/src/createEnum.js");
+const contentTypesOfMessages = createEnum("binary", "text");
+
+const GeneratorOfRequestId = __webpack_require__("../../common/ResponsiveConnection/utils/SequenceGeneratorOfUint16/SequenceGeneratorOfUint16.js");
+
+const startIndexOfBodyInBinaryResponse = (__webpack_require__("../../common/messaging/textMessages/abstractMessager.js").startIndexOfBodyInResponse);
+
+const startIndexOfBodyInTextResponse = (__webpack_require__("../../common/messaging/binaryMessages/abstractMessager.js").startIndexOfBodyInResponse);
+
+const TimeoutToReceiveResponseException = class extends Error {};
+
+const ResponsiveConnection = class {
+  constructor() {
+    this[_maxTimeMsToWaitResponse] = defaultMaxTimeMsToWaitResponse;
+    this[_generatorOfRequestId] = new GeneratorOfRequestId();
+    this[_idOfRequestToPromise] = new Map();
+  }
+
+  static contentTypesOfMessages = contentTypesOfMessages;
+  static TimeoutToReceiveResponseException = TimeoutToReceiveResponseException;
+  
+  get startIndexOfBodyInBinaryResponse() {
+    return startIndexOfBodyInBinaryResponse;
+  }
+  
+  get startIndexOfBodyInTextResponse() {
+    return startIndexOfBodyInTextResponse;
+  }
+  
+  setMaxTimeMsToWaitResponse(ms) {
+    this[_maxTimeMsToWaitResponse] = ms;
+  }
+  
+  get url() {
+    return this[_connection].url;
+  }
+  
+  setBinaryRequestListener(listnerOrNull) {
+    this[_onBinaryRequest] = listnerOrNull;
+  }
+
+  setTextRequestListener(listnerOrNull) {
+    this[_onTextRequest] = listnerOrNull;
+  }
+
+  setUnrequestingBinaryMessageListener(listnerOrNull) {
+    this[_onUnrequestingBinaryMessage] = listnerOrNull;
+  }
+
+  setUnrequestingTextMessageListener(listnerOrNull) {
+    this[_onUnrequestingTextMessage] = listnerOrNull;
+  }
+
+  setCloseListener(listnerOrNull) {
+    this[_onClose] = listnerOrNull;
+  }
+};
+
+const _connection = "_",
+      _generatorOfRequestId = "_g",
+      _idOfRequestToPromise = "_m",
+      _maxTimeMsToWaitResponse = "_t",
+
+      _onBinaryRequest = "_1",
+      _onTextRequest = "_2",
+      _onUnrequestingBinaryMessage = "_3",
+      _onUnrequestingTextMessage = "_4",
+      _onClose = "_5";
+
+const defaultMaxTimeMsToWaitResponse = 2000;
+
+ResponsiveConnection._namesOfPrivateProperties = {
+  _connection,
+  _generatorOfRequestId,
+  _idOfRequestToPromise,
+  _maxTimeMsToWaitResponse,
+  
+  _onBinaryRequest,
+  _onTextRequest,
+  _onUnrequestingBinaryMessage,
+  _onUnrequestingTextMessage,
+  _onClose
+};
+
+module.exports = ResponsiveConnection;
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/utils/SequenceGeneratorOfUint16/SequenceGeneratorOfUint16.js":
+/***/ ((module) => {
+
+
+
+const SequenceGeneratorOfUint16 = class {
+  constructor() {
+    this[_numbers] = new Uint16Array(1);
+  }
+
+  getNext() {
+    return this[_numbers][0]++; //not this[_numbers][0] += 1
+  }
+};
+
+const _numbers = "_";
+
+module.exports = SequenceGeneratorOfUint16;
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/utils/createTimeoutToReceiveResponse.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const { TimeoutToReceiveResponseException } = __webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js");
+
+const createTimeoutToReceiveResponse = function(
+  idOfRequestToEntryAboutPromise,
+  idOfMessage,
+  rejectPromise,
+  maxTimeMsToWaitResponse
+) {
+  return setTimeout(
+    _deleteEntryAndRejectResponsePromise,
+    maxTimeMsToWaitResponse,
+    idOfRequestToEntryAboutPromise,
+    idOfMessage,
+    rejectPromise
+  );
+};
+
+const _deleteEntryAndRejectResponsePromise = function(idOfRequestToEntryAboutPromise, idOfMessage, rejectPromise) {
+  idOfRequestToEntryAboutPromise.delete(idOfMessage);
+  rejectPromise(new TimeoutToReceiveResponseException(
+    "ResponsiveWebSocketConnection:: timeout for receiving response."));
+};
+
+module.exports = createTimeoutToReceiveResponse;
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/utils/entryAboutPromiseOfRequest.js":
+/***/ ((module) => {
+
+
+
+const create = function(resolvePromise, timeoutToWait) {
+  return {
+    a: resolvePromise,
+    b: timeoutToWait
+  };
+};
+
+const nameOfPromiseResolver = "a",
+      nameOfTimeout = "b";
+
+module.exports = {
+  create,
+  nameOfPromiseResolver,
+  nameOfTimeout
+};
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/utils/listenEventOfMessageToInnerWebSocket.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const {
+  request: typesOfIncomingMessages_request,
+  response: typesOfIncomingMessages_response,
+  unrequestingMessage: typesOfIncomingMessages_unrequestingMessage,
+} = __webpack_require__("../../common/messaging/typesOfIncomingMessages.js");
+
+const ExceptionAtParsing = __webpack_require__("../../common/messaging/ExceptionAtParsing.js");
+
+const {
+  _connection,
+  _idOfRequestToPromise
+} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js")._namesOfPrivateProperties);
+
+const {
+  create: entryAboutPromiseOfRequest_create,
+  nameOfPromiseResolver: entryAboutPromiseOfRequest_nameOfPromiseResolver,
+  nameOfTimeout: entryAboutPromiseOfRequest_nameOfTimeout
+} = __webpack_require__("../../common/ResponsiveConnection/utils/entryAboutPromiseOfRequest.js");
+
+const listenEventOfMessageToInnerWebSocket = function(
+  extractTypeOfIncomingMessage,
+  extractIdOfMessage,
+  typeOfMessageContent,
+  
+  nameOfUnrequestingMessageEventListener,
+  startIndexOfBodyInUnrequestingMessage,
+  
+  nameOfRequestEventListener,
+  startIndexOfBodyInRequest,
+  SenderOfResponse,
+
+  responsiveWebSocket,
+  incomingMessage
+) {
+  let typeOfMessage;
+  try {
+    typeOfMessage = extractTypeOfIncomingMessage(incomingMessage);
+  } catch(error) {
+    if (error instanceof ExceptionAtParsing) {
+      return;
+    }
+    throw error;
+  }
+  
+  if (typeOfMessage === typesOfIncomingMessages_response) {
+    return _resolveAwaitingResponseMessagePromise(
+      extractIdOfMessage,
+      typeOfMessageContent,
+      responsiveWebSocket,
+      incomingMessage
+    );  
+  }
+  else if (typeOfMessage === typesOfIncomingMessages_unrequestingMessage) {
+    return _emitUnrequestingMessageEvent(
+      nameOfUnrequestingMessageEventListener,
+      startIndexOfBodyInUnrequestingMessage,
+      responsiveWebSocket,
+      incomingMessage
+    );
+  }
+  else if (typeOfMessage === typesOfIncomingMessages_request) {
+    return _emitAwaitingResponseMessageEvent(
+      extractIdOfMessage,
+      nameOfRequestEventListener,
+      SenderOfResponse,
+      startIndexOfBodyInRequest,
+      responsiveWebSocket,
+      incomingMessage
+    ); 
+  }
+};
+
+const _resolveAwaitingResponseMessagePromise = function(
+  extractIdOfMessage,
+  typeOfMessageContent,
+  responsiveWebSocket,
+  rawPayload
+) {
+  const table = responsiveWebSocket[_idOfRequestToPromise],
+        numOfMessage = extractIdOfMessage(rawPayload),
+        awaitingPromise = table.get(numOfMessage);
+  
+  if (awaitingPromise) {
+    clearTimeout(awaitingPromise[entryAboutPromiseOfRequest_nameOfTimeout]);
+    const dataForCallback = {
+      contentType: typeOfMessageContent,
+      message: rawPayload
+    };
+
+    table.delete(numOfMessage);
+    awaitingPromise[entryAboutPromiseOfRequest_nameOfPromiseResolver](dataForCallback);
+  }
+};
+
+const _emitUnrequestingMessageEvent = function(
+  nameOfUnrequestingMessageEventListener,
+  startIndexOfBodyInUnrequestingMessage,
+  responsiveWebSocket,
+  rawPayload
+) {
+  if (responsiveWebSocket[nameOfUnrequestingMessageEventListener]) {
+    responsiveWebSocket[nameOfUnrequestingMessageEventListener](rawPayload, startIndexOfBodyInUnrequestingMessage);
+  }
+};
+
+const _emitAwaitingResponseMessageEvent = function(
+  extractIdOfMessage,
+  nameOfRequestEventListener,
+  SenderOfResponse,
+  startIndexOfBodyInRequest,
+  responsiveWebSocket,
+  rawPayload
+) {
+  if (responsiveWebSocket[nameOfRequestEventListener]) {
+    const numOfMessage = extractIdOfMessage(rawPayload);
+    const senderOfResponse = new SenderOfResponse(responsiveWebSocket[_connection], numOfMessage);
+    
+    responsiveWebSocket[nameOfRequestEventListener](
+      rawPayload,
+      startIndexOfBodyInRequest,
+      senderOfResponse
+    );
+  }
+};
+
+module.exports = listenEventOfMessageToInnerWebSocket;
+
+
+/***/ }),
+
+/***/ "../../common/ResponsiveConnection/utils/sendRequestByResponsiveConnection.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const {
+  _connection,
+  _generatorOfRequestId,
+  _idOfRequestToPromise,
+  _maxTimeMsToWaitResponse,
+} = (__webpack_require__("../../common/ResponsiveConnection/ResponsiveConnection.js")._namesOfPrivateProperties);
+
+const createTimeoutToReceiveResponse = __webpack_require__("../../common/ResponsiveConnection/utils/createTimeoutToReceiveResponse.js");
+const createEntryAboutPromiseOfRequest = (__webpack_require__("../../common/ResponsiveConnection/utils/entryAboutPromiseOfRequest.js").create);
+
+const sendRequestByResponsiveConnection = function(
+  responsiveConnection,
+  message,
+  maxTimeMsToWaitResponse,
+  sendMessageOfRequest
+) {
+  return new Promise(function(resolve, reject) {
+    if (!maxTimeMsToWaitResponse) {
+      maxTimeMsToWaitResponse = responsiveConnection[_maxTimeMsToWaitResponse];
+    }
+    const idOfRequest = responsiveConnection[_generatorOfRequestId].getNext();
+    const idOfRequestToPromise = responsiveConnection[_idOfRequestToPromise];
+    const timeout = createTimeoutToReceiveResponse(
+      idOfRequestToPromise,
+      idOfRequest,
+      reject,
+      maxTimeMsToWaitResponse
+    );
+    const entryAboutPromise = createEntryAboutPromiseOfRequest(resolve, timeout);
+    idOfRequestToPromise.set(idOfRequest, entryAboutPromise);
+    sendMessageOfRequest(responsiveConnection, idOfRequest, message);
+  });
+};
+
+module.exports = sendRequestByResponsiveConnection;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/ExceptionAtParsing.js":
+/***/ ((module) => {
+
+
+
+const ExceptionAtParsing = class extends Error {};
+
+module.exports = ExceptionAtParsing;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/binaryMessages/abstractMessager.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const {
+  response: typeOfIncomingMessage_response,
+  request: typeOfIncomingMessage_request,
+  unrequestingMessage: typeOfIncomingMessage_unrequestingMessage
+} = __webpack_require__("../../common/messaging/typesOfIncomingMessages.js");
+
+const ExceptionAtParsing = __webpack_require__("../../common/messaging/ExceptionAtParsing.js");
+
+const {
+  request: byteOfHeaders_request,
+  response: byteOfHeaders_response,
+  unrequestingMessage: byteOfHeaders_unrequestingMessage
+} = __webpack_require__("../../common/messaging/binaryMessages/byteHeaders.js");
+
+const abstractMessager = {
+  extractTypeOfIncomingMessage(message) {
+    const header1stByte = new DataView(message).getUint8(0);
+
+    switch (header1stByte) {
+      case byteOfHeaders_response:
+        return typeOfIncomingMessage_response;
+      case byteOfHeaders_unrequestingMessage:
+        return typeOfIncomingMessage_unrequestingMessage;
+      case byteOfHeaders_request:
+        return typeOfIncomingMessage_request;
+    }
+    throw new ExceptionAtParsing("Message of unrecognized type.");
+  },
+  extractIdOfMessage(awaitingResponseOrResponseMessage) {
+    return new DataView(awaitingResponseOrResponseMessage).getUint16(1);
+  },
+
+  startIndexOfBodyInRequest: 3,
+  startIndexOfBodyInUnrequestingMessage: 1,
+  startIndexOfBodyInResponse: 3
+};
+
+module.exports = abstractMessager;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/binaryMessages/byteHeaders.js":
+/***/ ((module) => {
+
+
+
+const byteHeaders = {
+  request: 1,
+  response: 2,
+  unrequestingMessage: 3
+};
+
+module.exports = byteHeaders;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/textMessages/abstractMessager.js":
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+
+const {
+  request: typeOfIncomingMessage_request,
+  unrequestingMessage: typeOfIncomingMessage_unrequestingMessage,
+  response: typeOfIncomingMessage_response
+} = __webpack_require__("../../common/messaging/typesOfIncomingMessages.js");
+
+const ExceptionAtParsing = __webpack_require__("../../common/messaging/ExceptionAtParsing.js");
+
+const {
+  request: charCodesOfHeaders_request,
+  response: charCodesOfHeaders_response,
+  unrequestingMessage: charCodesOfHeaders_unrequestingMessage
+} = __webpack_require__("../../common/messaging/textMessages/charCodesOfHeaders.js");
+
+const { extractUInt16FromStringUnsafe } = __webpack_require__("../../common/messaging/textMessages/uInt16ViewIn2Char/uInt16ViewIn2Char.js");
+
+const abstractMessager = {
+  extractTypeOfIncomingMessage(message) {
+    const charCodeOfHeader = message.charCodeAt(0);
+    
+    switch (charCodeOfHeader) {
+      case charCodesOfHeaders_request:
+        return typeOfIncomingMessage_request;
+      case charCodesOfHeaders_unrequestingMessage:
+        return typeOfIncomingMessage_unrequestingMessage;
+      case charCodesOfHeaders_response:
+        return typeOfIncomingMessage_response;
+    }
+    throw new ExceptionAtParsing("Message of unrecognized type.");
+  },
+  extractIdOfMessage(awaitingResponseMessageOrResponse) {
+    const minLengthOfMessage = 3;
+    const message = awaitingResponseMessageOrResponse;
+    if (message.length < minLengthOfMessage) {
+      throw new ExceptionAtParsing("Message is too short");
+    }
+    const startIndex = 1;
+    return extractUInt16FromStringUnsafe(startIndex, message);
+  },
+  startIndexOfBodyInRequest: 3,
+  startIndexOfBodyInUnrequestingMessage: 1,
+  startIndexOfBodyInResponse: 3
+};
+
+module.exports = abstractMessager;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/textMessages/charCodesOfHeaders.js":
+/***/ ((module) => {
+
+
+
+const charCodesOfHeaders = {
+  request: 1,
+  response: 2,
+  unrequestingMessage: 3
+};
+
+module.exports = charCodesOfHeaders;
+
+
+/***/ }),
+
+/***/ "../../common/messaging/textMessages/uInt16ViewIn2Char/uInt16ViewIn2Char.js":
 /***/ ((module) => {
 
 
@@ -875,7 +983,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/typesOfIncomingMessages.js":
+/***/ "../../common/messaging/typesOfIncomingMessages.js":
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
@@ -883,25 +991,10 @@ module.exports = {
 const createEnum = __webpack_require__("../../../node_modules/createEnum/src/createEnum.js");
 
 module.exports = createEnum(
-  "incomingAwaitingResponse",
-  "incomingWithoutWaitingResponse",
+  "request",
+  "unrequestingMessage",
   "response"
 );
-
-
-/***/ }),
-
-/***/ "../../common/ResponsiveWebSocketConnection/modules/messaging/messaging.js":
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-
-
-module.exports = {
-  binaryMessager: __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/binaryMessager/binaryMessager.js"),
-  textMessager: __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/textMessager/textMessager.js"),
-  ExeptionAtParsing: __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/ExeptionAtParsing.js"),
-  typesOfIncomingMessages: __webpack_require__("../../common/ResponsiveWebSocketConnection/modules/messaging/messagers/typesOfIncomingMessages.js")
-};
 
 
 /***/ })
@@ -966,16 +1059,16 @@ module.exports = {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/* harmony import */ var _ResponsiveWebSocketClient_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../ResponsiveWebSocketClient/ResponsiveWebSocketClient.js");
-/* harmony import */ var _ResponsiveWebSocketClient_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_ResponsiveWebSocketClient_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Client_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../Client/ResponsiveWebSocketClient.js");
+/* harmony import */ var _Client_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_Client_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__);
 
 
 
 
-_ResponsiveWebSocketClient_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default().setWebSocketClientClass(window.WebSocket);
+_Client_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default().setWebSocketClientClass(window.WebSocket);
 
 (async function() {
-  const client = new (_ResponsiveWebSocketClient_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default())(),
+  const client = new (_Client_ResponsiveWebSocketClient_js__WEBPACK_IMPORTED_MODULE_0___default())(),
         port = 4443,
         url = "ws://127.0.0.1:" + port + "/wsAPI/awjoiadwj";
 

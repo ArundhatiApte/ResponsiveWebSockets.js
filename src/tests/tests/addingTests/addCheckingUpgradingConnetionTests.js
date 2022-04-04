@@ -1,7 +1,7 @@
 "use strict";
 
-const checkAcceptingRequestOnUpgrade = require("./checks/checkAcceptingRequestOnUpgrade");
-const checkCancelRequestOnUpgrade = require("./checks/checkCancelRequestOnUpgrade");
+const checkAcceptingRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkAcceptingRequestOnUpgrade");
+const checkCancelRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkCancelRequestOnUpgrade");
 
 const addCheckingUpgradingConnetionTests = function(
   tester,

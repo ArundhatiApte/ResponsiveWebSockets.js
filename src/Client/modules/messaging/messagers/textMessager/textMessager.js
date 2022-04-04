@@ -15,22 +15,16 @@ const {
 const header_unrequestingMessage = String.fromCharCode(
   charCodesOfHeaders_unrequestingMessage);
 
-const textMessager = {
-  createRequestMessage(idOfRequest, text) {
-    return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, idOfRequest) + text;
-  },
-  createUnrequestingMessage(text) {
-    return header_unrequestingMessage + text;
-  },
-  createResponseMessage(idOfMessage, text) {
-    return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, idOfMessage) + text;
-  },
-  extractTypeOfIncomingMessage: abstractMessager.extractTypeOfIncomingMessage,
-  extractIdOfMessage: abstractMessager.extractIdOfMessage,
-  
-  startIndexOfBodyInRequest: abstractMessager.startIndexOfBodyInRequest,
-  startIndexOfBodyInUnrequestingMessage: abstractMessager.startIndexOfBodyInUnrequestingMessage,
-  startIndexOfBodyInResponse: abstractMessager.startIndexOfBodyInResponse
+const textMessager = abstractMessager;
+
+textMessager.createRequestMessage = function(idOfRequest, text) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, idOfRequest) + text;
+};
+textMessager.createUnrequestingMessage = function(text) {
+  return header_unrequestingMessage + text;
+};
+textMessager.createResponseMessage = function(idOfMessage, text) {
+  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, idOfMessage) + text;
 };
 
 module.exports = textMessager;
