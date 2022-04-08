@@ -14,7 +14,7 @@ const AcceptorOfRequestForUpgrade = class {
   acceptConnection(userData) {
     const request = this[_request];
     this[_response].upgrade(
-      userData ? {url: request.getUrl(), userData} : {url: request.getUrl()},
+      userData ? {url: request.getUrl(), [_userData]: userData} : {url: request.getUrl()},
       request.getHeader("sec-websocket-key"),
       request.getHeader("sec-websocket-protocol"),
       request.getHeader("sec-websocket-extensions"),
@@ -29,6 +29,9 @@ const AcceptorOfRequestForUpgrade = class {
 
 const _request = Symbol(),
       _response = Symbol(),
-      _usSocketContext = Symbol();
+      _usSocketContext = Symbol(),
+      _userData = "uD";
+
+AcceptorOfRequestForUpgrade._userData = _userData;
 
 module.exports = AcceptorOfRequestForUpgrade;

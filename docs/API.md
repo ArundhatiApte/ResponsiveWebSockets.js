@@ -25,23 +25,36 @@
     * close()
     * listen(port)
     * setConnectionListener(listener)
+    * setUpgradeListener(listener)
 - [Class: ResponsiveWebSocketServerConnection](#class-responsivewebsocketserverconnection)
     * getRemoteAddress()
+    * sendFragmentsOfBinaryRequest(...fragments)
+    * sendFragmentsOfTextRequest(...fragments)
+    * sendFragmentsOfUnrequestingBinaryMessage(...fragments)
+    * sendFragmentsOfUnrequestingTextMessage(...fragments)
     * url
 - [Class: ResponseSender](#class-responsesender)
+    * sendBinaryResponse(response)
+    * sendTextResponse(response)
+- [Class: ServerResponseSender](#class-serverresponsesender)
+    * sendFragmentsOfBinaryResponse(...fragments)
+    * sendFragmentsOfTextResponse(...fragments)
 - [Class: ResponseData](#class-responsedata)
+- [Class: HandshakeAction](class-handshakeaction)
+    * acceptConnection([userData])
+    * cancelConnection()
 
 ## Class: ResponsiveWebSocketConnection
 
 Base class for client and connection to client.
-Provides methods for sending awaiting response messages and messages without waiting response.
+Provides methods for sending requests and messages without waiting response.
 
 ### close([code, reason])
 
 * `code` `<number>`
 * `reason` `<string>`
 
-Closes connection.
+Initiate a closing handshake.
 
 ### static contentTypesOfMessages
 
@@ -53,10 +66,10 @@ Closes connection.
 
 * `bytes <ArrayBuffer>`
 * `maxTimeMsToWaitResponse <number>`  
-optional, by default value of `maxTimeMsToWaitResponse` property
+optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 * Returns `<Promise<ResponseData>>`
 
-Sends awaiting response binary message. Receiver can give response by setting lisneter of 'binaryRequest' event.
+Sends awaiting response binary message. Receiver can give response by setting lisneter of "binaryRequest" event.
 If response will not arrive within `maxTimeMsToWaitResponse` milliseconds, the `<Promise>` will be rejected with
 `TimeoutToReceiveResponseException`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
@@ -65,7 +78,7 @@ Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 * `text <string>`
 * `maxTimeMsToWaitResponse <number>`  
-optional, by default value of `maxTimeMsToWaitResponse` property.
+optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 * Returns `<Promise<ResponseData>>`
 
 Sends awaiting response text message. Receiver can give response by setting lisneter of 'textRequest' event.
@@ -78,19 +91,19 @@ Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 * `bytes <ArrayBuffer>`
 
 Sends binary message without waiting response.
-When a message arrives to the recipient, the 'unrequestingBinaryMessage' event is generated.
+When a message arrives to the recipient, the "unrequestingBinaryMessage" event is emitted.
  
 ### sendUnrequestingTextMessage(text)
 
 * `text <string>`
 
 Sends text message without waiting response.
-When a message arrives to the recipient, the 'unrequestingTextMessage' event is generated.
+When a message arrives to the recipient, the "unrequestingTextMessage" event is emitted.
 
 ### setBinaryRequestListener(listener)
 
 * `listener <function>`  
-listeners signature: `(bytes, startIndex, responseSender)`
+listener's signature: `(bytes, startIndex, responseSender)`
     * `bytes <ArrayBuffer>`
     a message containing the header and the body transmitted by the sender
     * `startIndex <number>`
@@ -98,17 +111,24 @@ listeners signature: `(bytes, startIndex, responseSender)`
     * `responseSender <ResponseSender>`
     object for sending binary or text response
 
-Sets the listener of event, that occurs when a binary message is received, the sender of which is waiting for a response.
+Sets the listener of event, that occurs when a binary message is received,
+the sender of which is waiting for a response.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### setCloseListener(listener)
 
 * `listener <function>`  
-listeners signature: `(event)`
+listener's signature: `(event)`
     * `event <Object>`
         * `code <number>`
         * `reason <string>`
         * `wasClean <bool>`
+
+Sets the WebSocket connection close event handler.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.
 
 ### setMaxTimeMsToWaitResponse(timeMs)
 
@@ -121,7 +141,7 @@ By default 2000.
 ### setTextRequestListener(listener)
 
 * `listener <function>`  
-listeners signature: `(text, startIndex, responseSender)`
+listener's signature: `(text, startIndex, responseSender)`
     * `text <string>`  
     a message containing the header and the body transmitted by the sender
     * `startIndex <number>`  
@@ -129,31 +149,40 @@ listeners signature: `(text, startIndex, responseSender)`
     * `responseSender <ResponseSender>`
     object for sending binary or text response
 
-Sets the listener of event, that occurs when a text message is received, the sender of which is waiting for a response.
+Sets the listener of event, that occurs when a text message is received,
+the sender of which is waiting for a response.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### setUnrequestingBinaryMessageListener(listener)
 
 * `listener <function>`  
-listeners signature: `(bytes, startIndex)`
+listener's signature: `(bytes, startIndex)`
     * `bytes <ArrayBuffer>`  
-a message containing the header and the body transmitted from the sender
+    a message containing the header and the body transmitted from the sender
     * `startIndex <number>`  
-index of the first byte of the message body
+    index of the first byte of the message body
 
-Sets the listener of event, that occurs when a binary message is received, the sender of which is not waiting for a response.
+Sets the listener of event, that occurs when a binary message is received,
+the sender of which is not waiting for a response.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.  
 Example of usage: [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs)
 
 ### setUnrequestingTextMessageListener(listener)
 
 * `listener <function>`  
-listeners signature: `(text, startIndex)`
+listener's signature: `(text, startIndex)`
     * `text <string>`  
-a message containing the header and the body transmitted from the sender
+    a message containing the header and the body transmitted from the sender
     * `startIndex <number>`  
-the index of the first character in the `text` string, from which the message body begins
+    the index of the first character in the `text` string, from which the message body begins
 
-Sets the listener of event, that occurs when a text message is received, the sender of which is not waiting for a response.
+Sets the listener of event, that occurs when a text message is received,
+the sender of which is not waiting for a response.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.  
 Example of usage: [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs)
 
 ### startIndexOfBodyInBinaryResponse
@@ -174,9 +203,12 @@ Forcibly close the connection. ResponsiveWebSocketClient in browser does not imp
 
 ### Static class TimeoutToReceiveResponseException
 
-Exeption, that throwed when the response to the request did not  arrive during the `maxTimeMsToWaitResponse`.
+Exception, that throwed when the response to the request
+did not arrive during the max time for waiting response on request.
 
 ## Class ResponsiveWebSocketClient
+
+* extends `ResponsiveWebSocketConnection`
 
 ### new ResponsiveWebSocketClient()
 
@@ -200,7 +232,7 @@ The method must be called before the first call of the new ResponsiveWebSocketCl
 
 Method provides opportunity to use ResponsiveWebSocketClient in browser and node.js.  
 Example:  
-in node.js:  
+in node.js:
 ```js
 import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
 import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
@@ -248,14 +280,31 @@ Starts port listening.
 ### setConnectionListener(httpRequest, listener)
 
 * `listener <function>`  
-listeners signature: `function(connection)`
+listener's signature: `(connection)`
     * `connection <ResponsiveWebSocketServerConnection>` connection to the client
 
-The 'connection' event occurs when the WebSocket client connects to the server.
+The "connection" event occurs when the WebSocket client connects to the server.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketServer` class.
+`listener` can be `null` or `undefined`.
+
+### setUpgradeListener(listener)
+
+* `listener <function>`
+listener's signature: `(httpRequest, handshakeAction)`
+    * `httpRequest <HttpRequest>` request from uWebSockets.js
+    * `handshakeAction <HandshakeAction>`
+    an object that can accept or reject a request for creating a WebSocket connection
+
+The method sets the event handler that occurs when server receive request to create a WebSocket connection.
+By default, all connections are accepted.
+`this` link inside the handler points to the instance object `ResponsiveWebSocketServer'.
+`listener` can be `null` or `undefined`.
 
 ## Class ResponsiveWebSocketServerConnection
 
-Extends ResponsiveWebSocketConnection. Connection to the client.
+* extends `ResponsiveWebSocketConnection`
+
+Connection to the client.
 
 ### getRemoteAddress()
 
@@ -265,9 +314,64 @@ Returns the remote binary IP address.
 IPv4 is 4 byte long and can be converted to text by printing every byte as a digit between 0 and 255.
 IPv6 is 16 byte long and can be converted to text by printing every byte as a digit between 0 and 255 in HEX.
 
-### url `<string>`
+### sendFragmentsOfBinaryRequest(...fragments)
+
+* `...fragments <ArrayBuffer>` parts of request
+* Returns `<Promise<ResponseData>>`
+
+Sends a binary request, similar as `sendBinaryRequest'.
+The method sends data in fragments, without connecting parts into one body,
+avoiding memory allocation for the entire request.  
+Example of usage:
+```js
+const smallHeader = new Uint8Array([1, 2, 3, 4]).buffer;
+const bigBody = new Uint8Array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1, 2, 3, 4, 5, 6, 7, 8, 9]).buffer;
+const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, bigBody);
+```
+
+### sendFragmentsOfTextRequest(...fragments)
+
+* `...fragments <string>` parts of request
+* Returns `<Promise<ResponseData>>`
+
+Sends a text request, similar as `sendTextRequest'.
+The method sends data in fragments, without connecting parts into one body,
+avoiding memory allocation for the entire request.  
+Example of usage:
+```js
+const smallHeader = "abcd";
+const bigBody = "Lorem Ipsum. ".repeat(20);
+const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bigBody);
+```
+
+### sendFragmentsOfUnrequestingBinaryMessage(...fragments)
+
+* `...fragments <ArrayBuffer>` parts of message
+
+The method sends binary unrequesting message, similar as `sendUnrequestingBinaryMessage`.
+The method sends data in fragments, without connecting parts into one body,
+avoiding memory allocation for the entire message.
+
+### sendFragmentsOfUnrequestingTextMessage(...fragments)
+
+* `...fragments <string>` parts of message
+
+The method sends text unrequesting message, similar as `sendUnrequestingTextMessage`.
+The method sends data in fragments, without connecting parts into one body,
+avoiding memory allocation for the entire message.
+
+### url
+
+* `<string>`
 
 Address, to which WebSocket client connected.
+
+### userData
+
+* `<any>`
+
+Optional field, for information attached to the client connection object
+when calling the `acceptConnection(userData)` method of the 'HandshakeAction` instance.
 
 ## Class ResponseSender
 
@@ -283,6 +387,26 @@ The method for sending the response (sendBinaryResponse or sendTextResponse) is 
 ### sendTextResponse(text)
 
 * `text <string>` the response
+
+## Class ServerResponseSender
+
+* extends `ResponseSender`
+
+### sendFragmentsOfBinaryResponse(...fragments)
+
+* `...fragments <ArrayBuffer>` parts of response
+
+The method sends binary response, similar as `sendBinaryResponse`.
+The method sends data in fragments, without connecting the parts into one body,
+avoiding allocating memory for the entire response.
+
+### sendFragmentsOfTextyResponse(...fragments)
+
+* `...fragments <string>` части ответа
+
+The method sends text response, similar as `sendTextResponse`.
+The method sends data in fragments, without connecting the parts into one body,
+avoiding allocating memory for the entire response.
 
 ## Class ResponseData
 
@@ -300,3 +424,18 @@ Content type of the response. Value of `contentTypesOfMessages` enumeration,
 * `<ArrayBuffer>` or `<string>`
 
 The response received over the web socket containing the service header and body.
+
+## Class HandshakeAction
+
+Class that accepts or rejects requests to create a WebSocket connection.
+
+### acceptConnection([userData])
+
+* `userData <any>`
+data attached to the client connection object. Optional parameter.
+
+Accepts a request to create a WebSocket connection.
+
+### cancelConnection()
+
+Rejects the request to create a WebSocket connection.

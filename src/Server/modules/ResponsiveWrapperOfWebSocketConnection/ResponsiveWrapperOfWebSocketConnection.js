@@ -16,6 +16,8 @@ const {
   text: contentTypesOfMessages_text
 } = ResponsiveConnection.contentTypesOfMessages;
 
+const { _userData } = require("./../AcceptorOfRequestForUpgrade");
+
 const {
   binaryMessager: {
     extractTypeOfIncomingMessage: extractTypeOfIncomingBinaryMessage,
@@ -60,7 +62,7 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveConnectio
   }
 
   get userData() {
-    return this[_connection].userData;
+    return this[_connection][_userData];
   }
 
   setErrorListener(listnerOrNull) {}
