@@ -61,6 +61,10 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveConnectio
     this[_connection] = uWSConnectionToClient;
   }
 
+  getRemoteAddress() {
+    return this[_connection].getRemoteAddress();
+  }
+
   get userData() {
     return this[_connection][_userData];
   }
