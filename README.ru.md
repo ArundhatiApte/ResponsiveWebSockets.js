@@ -41,8 +41,8 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 // const ResponsiveWebSocketClient = require("ResponsiveWebSockets/Client");
 
 (async () => {
-  const server = new ResponsiveWebSocketServer(),
-        port = 8443;
+  const server = new ResponsiveWebSocketServer();
+  const port = 8443;
   await server.listen(port);
 
   ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
@@ -65,8 +65,8 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
       return;
     }
     if (body === "What is the answer on everything?") {
-      const response = new ArrayBuffer(1),
-            dataView = new DataView(response);
+      const response = new ArrayBuffer(1);
+      const dataView = new DataView(response);
       dataView.setUint8(0, 42);
       responseSender.sendBinaryResponse(response);
     }
@@ -82,7 +82,7 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   }
 
   {
-     const {
+    const {
       message,
       contentType
     } = await client.sendTextRequest("What is the answer on everything?");
@@ -91,11 +91,15 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
     console.log("The answer on everything is ", number);
   }
 
-  client.setUnrequestingTextMessageListener((message, startIndex) => {
-    console.log(message.slice(startIndex));
-  });
+  {
+    client.setUnrequestingTextMessageListener((message, startIndex) => {
+      console.log("message: ", message.slice(startIndex, 40), " ...");
+    });
 
-  connectionToClient.sendUnrequestingTextMessage("some event");
+    const smallHeader = "abcd";
+    const bigBody = "Avoid allocation of memory. 0x0123".repeat(20);
+    connectionToClient.sendFragmentsOfUnrequestingTextMessage(smallHeader, bigBody);
+  }
 })();
 ```
 #### Использование в браузере
