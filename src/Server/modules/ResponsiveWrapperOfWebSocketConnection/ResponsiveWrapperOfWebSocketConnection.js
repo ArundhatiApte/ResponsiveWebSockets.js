@@ -79,12 +79,6 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveConnectio
     return this[_connection].close();
   }
 
-  _emitOnClose(code, reason) {
-    if (this[_onClose]) {
-      this[_onClose]({code, reason});
-    }
-  }
-
   sendBinaryRequest = sendBinaryRequest;
   sendTextRequest = sendTextRequest;
 
@@ -109,14 +103,14 @@ ResponsiveWrapperOfWebSocketConnection._acceptBinaryMessage = function(responsiv
     extractTypeOfIncomingBinaryMessage,
     extractIdOfBinaryMessage,
     contentTypesOfMessages_binary,
-    
+
     _onUnrequestingBinaryMessage,
     startIndexOfBodyInUnrequestingBinaryMessage,
-    
+
     _onBinaryRequest,
     startIndexOfBodyInBinaryRequest,
     SenderOfResponse,
-  
+
     responsiveWrapper,
     message
   );
@@ -127,15 +121,21 @@ ResponsiveWrapperOfWebSocketConnection._acceptTextMessage = function(responsiveW
     extractTypeOfIncomingTextMessage,
     extractIdOfTextMessage,
     contentTypesOfMessages_text,
-    
+
     _onUnrequestingTextMessage,
     startIndexOfBodyInUnrequestingTextMessage,
-    
+
     _onTextRequest,
     startIndexOfBodyInTextRequest,
     SenderOfResponse,
-  
+
     responsiveWrapper,
     message
   );
+};
+
+ResponsiveWrapperOfWebSocketConnection._emitOnClose = function(responsiveWrapper, code, reason) {
+  if (responsiveWrapper[_onClose]) {
+    responsiveWrapper[_onClose]({code, reason});
+  }
 };

@@ -1,9 +1,9 @@
 "use strict";
 
 const {
-  checkSendingManyBinaryMessagesAtOnce,
-  checkSendingManyTextMessagesAtOnce
-} = require("./../checks/checkSendingManyMessagesAtOnce");
+  checkSendingManyBinaryRequestsAtOnce,
+  checkSendingManyTextRequestsAtOnce
+} = require("./../checks/checkSendingManyRequestsAtOnce");
 
 const {
   checkSendingAwaitingResponseBinaryMessages,
@@ -44,10 +44,10 @@ const add2SidesTests = function(tester, createFnToTestFromServerToClient, create
     [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
     [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
     [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
-    
-    [checkSendingManyBinaryMessagesAtOnce, "send many binary messages at once"],
-    [checkSendingManyTextMessagesAtOnce, "send many text messages at once"],
-    
+
+    [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
+    [checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
+
     [checkTimeouts, "timeouts"],
     [
       checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,

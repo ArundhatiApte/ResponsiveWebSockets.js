@@ -33,7 +33,7 @@ const ResponsiveWebSocketServer = class {
       });
     });
   }
-  
+
   close() {
     return uWebSockets.us_listen_socket_close(this[_socketOfServer]);
   }
@@ -58,12 +58,12 @@ const _createServer = function(responsiveWebSocketServer, options) {
 const _createServerWithEventListeners = function(responsiveWebSocketServer, options) {
   const server = options.server || new uWebSockets.App({}),
         url = options.url || "/*";
-        
+
   return server.ws(url, {
     compression: options.useCompression || defaultIsCompressionUsed,
     maxPayloadLength: options.maxPayloadLength || defaultMaxPayloadLength,
     idleTimeout: options.idleTimeout || defaultIdleTimeout,
-    
+
     open: _emitConnectionEvent.bind(responsiveWebSocketServer),
     close: _emitClientsCloseEvent,
     message: _emitClientsMessageEvent,
@@ -76,7 +76,7 @@ const _createDefaultServerWithEventListeners = function(responsiveWebSocketServe
     compression: defaultIsCompressionUsed,
     maxPayloadLength: defaultMaxPayloadLength,
     idleTimeout: defaultIdleTimeout,
-    
+
     open: _emitConnectionEvent.bind(responsiveWebSocketServer),
     close: _emitClientsCloseEvent,
     message: _emitClientsMessageEvent,
@@ -91,7 +91,7 @@ const _emitConnectionEvent = function(connectionToClient) {
 };
 
 const _emitClientsMessageEvent = function(connectionToClient, message, isBinary) {
-  if (isBinary) { 
+  if (isBinary) {
     _emitClientsBinaryMessageEvent(connectionToClient, message);
   } else {
     _emitClientsTextMessageEvent(connectionToClient, message);
@@ -100,7 +100,8 @@ const _emitClientsMessageEvent = function(connectionToClient, message, isBinary)
 
 const {
   _acceptBinaryMessage,
-  _acceptTextMessage 
+  _acceptTextMessage,
+  _emitOnClose
 } = ResponsiveWrapperOfWebSocketConnection;
 
 const _emitClientsBinaryMessageEvent = function(connectionToClient, message) {
@@ -119,9 +120,9 @@ const _emitClientsCloseEvent = function(connectionToClient, code, reason) {
   let responsiveWrapper = connectionToClient[_wrapper];
   if (reason) {
     reason = _decodeBytesToString(reason);
-    responsiveWrapper._emitOnClose(code, reason);
+    _emitOnClose(responsiveWrapper, code, reason);
   } else {
-    responsiveWrapper._emitOnClose(code);
+    _emitOnClose(responsiveWrapper, code);
   }
 };
 
