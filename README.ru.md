@@ -21,9 +21,9 @@ console.log("ответ: ", message.slice(startIndex));
 ```
 ### Установка
 
-`npm install github:ArundhatiApte/ResponsiveWebSockets-JS`
+`npm install github:ArundhatiApte/ResponsiveWebSockets.js`  
 или  
-`yarn add github:ArundhatiApte/ResponsiveWebSockets-JS`  
+`yarn add github:ArundhatiApte/ResponsiveWebSockets.js`
 
 ### Использование
 
