@@ -28,8 +28,15 @@ const {
   }
 } = require("./../checks/checkSendingFragmentsOfMessages");
 
-const fromServerToClientPostfix = " from server to client";
-const fromClientToServerPostfix = " from client to server";
+const {
+  checkSendingMalformedBinaryMessagesFromServerToClient,
+  checkSendingMalformedTextMessagesFromServerToClient,
+  checkSendingMalformedBinaryMessagesFromClientToServer,
+  checkSendingMalformedTextMessagesFromClientToServer
+} = require("./../checks/checkSendingMalformedMessages");
+
+const fromServerToClientPostfix = " by server to client";
+const fromClientToServerPostfix = " by client to server";
 
 const addCheckingSendingMessagesTests = function(
   tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer
@@ -45,8 +52,8 @@ const add2SidesTests = function(tester, createFnToTestFromServerToClient, create
     [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
     [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
 
-    [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
-    [checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
+    //[checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
+    //[checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
 
     [checkTimeouts, "timeouts"],
     [
@@ -61,6 +68,7 @@ const add2SidesTests = function(tester, createFnToTestFromServerToClient, create
     addTestFormOneSideToAnotherToTester(
       tester, check, nameOfTest, createFnToTestFromClientToServer, fromClientToServerPostfix);
   }
+  addCheckingSendingBrokenMessagesTests(tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
 };
 
 const addTestFormOneSideToAnotherToTester = function(
@@ -70,6 +78,25 @@ const addTestFormOneSideToAnotherToTester = function(
         name = nameOfTest + postfixOfTestName;
   tester.addTest(test, {name});
 };
+
+const addCheckingSendingBrokenMessagesTests = function(
+  tester,
+  createFnToTestFromServerToClient,
+  createFnToTestFromClientToServer
+) {
+  tester.addTest(createFnToTestFromServerToClient(checkSendingMalformedBinaryMessagesFromServerToClient), {
+    name: "send malformed binary messages by server to client"
+  });
+  tester.addTest(createFnToTestFromServerToClient(checkSendingMalformedTextMessagesFromServerToClient), {
+    name: "send malformed text messages by server to client"
+  });
+  tester.addTest(createFnToTestFromClientToServer(checkSendingMalformedBinaryMessagesFromClientToServer), {
+    name: "send malformed binary messages by client to server"
+  });
+  tester.addTest(createFnToTestFromClientToServer(checkSendingMalformedTextMessagesFromClientToServer), {
+    name: "send malformed text messages by client to server"
+  });
+}
 
 const addTestsFromServer = function(tester, createFnToTestFromServerToClient) {
   const checkToNameOfTest = [

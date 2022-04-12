@@ -24,23 +24,35 @@ const ResponsiveConnection = class {
 
   static contentTypesOfMessages = contentTypesOfMessages;
   static TimeoutToReceiveResponseException = TimeoutToReceiveResponseException;
-  
+
+  asWebSocketConnection() {
+    return this[_connection];
+  }
+
   get startIndexOfBodyInBinaryResponse() {
     return startIndexOfBodyInBinaryResponse;
   }
-  
+
   get startIndexOfBodyInTextResponse() {
     return startIndexOfBodyInTextResponse;
   }
-  
+
   setMaxTimeMsToWaitResponse(ms) {
     this[_maxTimeMsToWaitResponse] = ms;
   }
-  
+
   get url() {
     return this[_connection].url;
   }
-  
+
+  setMalformedBinaryMessageListener(listnerOrNull) {
+    this[_onBrokenBinaryMessage] = listnerOrNull;
+  }
+
+  setMalformedTextMessageListener(listnerOrNull) {
+    this[_onBrokenTextMessage] = listnerOrNull;
+  }
+
   setBinaryRequestListener(listnerOrNull) {
     this[_onBinaryRequest] = listnerOrNull;
   }
@@ -62,16 +74,20 @@ const ResponsiveConnection = class {
   }
 };
 
-const _connection = "_",
-      _generatorOfRequestId = "_g",
-      _idOfRequestToPromise = "_m",
-      _maxTimeMsToWaitResponse = "_t",
+const _connection = Symbol(),
+      _generatorOfRequestId = Symbol(),
+      _idOfRequestToPromise = Symbol(),
+      _maxTimeMsToWaitResponse = Symbol(),
 
-      _onBinaryRequest = "_1",
-      _onTextRequest = "_2",
-      _onUnrequestingBinaryMessage = "_3",
-      _onUnrequestingTextMessage = "_4",
-      _onClose = "_5";
+      _onBrokenBinaryMessage = Symbol(),
+      _onBrokenTextMessage = Symbol(),
+
+      _onBinaryRequest = Symbol(),
+      _onTextRequest = Symbol(),
+      _onUnrequestingBinaryMessage = Symbol(),
+      _onUnrequestingTextMessage = Symbol(),
+
+      _onClose = Symbol();
 
 const defaultMaxTimeMsToWaitResponse = 2000;
 
@@ -80,7 +96,10 @@ ResponsiveConnection._namesOfPrivateProperties = {
   _generatorOfRequestId,
   _idOfRequestToPromise,
   _maxTimeMsToWaitResponse,
-  
+
+  _onBrokenBinaryMessage,
+  _onBrokenTextMessage,
+
   _onBinaryRequest,
   _onTextRequest,
   _onUnrequestingBinaryMessage,

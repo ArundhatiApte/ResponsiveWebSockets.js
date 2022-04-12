@@ -39,11 +39,11 @@ const ResponsiveWebSocketServer = class {
   }
 };
 
-const _socketOfServer = "_c",
-      _server = "_s",
-      _wrapper = "_",
-      _onConnection = "_1",
-      _onUpgrade = "_2";
+const _socketOfServer = Symbol(),
+      _server = Symbol(),
+      _wrapper = Symbol(),
+      _onConnection = Symbol(),
+      _onUpgrade = Symbol();
 
 const defaultIsCompressionUsed = false,
       defaultMaxPayloadLength =  10 * 1024 * 1024,

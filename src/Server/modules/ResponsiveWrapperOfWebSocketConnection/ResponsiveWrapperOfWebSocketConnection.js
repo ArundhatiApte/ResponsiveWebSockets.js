@@ -4,8 +4,12 @@ const ResponsiveConnection = require("./../../../common/ResponsiveConnection/Res
 
 const {
   _connection,
+  _onBrokenBinaryMessage,
+  _onBrokenTextMessage,
+
   _onBinaryRequest,
   _onTextRequest,
+
   _onUnrequestingBinaryMessage,
   _onUnrequestingTextMessage,
   _onClose
@@ -111,6 +115,8 @@ ResponsiveWrapperOfWebSocketConnection._acceptBinaryMessage = function(responsiv
     startIndexOfBodyInBinaryRequest,
     SenderOfResponse,
 
+    _onBrokenBinaryMessage,
+
     responsiveWrapper,
     message
   );
@@ -128,6 +134,8 @@ ResponsiveWrapperOfWebSocketConnection._acceptTextMessage = function(responsiveW
     _onTextRequest,
     startIndexOfBodyInTextRequest,
     SenderOfResponse,
+
+    _onBrokenTextMessage,
 
     responsiveWrapper,
     message

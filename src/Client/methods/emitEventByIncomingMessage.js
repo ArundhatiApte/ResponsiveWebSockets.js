@@ -28,8 +28,13 @@ const SenderOfResponse = require("./../modules/SenderOfResponse");
 const {
   _connection,
   _idOfRequestToPromise,
+
+  _onBrokenBinaryMessage,
+  _onBrokenTextMessage,
+
   _onBinaryRequest,
   _onTextRequest,
+
   _onUnrequestingBinaryMessage,
   _onUnrequestingTextMessage,
 } = require("./../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
@@ -43,14 +48,14 @@ const _emitOnFirstMessage = async function(event) {
   if (typeof data === "string") {
     return _emitEventByIncomingTextMessage(this, data);
   }
-  
+
   if (data instanceof ArrayBuffer) {
     this[_connection].onmessage = _emitOnMessageWithArrayBuffer.bind(this);
   } else {
     data = await data.arrayBuffer();
     this[_connection].onmessage = _emitOnMessageWithBlob.bind(this);
   }
-  
+
   _emitEventByIncomingBinaryMessage(this, data);
 };
 
@@ -76,14 +81,16 @@ const _emitEventByIncomingBinaryMessage = function(responsiveConnection, message
     extractTypeOfIncomingBinaryMessage,
     extractIdOfBinaryMessage,
     contentTypesOfMessages_binary,
-    
+
     _onUnrequestingBinaryMessage,
     startIndexOfBodyInUnrequestingBinaryMessage,
-    
+
     _onBinaryRequest,
     startIndexOfBodyInBinaryRequest,
     SenderOfResponse,
-  
+
+    _onBrokenBinaryMessage,
+
     responsiveConnection,
     message
   );
@@ -94,14 +101,16 @@ const _emitEventByIncomingTextMessage = function(responsiveConnection, message) 
     extractTypeOfIncomingTextMessage,
     extractIdOfTextMessage,
     contentTypesOfMessages_text,
-    
+
     _onUnrequestingTextMessage,
     startIndexOfBodyInUnrequestingTextMessage,
-    
+
     _onTextRequest,
     startIndexOfBodyInTextRequest,
     SenderOfResponse,
-  
+
+    _onBrokenTextMessage,
+
     responsiveConnection,
     message
   );

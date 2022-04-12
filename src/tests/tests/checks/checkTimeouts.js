@@ -13,11 +13,9 @@ const checkTimeouts = async function(sender, reciever) {
       senderOfResponse.sendBinaryResponse(response);
     }, msToWait + 200);
   });
-  
-  let hasError;
+
   try {
     const response = await sender.sendBinaryRequest(message, msToWait);
-    hasError = false;
   } catch(error) {
     clearTimeout(timeout);
     if (error instanceof TimeoutToReceiveResponseException) {
@@ -25,9 +23,7 @@ const checkTimeouts = async function(sender, reciever) {
     }
     throw error;
   }
-  if (hasError === false) {
-    throw new Error("Ответ пришел.");
-  }
+  throw new Error("Ответ пришел.");
 };
 
-module.exports = checkTimeouts; 
+module.exports = checkTimeouts;
