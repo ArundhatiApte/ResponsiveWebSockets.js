@@ -52,8 +52,8 @@ const add2SidesTests = function(tester, createFnToTestFromServerToClient, create
     [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
     [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
 
-    //[checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
-    //[checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
+    [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
+    [checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
 
     [checkTimeouts, "timeouts"],
     [
