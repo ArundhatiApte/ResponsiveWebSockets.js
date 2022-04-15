@@ -25,7 +25,7 @@ const ResponsiveConnection = class {
   static contentTypesOfMessages = contentTypesOfMessages;
   static TimeoutToReceiveResponseException = TimeoutToReceiveResponseException;
 
-  asWebSocketConnection() {
+  _asWebSocketConnection() {
     return this[_connection];
   }
 
@@ -45,20 +45,20 @@ const ResponsiveConnection = class {
     return this[_connection].url;
   }
 
-  setMalformedBinaryMessageListener(listnerOrNull) {
-    this[_onBrokenBinaryMessage] = listnerOrNull;
-  }
-
-  setMalformedTextMessageListener(listnerOrNull) {
-    this[_onBrokenTextMessage] = listnerOrNull;
-  }
-
   setBinaryRequestListener(listnerOrNull) {
     this[_onBinaryRequest] = listnerOrNull;
   }
 
   setTextRequestListener(listnerOrNull) {
     this[_onTextRequest] = listnerOrNull;
+  }
+
+  setMalformedBinaryMessageListener(listnerOrNull) {
+    this[_onMalformedBinaryMessage] = listnerOrNull;
+  }
+
+  setMalformedTextMessageListener(listnerOrNull) {
+    this[_onMalformedTextMessage] = listnerOrNull;
   }
 
   setUnrequestingBinaryMessageListener(listnerOrNull) {
@@ -79,11 +79,12 @@ const _connection = Symbol(),
       _idOfRequestToPromise = Symbol(),
       _maxTimeMsToWaitResponse = Symbol(),
 
-      _onBrokenBinaryMessage = Symbol(),
-      _onBrokenTextMessage = Symbol(),
-
       _onBinaryRequest = Symbol(),
       _onTextRequest = Symbol(),
+
+      _onMalformedBinaryMessage = Symbol(),
+      _onMalformedTextMessage = Symbol(),
+
       _onUnrequestingBinaryMessage = Symbol(),
       _onUnrequestingTextMessage = Symbol(),
 
@@ -97,11 +98,12 @@ ResponsiveConnection._namesOfPrivateProperties = {
   _idOfRequestToPromise,
   _maxTimeMsToWaitResponse,
 
-  _onBrokenBinaryMessage,
-  _onBrokenTextMessage,
-
   _onBinaryRequest,
   _onTextRequest,
+
+  _onMalformedBinaryMessage,
+  _onMalformedTextMessage,
+
   _onUnrequestingBinaryMessage,
   _onUnrequestingTextMessage,
   _onClose

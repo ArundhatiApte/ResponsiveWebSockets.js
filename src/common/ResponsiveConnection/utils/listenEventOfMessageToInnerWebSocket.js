@@ -31,7 +31,7 @@ const listenEventOfMessageToInnerWebSocket = function(
   startIndexOfBodyInRequest,
   SenderOfResponse,
 
-  nameOfBrokenMessageListener,
+  nameOfMalformedMessageListener,
 
   responsiveWebSocket,
   incomingMessage
@@ -40,7 +40,7 @@ const listenEventOfMessageToInnerWebSocket = function(
   try {
     typeOfMessage = extractTypeOfIncomingMessage(incomingMessage);
   } catch(error) {
-    _emitBrokenMessageEvent(responsiveWebSocket, nameOfBrokenMessageListener, incomingMessage);
+    _emitMalformedMessageEvent(responsiveWebSocket, nameOfMalformedMessageListener, incomingMessage);
     return;
   }
 
@@ -48,7 +48,7 @@ const listenEventOfMessageToInnerWebSocket = function(
     return _resolveAwaitingResponseMessagePromise(
       extractIdOfMessage,
       typeOfMessageContent,
-      nameOfBrokenMessageListener,
+      nameOfMalformedMessageListener,
       responsiveWebSocket,
       incomingMessage
     );
@@ -67,7 +67,7 @@ const listenEventOfMessageToInnerWebSocket = function(
       nameOfRequestEventListener,
       SenderOfResponse,
       startIndexOfBodyInRequest,
-      nameOfBrokenMessageListener,
+      nameOfMalformedMessageListener,
       responsiveWebSocket,
       incomingMessage
     );
@@ -77,7 +77,7 @@ const listenEventOfMessageToInnerWebSocket = function(
 const _resolveAwaitingResponseMessagePromise = function(
   extractIdOfMessage,
   typeOfMessageContent,
-  nameOfBrokenMessageListener,
+  nameOfMalformedMessageListener,
   responsiveWebSocket,
   rawPayload
 ) {
@@ -86,7 +86,7 @@ const _resolveAwaitingResponseMessagePromise = function(
   try {
     numOfMessage = extractIdOfMessage(rawPayload);
   } catch(error) {
-    _emitBrokenMessageEvent(responsiveWebSocket, nameOfBrokenMessageListener, rawPayload);
+    _emitMalformedMessageEvent(responsiveWebSocket, nameOfMalformedMessageListener, rawPayload);
     return;
   }
   const awaitingPromise = table.get(numOfMessage);
@@ -119,7 +119,7 @@ const _emitAwaitingResponseMessageEvent = function(
   nameOfRequestEventListener,
   SenderOfResponse,
   startIndexOfBodyInRequest,
-  nameOfBrokenMessageListener,
+  nameOfMalformedMessageListener,
   responsiveWebSocket,
   rawPayload
 ) {
@@ -128,7 +128,7 @@ const _emitAwaitingResponseMessageEvent = function(
     try {
       numOfMessage = extractIdOfMessage(rawPayload);
     } catch(error) {
-      _emitBrokenMessageEvent(responsiveWebSocket, nameOfBrokenMessageListener, rawPayload);
+      _emitMalformedMessageEvent(responsiveWebSocket, nameOfMalformedMessageListener, rawPayload);
       return;
     }
 
@@ -141,9 +141,9 @@ const _emitAwaitingResponseMessageEvent = function(
   }
 };
 
-const _emitBrokenMessageEvent = function(responsiveWebSocket, nameOfBrokenMessageListener, incomingMessage) {
-  if (responsiveWebSocket[nameOfBrokenMessageListener]) {
-    responsiveWebSocket[nameOfBrokenMessageListener](incomingMessage);
+const _emitMalformedMessageEvent = function(responsiveWebSocket, nameOfMalformedMessageListener, incomingMessage) {
+  if (responsiveWebSocket[nameOfMalformedMessageListener]) {
+    responsiveWebSocket[nameOfMalformedMessageListener](incomingMessage);
   }
 };
 

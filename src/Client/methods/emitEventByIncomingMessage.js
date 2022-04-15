@@ -29,8 +29,8 @@ const {
   _connection,
   _idOfRequestToPromise,
 
-  _onBrokenBinaryMessage,
-  _onBrokenTextMessage,
+  _onMalformedBinaryMessage,
+  _onMalformedTextMessage,
 
   _onBinaryRequest,
   _onTextRequest,
@@ -89,7 +89,7 @@ const _emitEventByIncomingBinaryMessage = function(responsiveConnection, message
     startIndexOfBodyInBinaryRequest,
     SenderOfResponse,
 
-    _onBrokenBinaryMessage,
+    _onMalformedBinaryMessage,
 
     responsiveConnection,
     message
@@ -109,7 +109,7 @@ const _emitEventByIncomingTextMessage = function(responsiveConnection, message) 
     startIndexOfBodyInTextRequest,
     SenderOfResponse,
 
-    _onBrokenTextMessage,
+    _onMalformedTextMessage,
 
     responsiveConnection,
     message

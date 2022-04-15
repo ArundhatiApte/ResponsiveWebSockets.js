@@ -28,7 +28,7 @@ const _checkSendingMalformedMessages = function(
     const maxTimeMsForSendingAllMessages = 290;
     const timeoutForSendingMessages = _createTimeoutForSendingMessages(reject, maxTimeMsForSendingAllMessages);
 
-    _sendMalformedMessages(sender.asWebSocketConnection(), brokenMessages, sendMessage);
+    _sendMalformedMessages(sender._asWebSocketConnection(), brokenMessages, sendMessage);
   });
 };
 
