@@ -23,11 +23,10 @@ console.log("response body: ", message.slice(startIndex));
 
 ### Installation
 
+Download and use package from releases.  
+Or install by package manager:  
 `npm install github:ArundhatiApte/ResponsiveWebSockets.js`  
-or  
 `yarn add github:ArundhatiApte/ResponsiveWebSockets.js`
-
-Or download and use package from releases.
 
 ### Usage
 

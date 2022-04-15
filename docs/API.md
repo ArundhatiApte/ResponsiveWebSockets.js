@@ -8,7 +8,10 @@
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
+    * setTextRequestListener(listener)
     * setCloseListener(listener)
+    * setMalformedBinaryMessageListener(listener)
+    * setMalformedTextMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
@@ -129,6 +132,76 @@ listener's signature: `(event)`
 Sets the WebSocket connection close event handler.
 `this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
 `listener` can be `null` or `undefined`.
+
+### setMalformedBinaryMessageListener(listener)
+
+* `listener <function>`  
+listener's signature: `(message)`
+    * `message <ArrayBuffer>`
+
+Sets the listener of event, that occurs when a malformed binary message (message without valid header) is received.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.
+
+Example:  
+in node.js:
+```js
+serverConnection.setMalformedBinaryMessageListener(function() {
+  this.terminate();
+});
+```
+in browser:
+```js
+const webSocketClient = new WebSocket("wss://example.com");
+
+webSocketClient.onopen = function() {
+  webSocketClient.send(new Uint8Array([0, 1, 2, 3, 4]).buffer);
+};
+```
+
+Notes:
+
+* if the first byte of the message is 1 (as an unsigned integer) and the message is longer than two bytes,
+then the message is treated as a request
+* if the first byte of the message is 2 (as an unsigned integer) and the message is longer than two bytes,
+then the message is treated as a response
+* if the first byte of the message is 3 (as an unsigned integer),
+then the message is treated as a unrequesting message
+
+### setMalformedTextMessageListener(listener)
+
+* `listener <function>`  
+listener's signature: `(message)`
+    * `message <string>`
+
+Sets the listener of event, that occurs when a malformed text message (message without valid header) is received.
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
+`listener` can be `null` or `undefined`.
+
+Example:  
+in node.js:
+```js
+serverConnection.setMalformedBinaryMessageListener(function() {
+  this.terminate();
+});
+```
+in browser:
+```js
+const webSocketClient = new WebSocket("wss://example.com");
+
+webSocketClient.onopen = function() {
+  webSocketClient.send("abcdefg");
+};
+```
+
+Notes:
+
+* if the first character of the message is '\u0001' and the message is longer than two characters,
+then the message is treated as a request
+* if the first character of the message is '\u0002' and the message is longer than two characters,
+then the message is treated as a response
+* if the first character of the message is '\u0003',
+then the message is treated as a unrequesting message
 
 ### setMaxTimeMsToWaitResponse(timeMs)
 
@@ -348,7 +421,7 @@ const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bi
 
 * `...fragments <ArrayBuffer>` parts of message
 
-The method sends binary unrequesting message, similar as `sendUnrequestingBinaryMessage`.
+Sends binary unrequesting message, similar as `sendUnrequestingBinaryMessage`.
 The method sends data in fragments, without connecting parts into one body,
 avoiding memory allocation for the entire message.
 
@@ -356,7 +429,7 @@ avoiding memory allocation for the entire message.
 
 * `...fragments <string>` parts of message
 
-The method sends text unrequesting message, similar as `sendUnrequestingTextMessage`.
+Sends text unrequesting message, similar as `sendUnrequestingTextMessage`.
 The method sends data in fragments, without connecting parts into one body,
 avoiding memory allocation for the entire message.
 
@@ -396,7 +469,7 @@ The method for sending the response (sendBinaryResponse or sendTextResponse) is 
 
 * `...fragments <ArrayBuffer>` parts of response
 
-The method sends binary response, similar as `sendBinaryResponse`.
+Sends binary response, similar as `sendBinaryResponse`.
 The method sends data in fragments, without connecting the parts into one body,
 avoiding allocating memory for the entire response.
 
@@ -404,7 +477,7 @@ avoiding allocating memory for the entire response.
 
 * `...fragments <string>` части ответа
 
-The method sends text response, similar as `sendTextResponse`.
+Sends text response, similar as `sendTextResponse`.
 The method sends data in fragments, without connecting the parts into one body,
 avoiding allocating memory for the entire response.
 

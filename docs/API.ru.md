@@ -8,7 +8,10 @@
     * sendUnrequestingBinaryMessage(bytes)
     * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
+    * setTextRequestListener(listener)
     * setCloseListener(listener)
+    * setMalformedBinaryMessageListener(listener)
+    * setMalformedTextMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
     * setUnrequestingTextMessageListener(listener)
@@ -70,7 +73,7 @@
 опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
 * Возвращает `<Promise<ResponseData>>`
  
-Отправляет бинарное сообщение, ожидающее ответ.
+Отправляет двоичное сообщение, ожидающее ответ.
 Получатель имеет возможность отправить ответ,
 установив обработчик события binaryRequest методом `setBinaryRequestListener`.
 Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд,
@@ -95,7 +98,7 @@ Promise завершится исключнием TimeoutToReceiveResponseExcept
 
 * `bytes <ArrayBuffer>`
 
-Отправляет бинарное сообщение без ожидания ответа.
+Отправляет двоичное сообщение без ожидания ответа.
 При поступлении сообщения получателю, генерируется событие unrequestingBinaryMessage.
  
 ### sendUnrequestingTextMessage(text)
@@ -116,33 +119,11 @@ Promise завершится исключнием TimeoutToReceiveResponseExcept
     * `responseSender <ResponseSender>`  
     объект для отправки бинарного или текстового ответа  
 
-Устанавливает обработчик события, возникающего при бинарного получении сообщения,
+Устанавливает обработчик события, возникающего при двоичного получении сообщения,
 отправитель которого ожидает ответ.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
 `listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
-
-### setCloseListener(listener)
-
-* `listener <function>`  
-сигнатура обработчика: `(event)`, где
-    * `event <Object>`
-        * `code <number>`
-        * `reason <string>`
-        * `wasClean <bool>`
-
-Устанавливает обработчик закрытия WebSocket соединения.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.
-
-### setMaxTimeMsToWaitResponse(timeMs)
-
-* `timeMs <number>`
-
-Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений
-с помощью методов sendBinaryRequest и sendTextRequest.
-Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
-По умолчанию 2000.
 
 ### setTextRequestListener(listener)
 
@@ -160,6 +141,98 @@ Promise завершится исключнием TimeoutToReceiveResponseExcept
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
 `listener` может быть `null` или `undefined`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs))
+
+### setCloseListener(listener)
+
+* `listener <function>`  
+сигнатура обработчика: `(event)`, где
+    * `event <Object>`
+        * `code <number>`
+        * `reason <string>`
+        * `wasClean <bool>`
+
+Устанавливает обработчик закрытия WebSocket соединения.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.
+
+### setMalformedBinaryMessageListener(listener)
+
+* `listener <function>`  
+сигнатура обработчика: `(message)`
+    * `message <ArrayBuffer>`
+
+Устанавливает обработчик события, возникающего при получении двоичного сообщения без верного заголовка.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.
+
+Пример:  
+в node.js:
+```js
+serverConnection.setMalformedBinaryMessageListener(function() {
+  this.terminate();
+});
+```
+в браузере:
+```js
+const webSocketClient = new WebSocket("wss://example.com");
+
+webSocketClient.onopen = function() {
+  webSocketClient.send(new Uint8Array([0, 1, 2, 3, 4]).buffer);
+};
+```
+
+Заметки:
+
+* если первый байт сообщения равен 1 (как беззнаковое целое) и сообщение длиннее двух байт,
+то сообщение расценивается как запрос
+* если первый байт сообщения равен 2 (как беззнаковое целое) и сообщение длиннее двух байт,
+то сообщение расценивается как ответ
+* если первый байт сообщения равен 3 (как беззнаковое целое),
+то сообщение расценивается как сообщение без ожидания ответа
+
+### setMalformedTextMessageListener(listener)
+
+* `listener <function>`  
+сигнатура обработчика: `(message)`
+    * `message <string>`
+
+Устанавливает обработчик события, возникающего при получении текстового сообщения без верного заголовка.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть `null` или `undefined`.
+
+Пример:  
+в node.js:
+```js
+serverConnection.setMalformedTextMessageListener(function() {
+  this.terminate();
+});
+```
+в браузере:
+```js
+const webSocketClient = new WebSocket("wss://example.com");
+
+webSocketClient.onopen = function() {
+  webSocketClient.send("abcdefg");
+};
+```
+
+Заметки:
+
+* если первый символ сообщения равен '\u0001' и сообщение длиннее двух символов,
+то сообщение расценивается как запрос
+* если первый символ сообщения равен '\u0002' и сообщение длиннее двух символов,
+то сообщение расценивается как ответ
+* если первый символ сообщения равен '\u0003',
+то сообщение расценивается как сообщение без ожидания ответа
+
+### setMaxTimeMsToWaitResponse(timeMs)
+
+* `timeMs <number>`
+
+Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений
+с помощью методов sendBinaryRequest и sendTextRequest.
+Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
+По умолчанию 2000.
 
 ### setUnrequestingBinaryMessageListener(listener)
 

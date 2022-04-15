@@ -21,8 +21,9 @@ console.log("ответ: ", message.slice(startIndex));
 ```
 ### Установка
 
+Используйте пакет со страницы выпусков.  
+Или установите менеджером пакетов:  
 `npm install github:ArundhatiApte/ResponsiveWebSockets.js`  
-или  
 `yarn add github:ArundhatiApte/ResponsiveWebSockets.js`
 
 ### Использование
