@@ -22,6 +22,10 @@ const {
     checkSendingFragmentsOfBinaryRequest,
     checkSendingFragmentsOfTextRequest
   },
+  checkSendingFragmentsOfResponse: {
+    checkSendingFragmentsOfBinaryResponse,
+    checkSendingFragmentsOfTextResponse
+  },
   checkSendingFragmentsOfUnrequestingMessage: {
     checkSendingFragmentsOfUnrequestingBinaryMessage,
     checkSendingFragmentsOfUnrequestingTextMessage
@@ -43,6 +47,7 @@ const addCheckingSendingMessagesTests = function(
 ) {
   add2SidesTests(tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
   addTestsFromServer(tester, createFnToTestFromServerToClient);
+  addTestsFromClient(tester, createFnToTestFromClientToServer);
 };
 
 const add2SidesTests = function(tester, createFnToTestFromServerToClient, createFnToTestFromClientToServer) {
@@ -114,6 +119,16 @@ const addTestsFromServer = function(tester, createFnToTestFromServerToClient) {
       createFnToTestFromServerToClient,
       fromServerToClientPostfix
     );
+  }
+};
+
+const addTestsFromClient = function(tester, createFnToTestFromClientToServer) {
+  const checkToNameOfTest = [
+    [checkSendingFragmentsOfBinaryResponse, "send fragments of binary response by server to client"],
+    [checkSendingFragmentsOfTextResponse, "send fragments of text response by server to client"]
+  ];
+  for (const [check, name] of checkToNameOfTest) {
+    tester.addTest(createFnToTestFromClientToServer(check), {name});
   }
 };
 

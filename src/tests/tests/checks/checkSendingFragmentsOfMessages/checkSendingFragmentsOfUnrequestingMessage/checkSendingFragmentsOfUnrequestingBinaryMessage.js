@@ -4,7 +4,7 @@ const createByteArray = require("./../utils/createByteArray");
 const areByteArraysEqual = require("./../utils/areByteArraysEqual/areByteArraysEqual");
 
 const createFnToCheckSendingFragmentsOfUnrequestingMessage = require(
-  "./createFnToCheckSendingFragmentsOfUnrequestingMessage"
+  "./_createFnToCheckSendingFragmentsOfUnrequestingMessage"
 );
 
 const fragmentsOfMessage = [

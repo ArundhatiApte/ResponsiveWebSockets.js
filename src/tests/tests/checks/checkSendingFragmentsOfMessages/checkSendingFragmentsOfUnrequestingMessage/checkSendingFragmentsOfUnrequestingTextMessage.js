@@ -3,7 +3,7 @@
 const areStringsEqual = require("./../utils/areStringsEqual");
 
 const createFnToCheckSendingFragmentsOfUnrequestingMessage = require(
-  "./createFnToCheckSendingFragmentsOfUnrequestingMessage"
+  "./_createFnToCheckSendingFragmentsOfUnrequestingMessage"
 );
 
 const fragmentsOfMessage = [
@@ -28,4 +28,4 @@ module.exports = createFnToCheckSendingFragmentsOfUnrequestingMessage(
   setListenerOfUnrequestingMessage,
   areStringsEqual
 );
- 
+
