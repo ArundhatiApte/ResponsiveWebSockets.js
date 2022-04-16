@@ -17,14 +17,14 @@ const sendHeaderAndFragments = require("./sendHeaderAndFragments");
 
 const sendFragmentsOfUnrequestingMessage = function(
   responsiveConnection,
-  header,
   isMessageBinary,
+  header,
   fragments
 ) {
   return sendHeaderAndFragments(
     responsiveConnection[_connection],
-    header,
     isMessageBinary,
+    header,
     fragments
   );
 };
