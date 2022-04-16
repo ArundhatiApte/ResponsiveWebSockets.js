@@ -6,11 +6,11 @@ const contentTypesOfMessages = createEnum("binary", "text");
 const GeneratorOfRequestId = require("./utils/SequenceGeneratorOfUint16/SequenceGeneratorOfUint16");
 
 const startIndexOfBodyInBinaryResponse = require(
-  "./../messaging/textMessages/abstractMessager"
+  "./../messaging/binaryMessages/abstractMessager"
 ).startIndexOfBodyInResponse;
 
 const startIndexOfBodyInTextResponse = require(
-  "./../messaging/binaryMessages/abstractMessager"
+  "./../messaging/textMessages/abstractMessager"
 ).startIndexOfBodyInResponse;
 
 const TimeoutToReceiveResponseException = class extends Error {};
