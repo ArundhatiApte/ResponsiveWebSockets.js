@@ -73,7 +73,7 @@ const _emitOnMessageWithBlob = async function(event) {
     return _emitEventByIncomingTextMessage(this, data);
   }
   const bytes = await data.arrayBuffer();
-  _emitEventByIncomingBinaryMessage(this, data);
+  _emitEventByIncomingBinaryMessage(this, bytes);
 };
 
 const _emitEventByIncomingBinaryMessage = function(responsiveConnection, message) {
