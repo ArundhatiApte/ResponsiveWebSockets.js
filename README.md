@@ -1,6 +1,7 @@
 ## ResposiveWebSockets
 
-Sending requests and messages web sockets.
+Sending requests and unrequesting messages wrapper for web sockets.
+Client works in a browser and node.js.
 
 ### Overview
 
@@ -12,7 +13,8 @@ const connection = new WebSocket("wss://example.com/translator");
 const response = await connection.send("translate this to indian");
 ```
 
-ResposiveWebSockets module provides opportunity to send requests and get response via web sockets, and opportunity to send
+ResposiveWebSockets module provides opportunity to send requests and get response via web sockets,
+and opportunity to send
 messages without waiting response:
 ```js
 const responseData = await connection.sendTextRequest("some request");
