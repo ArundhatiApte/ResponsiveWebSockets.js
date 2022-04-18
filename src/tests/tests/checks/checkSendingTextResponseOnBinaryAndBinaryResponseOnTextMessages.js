@@ -39,10 +39,10 @@ const checkSendingBinaryResponsesOnTextMessage = async function(sender, receiver
   });
   const {message, contentType} = await sender.sendTextRequest(textMessage);
   const startIndex = sender.startIndexOfBodyInTextResponse;
-  const reciviedNumber = int32BytesToNumber(message, startIndex);
+  const receivedNumber = int32BytesToNumber(message, startIndex);
 
   expectEqual(contentType, contentTypesOfMessages.binary);
-  expectEqual(numberInBinaryResponse, reciviedNumber);
+  expectEqual(numberInBinaryResponse, receivedNumber);
 };
 
 module.exports = checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages;

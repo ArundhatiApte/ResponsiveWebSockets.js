@@ -3,7 +3,7 @@
 const createByteArray = require("./../utils/createByteArray");
 const areByteArraysEqual = require("./../utils/areByteArraysEqual/areByteArraysEqual");
 
-const createFnToCheckSendingFragmentsOfRequest = require("./createFnToCheckSendingFragmentsOfRequest");
+const createFnToCheckSendingFragmentsOfRequest = require("./_createFnToCheckSendingFragmentsOfRequest");
 
 const fragmentsOfRequest = [
   createByteArray([1, 1, 1, 1]),
@@ -11,9 +11,6 @@ const fragmentsOfRequest = [
   createByteArray([3, 3, 3, 3]),
   createByteArray([4, 4, 4, 4])
 ];
-const sendFragmentsOfRequest = function(sender, fragments) {
-  return sender.sendFragmentsOfBinaryRequest.apply(sender, fragments);
-};
 
 const fullRequest = createByteArray([
   1, 1, 1, 1,
@@ -22,22 +19,14 @@ const fullRequest = createByteArray([
   4, 4, 4, 4
 ]);
 
-const setListenerOfRequest = function(receiver, listener) {
-  return receiver.setBinaryRequestListener(listener);
-};
-
 const fullResponse = createByteArray([1, 2, 3, 4]);
-
-const sendResponse = function(senderOfResponse, response) {
-  return senderOfResponse.sendBinaryResponse(response);
-};
 
 module.exports = createFnToCheckSendingFragmentsOfRequest(
   fragmentsOfRequest,
-  sendFragmentsOfRequest,
+  "sendFragmentsOfBinaryRequest",
   fullRequest,
   areByteArraysEqual,
-  setListenerOfRequest,
+  "setBinaryRequestListener",
   fullResponse,
-  sendResponse
+  "sendBinaryResponse"
 );

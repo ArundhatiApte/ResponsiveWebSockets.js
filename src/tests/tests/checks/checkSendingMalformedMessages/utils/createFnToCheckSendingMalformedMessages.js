@@ -2,14 +2,23 @@
 
 const _createTimeoutForSendingMessages = require("./../../utils/createTimeoutForPromise");
 
-const createFnToCheckSendingMalformedMessages = function(brokenMessages, setListenerOfMalformedMessage, sendMessage) {
-  return _checkSendingMalformedMessages.bind(null, brokenMessages, setListenerOfMalformedMessage, sendMessage);
+const createFnToCheckSendingMalformedMessages = function(
+  brokenMessages,
+  nameOfSettingListenerOfMalformedMessageMethod,
+  sendMessageByWebSocket
+) {
+  return _checkSendingMalformedMessages.bind(
+    null,
+    brokenMessages,
+    nameOfSettingListenerOfMalformedMessageMethod,
+    sendMessageByWebSocket
+  );
 };
 
 const _checkSendingMalformedMessages = function(
   brokenMessages,
-  setListenerOfMalformedMessage,
-  sendMessage,
+  nameOfSettingListenerOfMalformedMessageMethod,
+  sendMessageByWebSocket,
   sender,
   receiver
 ) {
@@ -17,7 +26,7 @@ const _checkSendingMalformedMessages = function(
     const totalCountOfSendedMalformedMessages = brokenMessages.length;
     let countOfReceivedMalformedMessages = 0;
 
-    setListenerOfMalformedMessage(receiver, function() {
+    receiver[nameOfSettingListenerOfMalformedMessageMethod](function() {
       countOfReceivedMalformedMessages += 1;
       if (countOfReceivedMalformedMessages === totalCountOfSendedMalformedMessages) {
         clearTimeout(timeoutForSendingMessages);
@@ -28,13 +37,13 @@ const _checkSendingMalformedMessages = function(
     const maxTimeMsForSendingAllMessages = 290;
     const timeoutForSendingMessages = _createTimeoutForSendingMessages(reject, maxTimeMsForSendingAllMessages);
 
-    _sendMalformedMessages(sender._asWebSocketConnection(), brokenMessages, sendMessage);
+    _sendMalformedMessages(sender._asWebSocketConnection(), brokenMessages, sendMessageByWebSocket);
   });
 };
 
-const _sendMalformedMessages = function(webSocketConnection, brokenMessages, sendMessage) {
+const _sendMalformedMessages = function(webSocketConnection, brokenMessages, sendMessageByWebSocket) {
   for (const brokenMessage of brokenMessages) {
-    sendMessage(webSocketConnection, brokenMessage);
+    sendMessageByWebSocket(webSocketConnection, brokenMessage);
   }
 }
 

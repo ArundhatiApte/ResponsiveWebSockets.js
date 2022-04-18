@@ -4,7 +4,7 @@ const createFnToCheckSendingMalformedMessages = require("./utils/createFnToCheck
 
 const checkSendingMalformedBinaryMessagesFromServerToClient = createFnToCheckSendingMalformedMessages(
   require("./utils/brokenBinaryMessages"),
-  require("./utils/setMalformedBinaryMessageListener"),
+  "setMalformedBinaryMessageListener",
   function sendBinaryMessageByWebSocket(webSocket, message) {
     return webSocket.send(message, true);
   }
@@ -12,7 +12,7 @@ const checkSendingMalformedBinaryMessagesFromServerToClient = createFnToCheckSen
 
 const checkSendingMalformedTextMessagesFromServerToClient = createFnToCheckSendingMalformedMessages(
   require("./utils/brokenTextMessages"),
-  require("./utils/setMalformedTextMessageListener"),
+  "setMalformedTextMessageListener",
   function sendTextMessageByWebSocket(webSocket, message) {
     return webSocket.send(message);
   }

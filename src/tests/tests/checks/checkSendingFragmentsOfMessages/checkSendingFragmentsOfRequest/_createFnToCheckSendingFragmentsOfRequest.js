@@ -4,42 +4,42 @@ const expectTrue = require("assert").ok;
 
 const createFnToCheckSendingFragmentsOfRequest = function(
   fragmentsOfRequest,
-  sendFragmentsOfRequest,
+  nameOfSendingFragmentsOfRequestMethod,
   fullRequest,
   areMessagesEqual,
-  setListenerOfRequest,
+  nameOfSettingListenerOfRequestMethod,
   fullResponse,
-  sendResponse
+  nameOfSendingResponseMethod
 ) {
   return _checkSendingFragmentsOfRequest.bind(
     null,
     fragmentsOfRequest,
-    sendFragmentsOfRequest,
+    nameOfSendingFragmentsOfRequestMethod,
     fullRequest,
     areMessagesEqual,
-    setListenerOfRequest,
+    nameOfSettingListenerOfRequestMethod,
     fullResponse,
-    sendResponse
+    nameOfSendingResponseMethod
   );
 };
 
 const _checkSendingFragmentsOfRequest = async function(
   fragmentsOfRequest,
-  sendFragmentsOfRequest,
+  nameOfSendingFragmentsOfRequestMethod,
   fullRequest,
   areMessagesEqual,
-  setListenerOfRequest,
+  nameOfSettingListenerOfRequestMethod,
   fullResponse,
-  sendResponse,
+  nameOfSendingResponseMethod,
   sender,
   receiver
 ) {
   let areRequestsEqual;
-  setListenerOfRequest(receiver, function(messageWithHeader, startIndex, senderOfResponse) {
+  receiver[nameOfSettingListenerOfRequestMethod](function(messageWithHeader, startIndex, senderOfResponse) {
     areRequestsEqual = areMessagesEqual(fullRequest, startIndex, messageWithHeader);
-    sendResponse(senderOfResponse, fullResponse);
+    senderOfResponse[nameOfSendingResponseMethod](fullResponse);
   });
-  const {message: response} = await sendFragmentsOfRequest(sender, fragmentsOfRequest);
+  const {message: response} = await sender[nameOfSendingFragmentsOfRequestMethod].apply(sender, fragmentsOfRequest);
   expectTrue(areRequestsEqual);
 };
 

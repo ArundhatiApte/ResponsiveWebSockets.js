@@ -10,13 +10,9 @@ const {
 
 const multiplier = 42;
 
-const sendedMessageToExpectedResponse = new Map([-4, -3, -2, -1, 0, 1, 2, 3, 4].map(function(number) {
-  return [number, number * multiplier];
-}));
-
-const setAwaitingResponseMessageListener = function(recivier, listener) {
-  return recivier.setBinaryRequestListener(listener);
-};
+const sendedMessageToExpectedResponse = new Map([-4, -3, -2, -1, 0, 1, 2, 3, 4].map((number) =>
+  [number, number * multiplier]
+));
 
 const sendAwaitingResponseBinaryMessage = function(sender, number) {
   const bytes = numberToInt32Bytes(number);
@@ -24,8 +20,9 @@ const sendAwaitingResponseBinaryMessage = function(sender, number) {
 };
 
 const sendResponseOnAwaitingResponseMessage = function(bytesWithHeader, startIndex, senderOfResponse) {
-  const reciviedNumber = int32BytesToNumber(bytesWithHeader, startIndex),
-        response = reciviedNumber * multiplier;
+  const receivedNumber = int32BytesToNumber(bytesWithHeader, startIndex),
+        response = receivedNumber * multiplier;
+
   senderOfResponse.sendBinaryResponse(numberToInt32Bytes(response));
 };
 
@@ -35,14 +32,10 @@ const extractMessageFromResponse = function(dataAboutResponse, startIndex) {
   return number;
 };
 
-const getStartIndexOfBodyInResponseFromSender = function(sender) {
-  return sender.startIndexOfBodyInBinaryResponse;
-};
-
 const checkSendingAwaitingResponseBinaryMessages = createFnToCheckSendingMessagesWithResponse(
-  getStartIndexOfBodyInResponseFromSender,
+  "startIndexOfBodyInBinaryResponse",
   sendedMessageToExpectedResponse,
-  setAwaitingResponseMessageListener,
+  "setBinaryRequestListener",
   sendAwaitingResponseBinaryMessage,
   sendResponseOnAwaitingResponseMessage,
   extractMessageFromResponse

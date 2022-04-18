@@ -7,23 +7,17 @@ const {
   int32BytesToNumber
 } = require("./../../../modules/bytesInNumbers");
 
-const createSendedMessage = function() {
-  return Math.floor(Math.random() * 10000) + 1;
-};
+const createSendedMessage = () => Math.floor(Math.random() * 10000) + 1;
 
-const createExpectedResponse = function(number) {
-  return number * 4;
-};
+const createExpectedResponse = (number) => number * 4;
 
-const maxTimeMSForWaiting = 6000;
+const maxTimeMsForWaiting = 6000;
 
-const sendMessage = function(sender, number) {
-  return sender.sendBinaryRequest(numberToInt32Bytes(number), maxTimeMSForWaiting);
-};
+const sendMessage = (sender, number) => sender.sendBinaryRequest(numberToInt32Bytes(number), maxTimeMsForWaiting);
 
-const setListenerToSendResponseOnIncomingMessage = function(recivier) {
-  return recivier.setBinaryRequestListener(sendResponseOnIncomingMessage);
-};
+const setListenerToSendResponseOnIncomingMessage = (receiver) => (
+  receiver.setBinaryRequestListener(sendResponseOnIncomingMessage)
+);
 
 const sendResponseOnIncomingMessage = function(bytes, startIndex, senderOfResponse) {
   const number = int32BytesToNumber(bytes, startIndex);
@@ -33,12 +27,8 @@ const sendResponseOnIncomingMessage = function(bytes, startIndex, senderOfRespon
 
 const extractMessageFromResponse = int32BytesToNumber;
 
-const getStartIndexOfBodyInResponseFromSender = function(sender) {
-  return sender.startIndexOfBodyInBinaryResponse;
-};
-
 module.exports = createFnToCheckendingManyMessagesAtOnce(
-  getStartIndexOfBodyInResponseFromSender,
+  "startIndexOfBodyInBinaryResponse",
   createSendedMessage,
   createExpectedResponse,
   sendMessage,

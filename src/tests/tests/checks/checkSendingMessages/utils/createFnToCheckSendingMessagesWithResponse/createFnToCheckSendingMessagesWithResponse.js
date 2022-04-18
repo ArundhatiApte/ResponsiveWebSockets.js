@@ -1,28 +1,47 @@
 "use strict";
 
-const expect = require("assert"),
-      areMapsEqual = require("./areMapsEqual");
+const expect = require("assert");
+const areMapsEqual = require("./areMapsEqual");
 
-const checkSendingMessagesWithResponse =  async function(
-  sender,
-  getStartIndexOfBodyInResponseFromSender,
-  receiver,
+const createFnToCheckSendingMessagesWithResponse = function(
+  nameOfStartIndexOfBodyInResponseProperty,
   sendedMessageToExpectedResponse,
-  setAwaitedResponseMessageListener,
-  sendMessage,
-  sendResponseOnAwaitedResponseMessage,
+  nameOfSettingRequestListener,
+  nameOfSendingRequestMethod,
+  sendResponseOnRequest,
   extractMessageFromResponse
 ) {
-  const startIndexOfBodyInResponse = getStartIndexOfBodyInResponseFromSender(sender);
+  return checkSendingMessagesWithResponse.bind(
+    null,
+    nameOfStartIndexOfBodyInResponseProperty,
+    sendedMessageToExpectedResponse,
+    nameOfSettingRequestListener,
+    nameOfSendingRequestMethod,
+    sendResponseOnRequest,
+    extractMessageFromResponse
+  );
+};
+
+const checkSendingMessagesWithResponse =  async function(
+  nameOfStartIndexOfBodyInResponseProperty,
+  sendedMessageToExpectedResponse,
+  nameOfSettingRequestListener,
+  sendRequest,
+  sendResponseOnRequest,
+  extractMessageFromResponse,
+  sender,
+  receiver
+) {
+  const startIndexOfBodyInResponse = sender[nameOfStartIndexOfBodyInResponseProperty];
   const sendedMessageToResponse = new Map();
 
-  setAwaitedResponseMessageListener(receiver, sendResponseOnAwaitedResponseMessage);
+  receiver[nameOfSettingRequestListener](sendResponseOnRequest);
 
   const sendingMessages = [];
   for (const message of sendedMessageToExpectedResponse.keys()) {
     const sendingMessage = sendMessageToReceiverAndAddResponseToMap(
       sender,
-      sendMessage,
+      sendRequest,
       message,
       startIndexOfBodyInResponse,
       extractMessageFromResponse,
@@ -36,37 +55,16 @@ const checkSendingMessagesWithResponse =  async function(
 
 const sendMessageToReceiverAndAddResponseToMap = async function(
   sender,
-  sendMessage,
+  sendRequest,
   uniqueMessage,
   startIndexOfBodyInResponse,
   extractMessageFromResponse,
   sendedMessageToResponse
 ) {
-  const dataAboutResponse = await sendMessage(sender, uniqueMessage),
-        response = extractMessageFromResponse(dataAboutResponse, startIndexOfBodyInResponse);
-  sendedMessageToResponse.set(uniqueMessage, response);
-};
+  const dataAboutResponse = await sendRequest(sender, uniqueMessage);
+  const response = extractMessageFromResponse(dataAboutResponse, startIndexOfBodyInResponse);
 
-const createFnToCheckSendingMessagesWithResponse = function(
-  getStartIndexOfBodyInResponseFromSender,
-  sendedMessageToExpectedResponse,
-  setAwaitedResponseMessageListener,
-  sendMessage,
-  sendResponseOnAwaitedResponseMessage,
-  extractMessageFromResponse
-) {
-  return function(sender, receiver) {
-    return checkSendingMessagesWithResponse(
-      sender,
-      getStartIndexOfBodyInResponseFromSender,
-      receiver,
-      sendedMessageToExpectedResponse,
-      setAwaitedResponseMessageListener,
-      sendMessage,
-      sendResponseOnAwaitedResponseMessage,
-      extractMessageFromResponse
-    );
-  };
+  sendedMessageToResponse.set(uniqueMessage, response);
 };
 
 module.exports = createFnToCheckSendingMessagesWithResponse;

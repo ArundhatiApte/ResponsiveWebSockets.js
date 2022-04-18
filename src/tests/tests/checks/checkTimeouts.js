@@ -23,7 +23,7 @@ const checkTimeouts = async function(sender, reciever) {
     }
     throw error;
   }
-  throw new Error("Ответ пришел.");
+  throw new Error("Response was received.");
 };
 
 module.exports = checkTimeouts;

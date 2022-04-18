@@ -5,13 +5,9 @@ const createFnToCheckSendingMessagesWithResponse =
 
 const sendedMessageToExpectedResponse = new Map([
   "hello", "word", "utf\u1234\u1567"
-].map(function(message) {
-  return [message, "(" + message + ")"];
-}));
+].map((message) => [message, "(" + message + ")"]));
 
-const sendAwaitingResponseTextMessage = function(sender, message) {
-  return sender.sendTextRequest(message);
-};
+const sendAwaitingResponseTextMessage = (sender, message) => sender.sendTextRequest(message);
 
 const setAwaitingResponseMessageListener = function(receiver, listener) {
   return receiver.setTextRequestListener(listener);
@@ -29,14 +25,10 @@ const extractMessageFromResponse = function(dataAboutResponse, startIndex) {
   return message.slice(startIndex);
 };
 
-const getStartIndexOfBodyInResponseFromSender = function(sender) {
-  return sender.startIndexOfBodyInTextResponse;
-};
-
 const checkSendingAwaitingResponseTextMessages = createFnToCheckSendingMessagesWithResponse(
-  getStartIndexOfBodyInResponseFromSender,
+  "startIndexOfBodyInTextResponse",
   sendedMessageToExpectedResponse,
-  setAwaitingResponseMessageListener,
+  "setTextRequestListener",
   sendAwaitingResponseTextMessage,
   sendResponseOnAwaitingResponseMessage,
   extractMessageFromResponse

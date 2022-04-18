@@ -2,43 +2,40 @@
 
 const isDeepEqual = require("util").isDeepStrictEqual;
 
-const wait = function(timeMS) {
+const wait = function(timeMs) {
   return new Promise(function(resplve) {
-    return setTimeout(resolve, timeMS);
+    return setTimeout(resolve, timeMs);
   });
 };
 
 const createFnToCheckSendingUnrequestingMessages = function(
   sendedMessages,
-  setUnrequestingMessageEventListener,
-  sendMessage,
+  nameOfSettingUnrequestingMessageEventListenerMethod,
+  sendUnrequestingMessage,
   extractMessageFromMessageWithHeader
 ) {
-  return function(sender, receiver) {
-    return checkSendingUnrequestingMessages(
-      sender,
-      receiver,
-      sendedMessages,
-      setUnrequestingMessageEventListener,
-      sendMessage,
-      extractMessageFromMessageWithHeader
-    );
-  };
+  return checkSendingUnrequestingMessages.bind(
+    null,
+    sendedMessages,
+    nameOfSettingUnrequestingMessageEventListenerMethod,
+    sendUnrequestingMessage,
+    extractMessageFromMessageWithHeader
+  );
 };
 
 const checkSendingUnrequestingMessages = async function(
+  sendedMessages,
+  nameOfSettingUnrequestingMessageEventListenerMethod,
+  sendUnrequestingMessage,
+  extractMessageFromMessageWithHeader,
   sender,
   receiver,
-  sendedMessages,
-  setUnrequestingMessageEventListener,
-  sendMessage,
-  extractMessageFromMessageWithHeader
 ) {
   return new Promise(function(resolve, reject) {
     const receivedMessages = [];
     let countOfMessages = sendedMessages.length;
-    
-    setUnrequestingMessageEventListener(receiver, function(rawMessage, startIndex) {
+
+    receiver[nameOfSettingUnrequestingMessageEventListenerMethod](function(rawMessage, startIndex) {
       const message = extractMessageFromMessageWithHeader(rawMessage, startIndex);
       receivedMessages.push(message);
       countOfMessages -= 1;
@@ -50,9 +47,9 @@ const checkSendingUnrequestingMessages = async function(
         }
       }
     });
-  
+
     for (const message of sendedMessages) {
-      sendMessage(sender, message);
+      sendUnrequestingMessage(sender, message);
     }
   });
 };
