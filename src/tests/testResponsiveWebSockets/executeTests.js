@@ -4,7 +4,7 @@ const addCheckingUpgradingConnetionTests = require("./addingTests/addCheckingUpg
 const addCheckingSendingMessagesTests = require("./addingTests/addCheckingSendingMessagesTests");
 const addCheckingClosingConnectionTests = require("./addingTests/addCheckingClosingConnectionTests");
 
-const executeTests = function(describe, addTest, options) {
+const executeTests = function(describeTests, addTest, options) {
   const {
     nameOfTest,
     responsiveWebSocketServer,
@@ -30,9 +30,7 @@ const executeTests = function(describe, addTest, options) {
     runTest(checkSendingMessages, client, connectionToClient)
   );
 
-  describe(nameOfTest, function() {
-    this.timeout(6000);
-
+  describeTests(nameOfTest, function() {
     before(async function() {
       await responsiveWebSocketServer.listen(port);
       const cons = await createConnectionToClientAndClient();
@@ -40,14 +38,25 @@ const executeTests = function(describe, addTest, options) {
       client = cons.client;
     });
 
-    addCheckingUpgradingConnetionTests(addTest, responsiveWebSocketServer, urlOfServer, ResponsiveWebSocketClient);
-    addCheckingSendingMessagesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
-    addCheckingClosingConnectionTests(addTest, createConnectionToClientAndClient);
+    addCheckingUpgradingConnetionTests(
+      describeTests,
+      addTest,
+      responsiveWebSocketServer,
+      urlOfServer,
+      ResponsiveWebSocketClient
+    );
+    addCheckingSendingMessagesTests(
+      describeTests,
+      addTest,
+      createFnToTestFromServerToClient,
+      createFnToTestFromClientToServer
+    );
+    addCheckingClosingConnectionTests(describeTests, addTest, createConnectionToClientAndClient);
 
     after(function() {
       responsiveWebSocketServer.close();
-      connectionToClient.close();
-      client.close();
+      connectionToClient.terminate();
+      client.terminate();
       setTimeout(process.exit.bind(process, 0), 10);
     });
   });

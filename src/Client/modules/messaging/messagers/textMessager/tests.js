@@ -19,7 +19,7 @@ const messages = ["ansi", "utf8◈ℱ"];
 const brokenMessage = "abcdef";
 
 testMessager(describe, it, {
-  nameOfTest: "test text messager",
+  nameOfTest: "client text messager",
   messages,
 
   createRequestMessage,

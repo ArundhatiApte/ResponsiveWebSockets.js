@@ -5,21 +5,21 @@ const Tester = require("tester");
 
 const typesOfIncomingMessages = require("./../../../../../../common/messaging/typesOfIncomingMessages");
 
-const testMessager = function(describe, it, options) {
+const testMessager = function(describeTests, addTest, options) {
   const { messager } = options;
   const { extractTypeOfIncomingMessage, extractIdOfMessage } = messager;
 
-  describe(options.nameOfTest, function() {
-    it("creating and parsing request", createTest(checkCreatingAndParsingRequest,
+  describeTests(options.nameOfTest, function() {
+    addTest("creating and parsing request", createTest(checkCreatingAndParsingRequest,
       messager.createHeaderOfRequest,
       extractTypeOfIncomingMessage,
       extractIdOfMessage
     ));
-    it("creating and parsing unrequesting message", createTest(checkCreatingAndParsingUnrequestingMessage,
+    addTest("creating and parsing unrequesting message", createTest(checkCreatingAndParsingUnrequestingMessage,
       messager.headerOfUnrequestingMessage,
       extractTypeOfIncomingMessage
     ));
-    it("creating and parsing response", createTest(checkCreatingAndParsingResponse,
+    addTest("creating and parsing response", createTest(checkCreatingAndParsingResponse,
       messager.createHeaderOfResponse,
       extractTypeOfIncomingMessage,
       extractIdOfMessage

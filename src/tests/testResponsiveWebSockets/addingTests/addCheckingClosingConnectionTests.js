@@ -2,15 +2,17 @@
 
 const checkClosingConnection = require("./../checks/checkClosingConnection");
 
-const addCheckingClosingConnectionTests = function(addTest, createConnectionToClientAndClient) {
-  addTest(
-    "close connection by client",
-    createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "client", "connectionToClient")
-  );
-  addTest(
-    "close connection by server",
-    createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "connectionToClient" , "client")
-  );
+const addCheckingClosingConnectionTests = function(describeTests, addTest, createConnectionToClientAndClient) {
+  return describeTests("closing connection", function() {
+    addTest(
+      "close connection by client",
+      createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "client", "connectionToClient")
+    );
+    addTest(
+      "close connection by server",
+      createFnToCheckClosingConnectionAndCloseIfFail(createConnectionToClientAndClient, "connectionToClient" , "client")
+    );
+  });
 };
 
 const createFnToCheckClosingConnectionAndCloseIfFail = function(

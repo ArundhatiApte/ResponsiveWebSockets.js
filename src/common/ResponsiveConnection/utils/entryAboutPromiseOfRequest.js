@@ -2,13 +2,13 @@
 
 const create = function(resolvePromise, timeoutToWait) {
   return {
-    a: resolvePromise,
-    b: timeoutToWait
+    [nameOfPromiseResolver]: resolvePromise,
+    [nameOfTimeout]: timeoutToWait
   };
 };
 
-const nameOfPromiseResolver = "a",
-      nameOfTimeout = "b";
+const nameOfPromiseResolver = Symbol(),
+      nameOfTimeout = Symbol();
 
 module.exports = {
   create,

@@ -1,6 +1,6 @@
 "use strict";
 
-const { TimeoutToReceiveResponseException } = require("./../ResponsiveConnection");
+const { TimeoutToReceiveResponseError } = require("./../ResponsiveConnection");
 
 const createTimeoutToReceiveResponse = function(
   idOfRequestToEntryAboutPromise,
@@ -19,8 +19,9 @@ const createTimeoutToReceiveResponse = function(
 
 const _deleteEntryAndRejectResponsePromise = function(idOfRequestToEntryAboutPromise, idOfMessage, rejectPromise) {
   idOfRequestToEntryAboutPromise.delete(idOfMessage);
-  rejectPromise(new TimeoutToReceiveResponseException(
-    "ResponsiveWebSocketConnection:: timeout for receiving response."));
+  rejectPromise(new TimeoutToReceiveResponseError(
+    "ResponsiveWebSocketConnection:: timeout for receiving response."
+  ));
 };
 
 module.exports = createTimeoutToReceiveResponse;

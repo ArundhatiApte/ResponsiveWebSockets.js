@@ -9,10 +9,10 @@ const checkCreatingAndParsingUnrequestingMessages =
 const checkCreatingAndParsingResponseMessages =
   require("./checks/checkCreatingAndParsingResponseMessages");
 
-const checkThrowingExceptionAtParsing =
-  require("./checks/checkThrowingExceptionAtParsing");
+const checkThrowingErrorAtParsing =
+  require("./checks/checkThrowingErrorAtParsing");
 
-const testMessager = function(describe, it, options) {
+const testMessager = function(describeTests, addTest, options) {
   const {
     nameOfTest,
     messages,
@@ -53,7 +53,7 @@ const testMessager = function(describe, it, options) {
     ]
   ];
 
-  describe(nameOfTest, function() {
+  describeTests(nameOfTest, function() {
     for (const [check, startIndexOfBody, createMessage, name] of checkigFnToCreatingMessageFnAndNameOfTest) {
       const test = createTest(
         check,
@@ -64,16 +64,16 @@ const testMessager = function(describe, it, options) {
         extractIdOfMessage,
         extractMessageFromMessageWithHeader
       );
-      it(name, test);
+      addTest(name, test);
     }
 
-    const testThrowingExceptionAtParsing = createTest(
-      checkThrowingExceptionAtParsing,
+    const testThrowingErrorAtParsing = createTest(
+      checkThrowingErrorAtParsing,
       brokenMessage,
       extractTypeOfIncomingMessage
     );
 
-    it("throwing error at parsing", testThrowingExceptionAtParsing);
+    addTest("throwing error at parsing", testThrowingErrorAtParsing);
   });
 };
 

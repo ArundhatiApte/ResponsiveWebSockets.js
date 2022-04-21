@@ -6,7 +6,7 @@ const {
   unrequestingMessage: typesOfIncomingMessages_unrequestingMessage,
 } = require("./../../../common/messaging/typesOfIncomingMessages");
 
-const ExceptionAtParsing = require("./../../../common/messaging/ExceptionAtParsing");
+const ErrorAtParsing = require("./../../../common/messaging/ErrorAtParsing");
 
 const {
   _connection,

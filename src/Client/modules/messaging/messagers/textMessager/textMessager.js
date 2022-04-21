@@ -12,8 +12,7 @@ const {
   unrequestingMessage: charCodesOfHeaders_unrequestingMessage
 } = require("./../../../../../common/messaging/textMessages/charCodesOfHeaders");
 
-const header_unrequestingMessage = String.fromCharCode(
-  charCodesOfHeaders_unrequestingMessage);
+const header_unrequestingMessage = String.fromCharCode(charCodesOfHeaders_unrequestingMessage);
 
 const textMessager = abstractMessager;
 

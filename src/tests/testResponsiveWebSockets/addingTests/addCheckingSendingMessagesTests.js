@@ -15,7 +15,7 @@ const {
 const checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages =
   require("./../checks/checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages");
 
-const checkTimeouts = require("./../checks/checkTimeouts");
+const checkTimeout = require("./../checks/checkTimeout");
 
 const {
   checkSendingFragmentsOfRequest: {
@@ -43,32 +43,52 @@ const fromServerToClientPostfix = " by server to client";
 const fromClientToServerPostfix = " by client to server";
 
 const addCheckingSendingMessagesTests = function(
+  describeTests,
   addTest,
   createFnToTestFromServerToClient,
   createFnToTestFromClientToServer
 ) {
-  add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
-  addTestsFromServer(addTest, createFnToTestFromServerToClient);
-  addTestsFromClient(addTest, createFnToTestFromClientToServer);
+  return describeTests("sending messages", function() {
+    add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
+      [checkSendingAwaitingResponseBinaryMessages, "send awaiting response binary messages"],
+      [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
+
+      [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
+      [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
+
+      [checkTimeout, "timeouts"],
+      [
+        checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
+        "send text response on binary and binary response on text messages"
+      ]
+    ]);
+
+    addCheckingSendingBrokenMessagesTests(
+      addTest,
+      createFnToTestFromServerToClient,
+      createFnToTestFromClientToServer
+    );
+
+    describeTests("sending many requests at once", function() {
+      const maxTimeMsToSendMessages = 6000;
+      this.timeout(maxTimeMsToSendMessages);
+      add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
+        [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
+        [checkSendingManyTextRequestsAtOnce, "send many text requests at once"]
+      ]);
+    });
+
+    addTestsFromServer(addTest, createFnToTestFromServerToClient);
+    addTestsFromClient(addTest, createFnToTestFromClientToServer);
+  });
 };
 
-const add2SidesTests = function(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer) {
-  const checkToNameOfTest = [
-    [checkSendingAwaitingResponseBinaryMessages, "send awaiting response binary messages"],
-    [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
-    [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
-    [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
-
-    [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
-    [checkSendingManyTextRequestsAtOnce, "send many text requests at once"],
-
-    [checkTimeouts, "timeouts"],
-    [
-      checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
-      "send text response on binary and binary response on text messages"
-    ]
-  ];
-
+const add2SidesTests = function(
+  addTest,
+  createFnToTestFromServerToClient,
+  createFnToTestFromClientToServer,
+  checkToNameOfTest
+) {
   for (const [check, nameOfTest] of checkToNameOfTest) {
     addTestFormOneSideToAnotherToTester(
       addTest,
@@ -85,7 +105,6 @@ const add2SidesTests = function(addTest, createFnToTestFromServerToClient, creat
       fromClientToServerPostfix
     );
   }
-  addCheckingSendingBrokenMessagesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer);
 };
 
 const addTestFormOneSideToAnotherToTester = function(

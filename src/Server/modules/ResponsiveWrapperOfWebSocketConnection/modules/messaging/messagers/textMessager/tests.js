@@ -4,6 +4,6 @@ const testMessager = require("./../testMessager");
 const textMessager = require("./textMessager");
 
 testMessager(describe, it, {
-  nameOfTest: "test text messager",
+  nameOfTest: "server text messager",
   messager: textMessager
 });

@@ -13,7 +13,7 @@ const port = 4668;
 const url = "ws://127.0.0.1:" + port + "/room/1234";
 
 executeTests(describe, it, {
-  nameOfTest: "test responsive web socket client and server",
+  nameOfTest: "responsive web socket client and server",
   responsiveWebSocketServer,
   port,
   urlOfServer: url,

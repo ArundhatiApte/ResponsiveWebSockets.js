@@ -1,8 +1,8 @@
 "use strict";
 
-const { TimeoutToReceiveResponseException } = require("./../../../common/ResponsiveConnection/ResponsiveConnection");
+const { TimeoutToReceiveResponseError } = require("./../../../common/ResponsiveConnection/ResponsiveConnection");
 
-const checkTimeouts = async function(sender, reciever) {
+const checkTimeout = async function(sender, reciever) {
   const msToWait = 100,
         message = new Uint8Array([2]).buffer,
         response = new Uint8Array([1]).buffer;
@@ -18,7 +18,7 @@ const checkTimeouts = async function(sender, reciever) {
     const response = await sender.sendBinaryRequest(message, msToWait);
   } catch(error) {
     clearTimeout(timeout);
-    if (error instanceof TimeoutToReceiveResponseException) {
+    if (error instanceof TimeoutToReceiveResponseError) {
       return;
     }
     throw error;
@@ -26,4 +26,4 @@ const checkTimeouts = async function(sender, reciever) {
   throw new Error("Response was received.");
 };
 
-module.exports = checkTimeouts;
+module.exports = checkTimeout;

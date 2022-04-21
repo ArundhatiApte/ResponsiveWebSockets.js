@@ -18,7 +18,7 @@
     * startIndexOfBodyInBinaryResponse
     * startIndexOfBodyInTextResponse
     * terminate()
-    * static class TimeoutToReceiveResponseException
+    * static class TimeoutToReceiveResponseError
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -77,7 +77,7 @@
 Получатель имеет возможность отправить ответ,
 установив обработчик события binaryRequest методом `setBinaryRequestListener`.
 Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд,
-Promise завершится исключением `TimeoutToReceiveResponseException`.  
+Promise завершится исключением `TimeoutToReceiveResponseError`.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendTextRequest(text[, maxTimeMsToWaitResponse])
@@ -91,7 +91,7 @@ Promise завершится исключением `TimeoutToReceiveResponseExc
 Получатель имеет возможность отправить ответ,
 установив обработчик события textRequest методом `setTextRequestListener`.
 Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд,
-Promise завершится исключнием TimeoutToReceiveResponseException.  
+Promise завершится исключнием TimeoutToReceiveResponseError.  
 Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
@@ -278,7 +278,7 @@ webSocketClient.onopen = function() {
 
 Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутствует.
 
-### Cтатичный класс TimeoutToReceiveResponseException
+### Cтатичный класс TimeoutToReceiveResponseError
 
 Исключение возникает, когда ответ на запрос не пришел за отведённое время maxTimeMsToWaitResponse.
 

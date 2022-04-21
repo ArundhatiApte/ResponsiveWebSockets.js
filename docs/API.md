@@ -18,7 +18,7 @@
     * startIndexOfBodyInBinaryResponse
     * startIndexOfBodyInTextResponse
     * terminate()
-    * static class TimeoutToReceiveResponseException
+    * static class TimeoutToReceiveResponseError
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
     * new ResponsiveWebSocketClient()
     * connect(url)
@@ -74,7 +74,7 @@ optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 
 Sends awaiting response binary message. Receiver can give response by setting lisneter of "binaryRequest" event.
 If response will not arrive within `maxTimeMsToWaitResponse` milliseconds, the `<Promise>` will be rejected with
-`TimeoutToReceiveResponseException`.  
+`TimeoutToReceiveResponseError`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendTextRequest(text[, maxTimeMsToWaitResponse])
@@ -86,7 +86,7 @@ optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 
 Sends awaiting response text message. Receiver can give response by setting lisneter of 'textRequest' event.
 If response will not arrive within `maxTimeMsToWaitResponse` milliseconds, the `<Promise>` will be rejected with
-`TimeoutToReceiveResponseException`.  
+`TimeoutToReceiveResponseError`.  
 Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
@@ -274,9 +274,9 @@ Index of the first character, from which the message body begins.
 
 Forcibly close the connection. ResponsiveWebSocketClient in browser does not implement this method.
 
-### Static class TimeoutToReceiveResponseException
+### Static class TimeoutToReceiveResponseError
 
-Exception, that throwed when the response to the request
+Error, that throwed when the response to the request
 did not arrive during the max time for waiting response on request.
 
 ## Class ResponsiveWebSocketClient

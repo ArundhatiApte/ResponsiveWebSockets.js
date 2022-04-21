@@ -35,7 +35,7 @@ const createFnToCreateBinaryMessageWithIdFromNumber = function(createBinaryMessa
 };
 
 testMessager(describe, it, {
-  nameOfTest: "test binary messager",
+  nameOfTest: "client binary messager",
   messages,
   createRequestMessage: createFnToCreateBinaryMessageWithIdFromNumber(createRequestMessage),
   createUnrequestingMessage(number) {

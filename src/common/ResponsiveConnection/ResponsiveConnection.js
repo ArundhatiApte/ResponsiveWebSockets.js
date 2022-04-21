@@ -13,7 +13,7 @@ const startIndexOfBodyInTextResponse = require(
   "./../messaging/textMessages/abstractMessager"
 ).startIndexOfBodyInResponse;
 
-const TimeoutToReceiveResponseException = class extends Error {};
+const TimeoutToReceiveResponseError = class extends Error {};
 
 const ResponsiveConnection = class {
   constructor() {
@@ -23,7 +23,7 @@ const ResponsiveConnection = class {
   }
 
   static contentTypesOfMessages = contentTypesOfMessages;
-  static TimeoutToReceiveResponseException = TimeoutToReceiveResponseException;
+  static TimeoutToReceiveResponseError = TimeoutToReceiveResponseError;
 
   _asWebSocketConnection() {
     return this[_connection];

@@ -6,7 +6,7 @@ const {
   unrequestingMessage: typeOfIncomingMessage_unrequestingMessage
 } = require("./../typesOfIncomingMessages");
 
-const ExceptionAtParsing = require("./../ExceptionAtParsing");
+const ErrorAtParsing = require("./../ErrorAtParsing");
 
 const {
   request: byteOfHeaders_request,
@@ -26,7 +26,7 @@ const abstractMessager = {
       case byteOfHeaders_request:
         return typeOfIncomingMessage_request;
     }
-    throw new ExceptionAtParsing("Message of unrecognized type.");
+    throw new ErrorAtParsing("Message of unrecognized type.");
   },
   extractIdOfMessage(awaitingResponseOrResponseMessage) {
     return new DataView(awaitingResponseOrResponseMessage).getUint16(1);
