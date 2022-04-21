@@ -5,16 +5,16 @@ const testMessager = require("./../testMessager/testMessager");
 const {
   numberToInt32Bytes,
   int32BytesToNumber
-} = require("./../../../../../tests/modules/bytesInNumbers");      
+} = require("./../../../../../tests/modules/bytesInNumbers");
 
 const {
   createRequestMessage,
   createUnrequestingMessage,
   createResponseMessage,
-  
+
   extractTypeOfIncomingMessage,
   extractIdOfMessage,
-  
+
   startIndexOfBodyInRequest,
   startIndexOfBodyInUnrequestingMessage,
   startIndexOfBodyInResponse
@@ -34,7 +34,7 @@ const createFnToCreateBinaryMessageWithIdFromNumber = function(createBinaryMessa
   };
 };
 
-testMessager({
+testMessager(describe, it, {
   nameOfTest: "test binary messager",
   messages,
   createRequestMessage: createFnToCreateBinaryMessageWithIdFromNumber(createRequestMessage),
@@ -42,14 +42,14 @@ testMessager({
     return createUnrequestingMessage(numberToInt32Bytes(number));
   },
   createResponseMessage: createFnToCreateBinaryMessageWithIdFromNumber(createResponseMessage),
-  
+
   extractTypeOfIncomingMessage,
   extractIdOfMessage,
-  
+
   startIndexOfBodyInRequest,
   startIndexOfBodyInUnrequestingMessage,
   startIndexOfBodyInResponse,
-  
+
   extractMessageFromMessageWithHeader(rawMessage, startIndex) {
     return int32BytesToNumber(rawMessage, startIndex);
   },

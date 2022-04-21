@@ -4,18 +4,18 @@ const checkAcceptingRequestOnUpgrade = require("./../checks/checkUpgradingConnec
 const checkCancelRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkCancelRequestOnUpgrade");
 
 const addCheckingUpgradingConnetionTests = function(
-  tester,
+  addTest,
   webSocketServer,
   urlOfServer,
   WebSocketClient
 ) {
-  tester.addTest(
-    checkAcceptingRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient),
-    {name: "accept request on upgrade"}
+  addTest(
+    "accept request on upgrade",
+    checkAcceptingRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient)
   );
-  tester.addTest(
-    checkCancelRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient),
-    {name: "cancel request on upgrade"}
+  addTest(
+    "cancel request on upgrade",
+    checkCancelRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient)
   );
 };
 

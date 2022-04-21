@@ -3,7 +3,7 @@
 const testMessager = require("./../testMessager");
 const binaryMessager = require("./binaryMessager");
 
-testMessager({
-  nameOfTester: "test binary messager",
+testMessager(describe, it, {
+  nameOfTest: "test binary messager",
   messager: binaryMessager
 });

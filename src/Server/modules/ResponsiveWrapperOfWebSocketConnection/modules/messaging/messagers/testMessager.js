@@ -5,46 +5,30 @@ const Tester = require("tester");
 
 const typesOfIncomingMessages = require("./../../../../../../common/messaging/typesOfIncomingMessages");
 
-const testMessager = function(options) {
-  return createTester(options).run();
-};
-
-const createTester = function(options) {
-  const tester = new Tester(options.nameOfTester);
-  addTests(tester, options);
-  return tester;
-};
-
-const addTests = function(tester, options) {
+const testMessager = function(describe, it, options) {
   const { messager } = options;
   const { extractTypeOfIncomingMessage, extractIdOfMessage } = messager;
 
-  tester.addTest(
-    checkCreatingAndParsingRequest.bind(
-      null,
+  describe(options.nameOfTest, function() {
+    it("creating and parsing request", createTest(checkCreatingAndParsingRequest,
       messager.createHeaderOfRequest,
       extractTypeOfIncomingMessage,
       extractIdOfMessage
-    ),
-    {name: "test creating and parsing request"}
-  );
-  tester.addTest(
-    checkCreatingAndParsingUnrequestingMessage.bind(
-      null,
+    ));
+    it("creating and parsing unrequesting message", createTest(checkCreatingAndParsingUnrequestingMessage,
       messager.headerOfUnrequestingMessage,
       extractTypeOfIncomingMessage
-    ),
-    {name: "test creating and parsing unrequesting message"}
-  );
-  tester.addTest(
-    checkCreatingAndParsingResponse.bind(
-      null,
+    ));
+    it("creating and parsing response", createTest(checkCreatingAndParsingResponse,
       messager.createHeaderOfResponse,
       extractTypeOfIncomingMessage,
       extractIdOfMessage
-    ),
-    {name: "test creating and parsing response"}
-  );
+    ));
+  });
+};
+
+const createTest = function(check, ...args) {
+  return check.bind(null, ...args);
 };
 
 const checkCreatingAndParsingRequest = function(

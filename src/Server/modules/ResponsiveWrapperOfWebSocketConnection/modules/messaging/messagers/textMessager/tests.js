@@ -3,7 +3,7 @@
 const testMessager = require("./../testMessager");
 const textMessager = require("./textMessager");
 
-testMessager({
-  nameOfTester: "test text messager",
+testMessager(describe, it, {
+  nameOfTest: "test text messager",
   messager: textMessager
 });

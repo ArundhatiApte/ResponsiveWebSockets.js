@@ -6,34 +6,34 @@ const {
   createRequestMessage,
   createUnrequestingMessage,
   createResponseMessage,
-  
+
   extractTypeOfIncomingMessage,
   extractIdOfMessage,
-  
+
   startIndexOfBodyInRequest,
   startIndexOfBodyInUnrequestingMessage,
   startIndexOfBodyInResponse
 } = require("./textMessager");
 
-const messages = ["ansi", "utf8◈ℱ"],
-      brokenMessage = "abcdef";
+const messages = ["ansi", "utf8◈ℱ"];
+const brokenMessage = "abcdef";
 
-testMessager({
+testMessager(describe, it, {
   nameOfTest: "test text messager",
   messages,
-  
+
   createRequestMessage,
   startIndexOfBodyInRequest,
-  
+
   createUnrequestingMessage,
   startIndexOfBodyInUnrequestingMessage,
-    
+
   createResponseMessage,
   startIndexOfBodyInResponse,
-  
+
   extractTypeOfIncomingMessage,
   extractIdOfMessage,
-  
+
   extractMessageFromMessageWithHeader(rawMessage, startIndex) {
     return rawMessage.slice(startIndex);
   },

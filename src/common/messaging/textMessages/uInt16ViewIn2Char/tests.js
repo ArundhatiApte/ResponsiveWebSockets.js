@@ -10,10 +10,8 @@ const {
 const test = function() {
   const maxNumber = Math.pow(2, 16);
   for (let i = 0; i < maxNumber; i += 1) {
-    checkCreatingAndParsingString(i);  
+    checkCreatingAndParsingString(i);
   }
-  
-  console.log("Ok");
 };
 
 const checkCreatingAndParsingString = function(uInt16) {
@@ -29,4 +27,6 @@ const checkCreatingAndParsingString = function(uInt16) {
   expectEqual(uInt16, number);
 };
 
-test();
+describe("uInt16ViewIn2Char", function() {
+  it("pack and unpack uint16 to/from 2 8bit char string", test);
+});
