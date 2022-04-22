@@ -56,12 +56,20 @@ const addCheckingSendingMessagesTests = function(
       [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
       [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
 
-      [checkTimeout, "timeouts"],
       [
         checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
         "send text response on binary and binary response on text messages"
       ]
     ]);
+
+    describeTests("timeouts", function() {
+      add2SidesTests(
+        addTest,
+        createFnToTestFromServerToClient,
+        createFnToTestFromClientToServer,
+        [[checkTimeout, "timeout to receive response on request"]]
+      );
+    })
 
     addCheckingSendingBrokenMessagesTests(
       addTest,
@@ -72,6 +80,7 @@ const addCheckingSendingMessagesTests = function(
     describeTests("sending many requests at once", function() {
       const maxTimeMsToSendMessages = 6000;
       this.timeout(maxTimeMsToSendMessages);
+      this.slow(2300);
       add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
         [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
         [checkSendingManyTextRequestsAtOnce, "send many text requests at once"]
