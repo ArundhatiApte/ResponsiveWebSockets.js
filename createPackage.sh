@@ -1,8 +1,8 @@
 #!/bin/sh
 
-rm ResponsiveWebSockets.tar.gz
+rm ResponsiveWebSockets.package.tar.gz
 
-tar -czvf ResponsiveWebSockets.tar.gz \
+tar -czvf ResponsiveWebSockets.package.tar.gz \
   --exclude='node_modules'\
   --exclude='docs'\
   --exclude='.git'\
