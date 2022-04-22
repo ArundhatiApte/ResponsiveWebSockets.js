@@ -1,13 +1,14 @@
 #!/bin/sh
 
-rm ResponsiveWebSockets.package.zip
+rm ResponsiveWebSockets.tar.gz
 
-zip -r ResponsiveWebSockets.package.zip . \
-  -x node_modules/\*\
-  -x docs/\*\
-  -x .git/\*\
-  -x examples/\*\
-  -x *test\*\
-  -x ".gitignore"\
-  -x *test/\*\
-  -x "createPackage.sh"
+tar -czvf ResponsiveWebSockets.tar.gz \
+  --exclude='node_modules'\
+  --exclude='docs'\
+  --exclude='.git'\
+  --exclude='examples'\
+  --exclude=".gitignore"\
+  --exclude='*test*'\
+  --exclude='*tests.js'\
+  --exclude='createPackage.sh'\
+  .
