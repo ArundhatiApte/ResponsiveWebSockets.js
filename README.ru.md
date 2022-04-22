@@ -24,10 +24,8 @@ console.log("ответ: ", message.slice(startIndex));
 ```
 ### Установка
 
-Используйте пакет со страницы выпусков.  
-Или установите менеджером пакетов:  
-`npm install github:ArundhatiApte/ResponsiveWebSockets.js`  
-`yarn add github:ArundhatiApte/ResponsiveWebSockets.js`
+Скачайте пакет со страницы выпусков. В каталоге вашего проекта установите модуль менеджером пакетов:
+`npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
 ### Использование
 
@@ -106,6 +104,7 @@ import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
   }
 })();
 ```
+
 #### Использование в браузере
 
 ```js
@@ -116,6 +115,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 // компилируется webpack'ом
 // ...
 ```
+
 После вызова setWebSocketClientClass(window.WebSocket), класс ResponsiveWebSocketClient готов к использованию.
 Поскольку код ResponsiveWebSocketClient не зависит от модулей node.js, webpack скомпилирует код класса.
 
@@ -126,9 +126,9 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### Запуск тестов
 
-- скачать репозиторий с github
-- установить зависимости: `yarn install --production=false`
-- запустить тесты: `yarn run tests`
+- скачать исходный код проекта со страницы выпусков
+- установить зависимости: `npm install`
+- запустить тесты: `npm test`
 
 ### Лицензия
 

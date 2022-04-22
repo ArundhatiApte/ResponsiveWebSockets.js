@@ -25,10 +25,8 @@ console.log("response body: ", message.slice(startIndex));
 
 ### Installation
 
-Download and use package from releases.  
-Or install by package manager:  
-`npm install github:ArundhatiApte/ResponsiveWebSockets.js`  
-`yarn add github:ArundhatiApte/ResponsiveWebSockets.js`
+Download package from releases page. In folder of your project install module by pakcage manager:
+`npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
 ### Usage
 
@@ -129,9 +127,9 @@ Because the code of `ResponsiveWebSocketClient` does not depend on node.js modul
 
 ### Launching tests
 
-- download repository from github
-- install all dependencies: `yarn install --production=false`
-- launch tests: `yarn run tests`
+- download project source code from releases page
+- install all dependencies: `npm install --production=false`
+- launch tests: `npm test`
 
 ### License
 
