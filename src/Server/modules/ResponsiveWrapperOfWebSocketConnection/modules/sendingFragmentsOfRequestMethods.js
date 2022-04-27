@@ -1,33 +1,38 @@
 "use strict";
 
 const {
-  _connection,
-  _generatorOfRequestId,
-  _idOfRequestToPromise,
-  _maxTimeMsToWaitResponse,
-} = require("./../../../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
+  _namesOfPrivateProperties: {
+    _connection,
+    _generatorOfRequestId,
+    _idOfRequestToPromise,
+    _maxTimeMsToWaitResponse,
+  }
+} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const createTimeoutToReceiveResponse = require(
-  "./../../../../common/ResponsiveConnection/utils/createTimeoutToReceiveResponse"
+  "./../../../../common/ResponsiveWebSocketConnection/utils/createTimeoutToReceiveResponse"
 );
 const createEntryAboutPromiseOfRequest = require(
-  "./../../../../common/ResponsiveConnection/utils/entryAboutPromiseOfRequest"
+  "./../../../../common/ResponsiveWebSocketConnection/utils/entryAboutPromiseOfRequest"
 ).create;
+
+const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
+const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
 
 const {
   binaryMessager: {
-    createHeaderOfRequest: createHeaderOfBinaryRequest
+    fillBufferAsHeaderOfRequest: fillBufferAsHeaderOfBinaryRequest
   },
   textMessager: {
-    createHeaderOfRequest: createHeaderOfTextRequest
+    fillBufferAsHeaderOfRequest: fillBufferAsHeaderOfTextRequest
   }
 } = require("./messaging/messaging");
 
-const sendHeaderAndFragments = require("./sendHeaderAndFragments");
+const sendHeaderAndFragments = require("./utilsForWebSocket/sendHeaderAndFragments");
 
 const sendFragmentsOfRequest = function(
   responsiveConnection,
-  createHeaderOfRequest,
+  fillBufferAsHeaderOfRequest,
   isMessageBinary,
   fragments
 ) {
@@ -40,19 +45,20 @@ const sendFragmentsOfRequest = function(
       reject,
       responsiveConnection[_maxTimeMsToWaitResponse]
     );
-    
+
     const entryAboutPromise = createEntryAboutPromiseOfRequest(resolve, timeout);
     idOfRequestToPromise.set(idOfRequest, entryAboutPromise);
 
-    const header = createHeaderOfRequest(idOfRequest);
-    sendHeaderAndFragments(responsiveConnection[_connection], isMessageBinary, header, fragments);
+    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
+    fillBufferAsHeaderOfRequest(header, idOfRequest);
+    sendHeaderAndFragments(responsiveConnection[_connection], header, isMessageBinary, fragments);
   });
 };
 
 const sendFragmentsOfBinaryRequest = function() {
   return sendFragmentsOfRequest(
     this,
-    createHeaderOfBinaryRequest,
+    fillBufferAsHeaderOfBinaryRequest,
     true,
     arguments
   );
@@ -61,7 +67,7 @@ const sendFragmentsOfBinaryRequest = function() {
 const sendFragmentsOfTextRequest = function() {
   return sendFragmentsOfRequest(
     this,
-    createHeaderOfTextRequest,
+    fillBufferAsHeaderOfTextRequest,
     false,
     arguments
   );

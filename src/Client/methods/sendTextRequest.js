@@ -1,8 +1,11 @@
 "use strict";
 
-const {_connection} = require("./../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
+const { _connection } = require(
+  "./../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
+)._namesOfPrivateProperties;
+
 const sendRequestByResponsiveConnection = require(
-  "./../../common/ResponsiveConnection/utils/sendRequestByResponsiveConnection"
+  "./../../common/ResponsiveWebSocketConnection/utils/sendRequestByResponsiveConnection"
 );
 const creatTextRequest = require("./../modules/messaging/messaging").textMessager.createRequestMessage;
 

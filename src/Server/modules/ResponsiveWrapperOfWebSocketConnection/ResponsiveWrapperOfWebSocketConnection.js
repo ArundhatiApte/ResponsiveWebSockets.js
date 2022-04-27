@@ -1,6 +1,8 @@
 "use strict";
 
-const ResponsiveConnection = require("./../../../common/ResponsiveConnection/ResponsiveConnection");
+const ResponsiveWebSocketConnection = require(
+  "./../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
+);
 
 const {
   _connection,
@@ -13,16 +15,17 @@ const {
   _onUnrequestingBinaryMessage,
   _onUnrequestingTextMessage,
   _onClose
-} = ResponsiveConnection._namesOfPrivateProperties;
+} = ResponsiveWebSocketConnection._namesOfPrivateProperties;
 
 const {
   binary: contentTypesOfMessages_binary,
   text: contentTypesOfMessages_text
-} = ResponsiveConnection.contentTypesOfMessages;
+} = ResponsiveWebSocketConnection.contentTypesOfMessages;
 
 const { _userData } = require("./../AcceptorOfRequestForUpgrade");
 
 const {
+  sizeOfRequestOrResponseHeader,
   binaryMessager: {
     extractTypeOfIncomingMessage: extractTypeOfIncomingBinaryMessage,
     extractIdOfMessage: extractIdOfBinaryMessage,
@@ -36,6 +39,37 @@ const {
     startIndexOfBodyInRequest: startIndexOfBodyInTextRequest
   }
 } = require("./modules/messaging/messaging");
+
+const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveWebSocketConnection {
+  constructor(uWSConnectionToClient) {
+    super();
+    this[_connection] = uWSConnectionToClient;
+  }
+
+  getRemoteAddress() {
+    return this[_connection].getRemoteAddress();
+  }
+
+  get userData() {
+    return this[_connection][_userData];
+  }
+
+  setErrorListener(listnerOrNull) {}
+
+  close(code, reason) {
+    return this[_connection].end(code, reason);
+  }
+
+  terminate() {
+    return this[_connection].close();
+  }
+};
+
+const _symbolOfBufferForHeader = Symbol();
+ResponsiveWrapperOfWebSocketConnection._symbolOfBufferForHeader = _symbolOfBufferForHeader;
+ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader] = new ArrayBuffer(sizeOfRequestOrResponseHeader);
+
+module.exports = ResponsiveWrapperOfWebSocketConnection;
 
 const SenderOfResponse = require("./modules/SenderOfResponse");
 
@@ -59,47 +93,22 @@ const {
   sendFragmentsOfUnrequestingTextMessage
 } = require("./modules/sendingFragmentsOfUnrequestingMessageMethods");
 
-const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveConnection {
-  constructor(uWSConnectionToClient) {
-    super();
-    this[_connection] = uWSConnectionToClient;
-  }
+const Proto = ResponsiveWrapperOfWebSocketConnection.prototype;
 
-  getRemoteAddress() {
-    return this[_connection].getRemoteAddress();
-  }
+Proto.sendBinaryRequest = sendBinaryRequest;
+Proto.sendTextRequest = sendTextRequest;
 
-  get userData() {
-    return this[_connection][_userData];
-  }
+Proto.sendFragmentsOfBinaryRequest = sendFragmentsOfBinaryRequest;
+Proto.sendFragmentsOfTextRequest = sendFragmentsOfTextRequest;
 
-  setErrorListener(listnerOrNull) {}
+Proto.sendUnrequestingBinaryMessage = sendUnrequestingBinaryMessage;
+Proto.sendUnrequestingTextMessage = sendUnrequestingTextMessage;
 
-  close(code, reason) {
-    return this[_connection].end(code, reason);
-  }
-
-  terminate() {
-    return this[_connection].close();
-  }
-
-  sendBinaryRequest = sendBinaryRequest;
-  sendTextRequest = sendTextRequest;
-
-  sendFragmentsOfBinaryRequest = sendFragmentsOfBinaryRequest;
-  sendFragmentsOfTextRequest = sendFragmentsOfTextRequest;
-
-  sendUnrequestingBinaryMessage = sendUnrequestingBinaryMessage;
-  sendUnrequestingTextMessage = sendUnrequestingTextMessage;
-
-  sendFragmentsOfUnrequestingBinaryMessage = sendFragmentsOfUnrequestingBinaryMessage;
-  sendFragmentsOfUnrequestingTextMessage = sendFragmentsOfUnrequestingTextMessage;
-};
-
-module.exports = ResponsiveWrapperOfWebSocketConnection;
+Proto.sendFragmentsOfUnrequestingBinaryMessage = sendFragmentsOfUnrequestingBinaryMessage;
+Proto.sendFragmentsOfUnrequestingTextMessage = sendFragmentsOfUnrequestingTextMessage;
 
 const listenEventOfMessageToInnerWebSocket = require(
-  "./../../../common/ResponsiveConnection/utils/listenEventOfMessageToInnerWebSocket"
+  "./../../../common/ResponsiveWebSocketConnection/utils/listenEventOfMessageToInnerWebSocket"
 );
 
 ResponsiveWrapperOfWebSocketConnection._acceptBinaryMessage = function(responsiveWrapper, message) {

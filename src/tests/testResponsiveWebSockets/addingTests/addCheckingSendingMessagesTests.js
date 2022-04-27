@@ -69,7 +69,7 @@ const addCheckingSendingMessagesTests = function(
         createFnToTestFromClientToServer,
         [[checkTimeout, "timeout to receive response on request"]]
       );
-    })
+    });
 
     addCheckingSendingBrokenMessagesTests(
       addTest,
@@ -78,9 +78,9 @@ const addCheckingSendingMessagesTests = function(
     );
 
     describeTests("sending many requests at once", function() {
-      const maxTimeMsToSendMessages = 6000;
+      const maxTimeMsToSendMessages = 4000;
       this.timeout(maxTimeMsToSendMessages);
-      this.slow(2300);
+      this.slow(4000);
       add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
         [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
         [checkSendingManyTextRequestsAtOnce, "send many text requests at once"]

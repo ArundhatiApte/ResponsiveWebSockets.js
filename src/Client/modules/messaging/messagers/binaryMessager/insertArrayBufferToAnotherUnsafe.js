@@ -1,8 +1,6 @@
 "use strict";
 
-const insertArrayBufferToAnotherUnsafe = function(
-  sourceArrayBuffer, startIndexInSource, insertedArrayBuffer
-) {
+const insertArrayBufferToAnotherUnsafe = function(sourceArrayBuffer, startIndexInSource, insertedArrayBuffer) {
   const sourceBytes = new Uint8Array(sourceArrayBuffer),
         insertedBytes = new Uint8Array(insertedArrayBuffer),
         countOfInsertedBytes = insertedBytes.length,

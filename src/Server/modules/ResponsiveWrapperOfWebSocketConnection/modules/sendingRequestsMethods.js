@@ -1,34 +1,35 @@
 "use strict";
 
 const {
-  _connection
-} = require("./../../../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
+  _namesOfPrivateProperties: { _connection }
+} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const sendRequestByResponsiveConnection = require(
-  "./../../../../common/ResponsiveConnection/utils/sendRequestByResponsiveConnection"
+  "./../../../../common/ResponsiveWebSocketConnection/utils/sendRequestByResponsiveConnection"
 );
+
+const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
+const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
 
 const {
   binaryMessager: {
-    createHeaderOfRequest: createHeaderOfBinaryRequest
+    fillBufferAsHeaderOfRequest: fillBufferAsHeaderOfBinaryRequest
   },
   textMessager: {
-    createHeaderOfRequest: createHeaderOfTextRequest
+    fillBufferAsHeaderOfRequest: fillBufferAsHeaderOfTextRequest
   }
 } = require("./messaging/messaging");
 
 const sendBinaryChunksInRequest = function(responsiveConnection, idOfRequest, message) {
   const webSocket = responsiveConnection[_connection];
-  const header = createHeaderOfBinaryRequest(idOfRequest);
-  const messageIsBinary = true;
-  webSocket.sendFirstFragment(header, messageIsBinary);
-  webSocket.sendLastFragment(message, messageIsBinary);
+  const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
+  fillBufferAsHeaderOfBinaryRequest(header, idOfRequest);
+
+  webSocket.sendFirstFragment(header, true);
+  webSocket.sendLastFragment(message, true);
 };
 
-const sendBinaryRequest = function(
-  message,
-  maxTimeMsToWaitResponse
-) {
+const sendBinaryRequest = function(message, maxTimeMsToWaitResponse) {
   return sendRequestByResponsiveConnection(
     this,
     message,
@@ -39,15 +40,14 @@ const sendBinaryRequest = function(
 
 const sendTextChunksInRequest = function(responsiveConnection, idOfRequest, message) {
   const webSocket = responsiveConnection[_connection];
-  const header = createHeaderOfTextRequest(idOfRequest);
+  const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
+  fillBufferAsHeaderOfTextRequest(header, idOfRequest);
+
   webSocket.sendFirstFragment(header);
   webSocket.sendLastFragment(message);
 };
 
-const sendTextRequest = function(
-  message,
-  maxTimeMsToWaitResponse
-) {
+const sendTextRequest = function(message, maxTimeMsToWaitResponse) {
   return sendRequestByResponsiveConnection(
     this,
     message,

@@ -1,6 +1,6 @@
 "use strict";
 
-const { TimeoutToReceiveResponseError } = require("./../ResponsiveConnection");
+const { TimeoutToReceiveResponseError } = require("./../ResponsiveWebSocketConnection");
 
 const createTimeoutToReceiveResponse = function(
   idOfRequestToEntryAboutPromise,

@@ -9,23 +9,20 @@ const {
 const ErrorAtParsing = require("./../ErrorAtParsing");
 
 const {
-  request: charCodesOfHeaders_request,
-  response: charCodesOfHeaders_response,
-  unrequestingMessage: charCodesOfHeaders_unrequestingMessage
-} = require("./charCodesOfHeaders");
-
-const { extractUInt16FromStringUnsafe } = require("./uInt16ViewIn2Char/uInt16ViewIn2Char");
+  request: codesOfHeader_request,
+  response: codesOfHeader_response,
+  unrequestingMessage: codesOfHeader_unrequestingMessage
+} = require("./codesOfHeaders");
 
 const abstractMessager = {
   extractTypeOfIncomingMessage(message) {
-    const charCodeOfHeader = message.charCodeAt(0);
-
-    switch (charCodeOfHeader) {
-      case charCodesOfHeaders_request:
+    const codeOfHeader = message.charCodeAt(0) & 0b0000_0000_0011_0000;
+    switch (codeOfHeader) {
+      case codesOfHeader_request:
         return typeOfIncomingMessage_request;
-      case charCodesOfHeaders_unrequestingMessage:
+      case codesOfHeader_unrequestingMessage:
         return typeOfIncomingMessage_unrequestingMessage;
-      case charCodesOfHeaders_response:
+      case codesOfHeader_response:
         return typeOfIncomingMessage_response;
     }
     throw new ErrorAtParsing("Message of unrecognized type.");
@@ -36,8 +33,11 @@ const abstractMessager = {
     if (message.length < minLengthOfMessage) {
       throw new ErrorAtParsing("Message is too short");
     }
-    const startIndex = 1;
-    return extractUInt16FromStringUnsafe(startIndex, message);
+    const first4Bit = message.charCodeAt(0) & 0b1111;
+    const middle6Bit = message.charCodeAt(1) & 0b111111;
+    const last6Bit = message.charCodeAt(2) & 0b111111;
+
+    return (first4Bit << 12) | (middle6Bit << 6) | last6Bit;
   },
   startIndexOfBodyInRequest: 3,
   startIndexOfBodyInUnrequestingMessage: 1,

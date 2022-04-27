@@ -2,7 +2,9 @@
 
 const expectEqual = require("assert").strictEqual;
 
-const { contentTypesOfMessages } = require("./../../../common/ResponsiveConnection/ResponsiveConnection");
+const { contentTypesOfMessages } = require(
+  "./../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
+);
 
 const {
   numberToInt32Bytes,

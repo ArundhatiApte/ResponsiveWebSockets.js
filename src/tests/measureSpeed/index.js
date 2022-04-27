@@ -24,7 +24,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   connectionToClient.setMaxTimeMsToWaitResponse(maxTimeMs);
   client.setMaxTimeMsToWaitResponse(maxTimeMs);
 
-  const countOfRequests = 10_000_000;
+  const countOfRequests = 1_000_000;
   await measureSpeedOfSendingRequestsAndLogResults(connectionToClient, client, countOfRequests, process.stdout);
 
   client.close();

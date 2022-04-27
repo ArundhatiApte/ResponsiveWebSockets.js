@@ -1,6 +1,6 @@
 "use strict";
 
-const ResponsiveConnection = require("./../common/ResponsiveConnection/ResponsiveConnection");
+const ResponsiveWebSocketConnection = require("./../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const {
   binaryMessager: {
@@ -17,10 +17,10 @@ let W3CWebSocketClientClass = null;
 const {
   _connection,
   _onClose
-} = ResponsiveConnection._namesOfPrivateProperties;
+} = ResponsiveWebSocketConnection._namesOfPrivateProperties;
 const _onError = "_6";
 
-const ResponsiveWebSocketClient = class extends ResponsiveConnection {
+const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
   constructor() {
     super();
   }
@@ -31,9 +31,9 @@ const ResponsiveWebSocketClient = class extends ResponsiveConnection {
 
   connect(url) {
     return new Promise((resolve, reject) => {
-      const client = this[_connection] = new W3CWebSocketClientClass(url);      
+      const client = this[_connection] = new W3CWebSocketClientClass(url);
       client.binaryType = "arrayBuffer";
-      
+
       const self = this;
       client.onopen = function onWebSocketLoad() {
         self._setupListenersOfEvents(client);

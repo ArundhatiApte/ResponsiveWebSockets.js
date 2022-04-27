@@ -1,14 +1,12 @@
 "use strict";
 
-const typesOfIncomingMessages = require("./../../../../../../common/messaging/typesOfIncomingMessages"),
-      createFnToCheckCreatingMessages = require("./_createFnToCheckCreatingMessages"),
-      createFnToCheckCreatingMessageWithId = require("./_createFnToCheckCreatingMessageWithId");
-
-const checkCreatingAndParsingAwaitingResponseMessage = createFnToCheckCreatingMessageWithId(
-  244, typesOfIncomingMessages.request
+const typesOfIncomingMessages = require(
+  "./../../../../../../common/ResponsiveWebSocketConnection/modules/messaging/typesOfIncomingMessages"
 );
+const createFnToCheckCreatingMessagesWithId = require("./_createFnToCheckCreatingMessagesWithId");
 
-const checkCreatingAndParsingAwaitingResponseMessages =
-  createFnToCheckCreatingMessages(checkCreatingAndParsingAwaitingResponseMessage);
+const checkCreatingAndParsingAwaitingResponseMessages = createFnToCheckCreatingMessagesWithId(
+  typesOfIncomingMessages.request
+);
 
 module.exports = checkCreatingAndParsingAwaitingResponseMessages;

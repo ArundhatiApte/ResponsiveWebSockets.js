@@ -1,25 +1,29 @@
 "use strict";
 
-const abstractMessager = require("./../../../../../../../common/messaging/textMessages/abstractMessager");
+const abstractMessager = require(
+  "./../../../../../../../common/ResponsiveWebSocketConnection/modules/messaging/textMessages/abstractMessager"
+);
 
 const {
-  request: charCodesOfHeaders_request,
-  response: charCodesOfHeaders_response,
-  unrequestingMessage: charCodesOfHeaders_unrequestingMessage
-} = require("./../../../../../../../common/messaging/textMessages/charCodesOfHeaders");
+  request: codesOfHeaders_request,
+  response: codesOfHeaders_response,
+  unrequestingMessage: codesOfHeaders_unrequestingMessage
+} = require(
+  "./../../../../../../../common/ResponsiveWebSocketConnection/modules/messaging/textMessages/codesOfHeaders"
+);
 
-const {
-  uInt16ToCharPlus2Chars8BitString
-} = require("./../../../../../../../common/messaging/textMessages/uInt16ViewIn2Char/uInt16ViewIn2Char");
+const fillArrayBufferAsHeader = function(uint8OfHeader, arrayBuffer, uint16IdOfMessage) {
+  const dataView = new DataView(arrayBuffer);
+
+  dataView.setUint8(0, uint8OfHeader | ((uint16IdOfMessage << 16) >>> 28), true);
+  dataView.setUint8(1, ((uint16IdOfMessage << 20) >>> 26), true);
+  dataView.setUint8(2, ((uint16IdOfMessage << 26) >>> 26), true);
+};
 
 const textMessager = abstractMessager;
 
-textMessager.createHeaderOfRequest = function(uint16IdOfMessage) {
-  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_request, uint16IdOfMessage);
-};
-textMessager.createHeaderOfResponse = function(uint16IdOfMessage) {
-  return uInt16ToCharPlus2Chars8BitString(charCodesOfHeaders_response, uint16IdOfMessage);
-};
-textMessager.headerOfUnrequestingMessage = String.fromCharCode(charCodesOfHeaders_unrequestingMessage);
+textMessager.fillBufferAsHeaderOfRequest = fillArrayBufferAsHeader.bind(null, codesOfHeaders_request);
+textMessager.fillBufferAsHeaderOfResponse = fillArrayBufferAsHeader.bind(null, codesOfHeaders_response);
+textMessager.headerOfUnrequestingMessage = String.fromCharCode(codesOfHeaders_unrequestingMessage);
 
 module.exports = textMessager;

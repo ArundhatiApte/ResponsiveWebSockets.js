@@ -2,7 +2,7 @@
 
 const expectDeepEqual = require("assert").deepStrictEqual;
 
-const maxValueOfCounterOfAwaitingResponseMessages = Math.pow(2, 16) - 1;
+const maxValueOfCounterOfAwaitingResponseMessagesPlus1 = Math.pow(2, 16);
 
 const checkSendingManyMessagesAtOnce = async function(
   sender,
@@ -20,8 +20,7 @@ const checkSendingManyMessagesAtOnce = async function(
   const expectedResponses = [];
   const sendingMessages = [];
 
-  for (let i = maxValueOfCounterOfAwaitingResponseMessages; i; ) {
-    i -= 1;
+  for (let i = 0; i < maxValueOfCounterOfAwaitingResponseMessagesPlus1; i += 1) {
     const sendedMessage = createSendedMessage(),
           expectedResponse = createExpectedResponse(sendedMessage);
 
@@ -64,8 +63,14 @@ const sendMessageAndReceiveResponse = async function(
   startIndexOfBodyInResponse,
   extractMessageFromResponse
 ) {
-  const {message: receivedMessage} = await sendMessage(sender, message);
-  return extractMessageFromResponse(receivedMessage, startIndexOfBodyInResponse);
+  //const {message: receivedMessage} = await sendMessage(sender, message);
+  let response;
+  try {
+    response = await sendMessage(sender, message);
+  } catch(error) {
+    console.log("ошибка получения ответа, запрос: ", message);
+  }
+  return extractMessageFromResponse(response.message, startIndexOfBodyInResponse);
 };
 
 const createFnToCheckSendingManyMessagesAtOnce = function(

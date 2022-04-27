@@ -4,14 +4,14 @@ const {
   request: typesOfIncomingMessages_request,
   response: typesOfIncomingMessages_response,
   unrequestingMessage: typesOfIncomingMessages_unrequestingMessage,
-} = require("./../../../common/messaging/typesOfIncomingMessages");
+} = require("./../modules/messaging/typesOfIncomingMessages");
 
-const ErrorAtParsing = require("./../../../common/messaging/ErrorAtParsing");
+const ErrorAtParsing = require("./../modules/messaging/ErrorAtParsing");
 
 const {
   _connection,
   _idOfRequestToPromise
-} = require("./../ResponsiveConnection")._namesOfPrivateProperties;
+} = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
 
 const {
   create: entryAboutPromiseOfRequest_create,

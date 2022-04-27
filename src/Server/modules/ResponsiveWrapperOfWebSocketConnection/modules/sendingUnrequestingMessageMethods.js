@@ -1,8 +1,8 @@
 "use strict";
 
 const {
-  _connection
-} = require("./../../../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
+  _namesOfPrivateProperties: { _connection }
+} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const {
   binaryMessager: {

@@ -1,6 +1,8 @@
 "use strict";
 
-const { TimeoutToReceiveResponseError } = require("./../../../common/ResponsiveConnection/ResponsiveConnection");
+const { TimeoutToReceiveResponseError } = require(
+  "./../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
+);
 
 const checkTimeout = async function(sender, reciever) {
   const msToWait = 100,

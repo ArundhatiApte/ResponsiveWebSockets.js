@@ -1,8 +1,8 @@
 "use strict";
 
 const {
-  _connection
-} = require("./../../../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
+  _namesOfPrivateProperties: { _connection }
+} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const {
   binaryMessager: {
@@ -13,28 +13,28 @@ const {
   }
 } = require("./messaging/messaging");
 
-const sendHeaderAndFragments = require("./sendHeaderAndFragments");
+const sendHeaderAndFragments = require("./utilsForWebSocket/sendHeaderAndFragments");
 
 const sendFragmentsOfUnrequestingMessage = function(
   responsiveConnection,
-  isMessageBinary,
   header,
+  isMessageBinary,
   fragments
 ) {
   return sendHeaderAndFragments(
     responsiveConnection[_connection],
-    isMessageBinary,
     header,
+    isMessageBinary,
     fragments
   );
 };
 
 const sendFragmentsOfUnrequestingBinaryMessage = function() {
-  return sendFragmentsOfUnrequestingMessage(this, true, headerOfUnrequestingBinaryMessage, arguments);
+  return sendFragmentsOfUnrequestingMessage(this, headerOfUnrequestingBinaryMessage, true, arguments);
 };
 
 const sendFragmentsOfUnrequestingTextMessage = function() {
-  return sendFragmentsOfUnrequestingMessage(this, false, headerOfUnrequestingTextMessage, arguments);
+  return sendFragmentsOfUnrequestingMessage(this, headerOfUnrequestingTextMessage, false, arguments);
 };
 
 module.exports = {

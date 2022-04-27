@@ -1,15 +1,18 @@
 "use strict";
 
+const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
+const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
+
 const {
   binaryMessager: {
-    createHeaderOfResponse: createHeaderOfBinaryResponse
+    fillBufferAsHeaderOfResponse: fillBufferAsHeaderOfBinaryResponse
   },
   textMessager: {
-    createHeaderOfResponse: createHeaderOfTextResponse
+    fillBufferAsHeaderOfResponse: fillBufferAsHeaderOfTextResponse
   }
 } = require("./messaging/messaging");
 
-const sendHeaderAndFragments = require("./sendHeaderAndFragments");
+const fillHeaderThenSendItAndFragments = require("./utilsForWebSocket/fillHeaderThenSendItAndFragments");
 
 const SenderOfResponse = class {
   constructor(webSocket, idOfMessage) {
@@ -19,38 +22,47 @@ const SenderOfResponse = class {
 
   sendBinaryResponse(message) {
     const connection = this[_connection];
+    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
+    fillBufferAsHeaderOfBinaryResponse(header, this[_idOfMessage]);
+
     const messageIsBinary = true;
-    const header = createHeaderOfBinaryResponse(this[_idOfMessage]);
     connection.sendFirstFragment(header, messageIsBinary);
     connection.sendLastFragment(message, messageIsBinary);
   }
-  
+
   sendTextResponse(message) {
     const connection = this[_connection];
-    connection.sendFirstFragment(createHeaderOfTextResponse(this[_idOfMessage]));
+    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
+    fillBufferAsHeaderOfTextResponse(header, this[_idOfMessage]);
+
+    connection.sendFirstFragment(header);
     connection.sendLastFragment(message);
   }
 
   sendFragmentsOfBinaryResponse() {
-    return sendHeaderAndFragments(
+    return fillHeaderThenSendItAndFragments(
       this[_connection],
+      ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader],
+      fillBufferAsHeaderOfBinaryResponse,
+      this[_idOfMessage],
       true,
-      createHeaderOfBinaryResponse(this[_idOfMessage]),
       arguments
     );
   }
 
   sendFragmentsOfTextResponse() {
-    return sendHeaderAndFragments(
+    return fillHeaderThenSendItAndFragments(
       this[_connection],
+      ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader],
+      fillBufferAsHeaderOfTextResponse,
+      this[_idOfMessage],
       false,
-      createHeaderOfTextResponse(this[_idOfMessage]),
       arguments
     );
   }
 };
 
-const _connection = "_",
-      _idOfMessage = "_i";
+const _connection = Symbol(),
+      _idOfMessage = Symbol();
 
 module.exports = SenderOfResponse;

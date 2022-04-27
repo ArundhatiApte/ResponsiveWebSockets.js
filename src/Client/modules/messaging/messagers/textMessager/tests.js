@@ -16,7 +16,7 @@ const {
 } = require("./textMessager");
 
 const messages = ["ansi", "utf8◈ℱ"];
-const brokenMessage = "abcdef";
+const brokenMessage = new TextDecoder("utf-8").decode(new Uint8Array([0b1100001100, 29, 42]).buffer);
 
 testMessager(describe, it, {
   nameOfTest: "client text messager",

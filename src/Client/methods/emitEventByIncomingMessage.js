@@ -1,6 +1,30 @@
 "use strict";
 
 const {
+  contentTypesOfMessages: {
+    binary: contentTypesOfMessages_binary,
+    text: contentTypesOfMessages_text
+  },
+  _namesOfPrivateProperties: {
+    _connection,
+    _idOfRequestToPromise,
+
+    _onMalformedBinaryMessage,
+    _onMalformedTextMessage,
+
+    _onBinaryRequest,
+    _onTextRequest,
+
+    _onUnrequestingBinaryMessage,
+    _onUnrequestingTextMessage,
+  }
+} = require("./../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
+
+const listenEventOfMessageToInnerWebSocket = require(
+  "./../../common/ResponsiveWebSocketConnection/utils/listenEventOfMessageToInnerWebSocket"
+);
+
+const {
   textMessager: {
     extractTypeOfIncomingMessage: extractTypeOfIncomingTextMessage,
     extractIdOfMessage: extractIdOfTextMessage,
@@ -15,29 +39,7 @@ const {
   }
 } = require("./../modules/messaging/messaging");
 
-const {
-  binary: contentTypesOfMessages_binary,
-  text: contentTypesOfMessages_text
-} = require("./../../common/ResponsiveConnection/ResponsiveConnection").contentTypesOfMessages;
-
-const listenEventOfMessageToInnerWebSocket = require(
-  "./../../common/ResponsiveConnection/utils/listenEventOfMessageToInnerWebSocket"
-);
 const SenderOfResponse = require("./../modules/SenderOfResponse");
-
-const {
-  _connection,
-  _idOfRequestToPromise,
-
-  _onMalformedBinaryMessage,
-  _onMalformedTextMessage,
-
-  _onBinaryRequest,
-  _onTextRequest,
-
-  _onUnrequestingBinaryMessage,
-  _onUnrequestingTextMessage,
-} = require("./../../common/ResponsiveConnection/ResponsiveConnection")._namesOfPrivateProperties;
 
 const emitEventByIncomingMessage = function(event) {
   return _emitOnFirstMessage.call(this, event);

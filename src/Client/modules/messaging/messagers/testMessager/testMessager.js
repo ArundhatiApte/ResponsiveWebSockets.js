@@ -3,11 +3,8 @@
 const checkCreatingAndParsingAwaitingResponseMessages =
   require("./checks/checkCreatingAndParsingAwaitingResponseMessages");
 
-const checkCreatingAndParsingUnrequestingMessages =
-  require("./checks/checkCreatingAndParsingUnrequestingMessages");
-
-const checkCreatingAndParsingResponseMessages =
-  require("./checks/checkCreatingAndParsingResponseMessages");
+const checkCreatingAndParsingUnrequestingMessage = require("./checks/checkCreatingAndParsingUnrequestingMessage");
+const checkCreatingAndParsingResponseMessages = require("./checks/checkCreatingAndParsingResponseMessages");
 
 const checkThrowingErrorAtParsing =
   require("./checks/checkThrowingErrorAtParsing");
@@ -32,48 +29,41 @@ const testMessager = function(describeTests, addTest, options) {
     brokenMessage
   } = options;
 
-  const checkigFnToCreatingMessageFnAndNameOfTest = [
-    [
-      checkCreatingAndParsingAwaitingResponseMessages,
-      startIndexOfBodyInRequest,
-      createRequestMessage,
-      "creating and parsing awaiting response messages"
-    ],
-    [
-      checkCreatingAndParsingUnrequestingMessages,
-      startIndexOfBodyInUnrequestingMessage,
-      createUnrequestingMessage,
-      "creating and parsing unrequesting messages"
-    ],
-    [
-      checkCreatingAndParsingResponseMessages,
-      startIndexOfBodyInResponse,
-      createResponseMessage,
-      "creating and parsing response messages"
-    ]
-  ];
-
   describeTests(nameOfTest, function() {
-    for (const [check, startIndexOfBody, createMessage, name] of checkigFnToCreatingMessageFnAndNameOfTest) {
-      const test = createTest(
-        check,
-        startIndexOfBody,
-        messages,
-        createMessage,
-        extractTypeOfIncomingMessage,
-        extractIdOfMessage,
-        extractMessageFromMessageWithHeader
-      );
-      addTest(name, test);
-    }
+    addTest("creating and parsing awaiting response messages", createTest(
+      checkCreatingAndParsingAwaitingResponseMessages,
+      createRequestMessage,
+      messages,
+      startIndexOfBodyInRequest,
+      extractTypeOfIncomingMessage,
+      extractIdOfMessage,
+      extractMessageFromMessageWithHeader
+    ));
 
-    const testThrowingErrorAtParsing = createTest(
+    addTest("creating and parsing response messages", createTest(
+      checkCreatingAndParsingResponseMessages,
+      createResponseMessage,
+      messages,
+      startIndexOfBodyInResponse,
+      extractTypeOfIncomingMessage,
+      extractIdOfMessage,
+      extractMessageFromMessageWithHeader
+    ));
+
+    addTest("creating and parsing unrequesting messages", createTest(
+      checkCreatingAndParsingUnrequestingMessage,
+      createUnrequestingMessage,
+      messages[0],
+      startIndexOfBodyInUnrequestingMessage,
+      extractTypeOfIncomingMessage,
+      extractMessageFromMessageWithHeader
+    ));
+
+    addTest("throwing error at parsing", createTest(
       checkThrowingErrorAtParsing,
       brokenMessage,
       extractTypeOfIncomingMessage
-    );
-
-    addTest("throwing error at parsing", testThrowingErrorAtParsing);
+    ));
   });
 };
 

@@ -5,20 +5,20 @@ const createTextResponse = require("./messaging/messaging").textMessager.createR
 
 const SenderOfResponse = class {
   constructor(nonResponsiveWebSocketConnection, idOfMessage) {
-    this[_nonResponsiveWebSocketConnection] = nonResponsiveWebSocketConnection;
+    this[_webSocketConnection] = nonResponsiveWebSocketConnection;
     this[_idOfMessage] = idOfMessage;
   }
 
   sendBinaryResponse(message) {
-    return this[_nonResponsiveWebSocketConnection].send(createBinaryResponse(this[_idOfMessage], message));
+    return this[_webSocketConnection].send(createBinaryResponse(this[_idOfMessage], message));
   }
 
   sendTextResponse(message) {
-    return this[_nonResponsiveWebSocketConnection].send(createTextResponse(this[_idOfMessage], message));
+    return this[_webSocketConnection].send(createTextResponse(this[_idOfMessage], message));
   }
 };
 
-const _nonResponsiveWebSocketConnection = "_",
+const _webSocketConnection = "_",
       _idOfMessage = "_i";
 
 module.exports = SenderOfResponse;

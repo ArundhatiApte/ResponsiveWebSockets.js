@@ -3,19 +3,19 @@
 const createEnum = require("createEnum");
 const contentTypesOfMessages = createEnum("binary", "text");
 
-const GeneratorOfRequestId = require("./utils/SequenceGeneratorOfUint16/SequenceGeneratorOfUint16");
+const GeneratorOfRequestId = require("./modules/SequenceGeneratorOfUint16/SequenceGeneratorOfUint16");
 
 const startIndexOfBodyInBinaryResponse = require(
-  "./../messaging/binaryMessages/abstractMessager"
+  "./modules/messaging/binaryMessages/abstractMessager"
 ).startIndexOfBodyInResponse;
 
 const startIndexOfBodyInTextResponse = require(
-  "./../messaging/textMessages/abstractMessager"
+  "./modules/messaging/textMessages/abstractMessager"
 ).startIndexOfBodyInResponse;
 
 const TimeoutToReceiveResponseError = class extends Error {};
 
-const ResponsiveConnection = class {
+const ResponsiveWebSocketConnection = class {
   constructor() {
     this[_maxTimeMsToWaitResponse] = defaultMaxTimeMsToWaitResponse;
     this[_generatorOfRequestId] = new GeneratorOfRequestId();
@@ -92,7 +92,7 @@ const _connection = Symbol(),
 
 const defaultMaxTimeMsToWaitResponse = 2000;
 
-ResponsiveConnection._namesOfPrivateProperties = {
+ResponsiveWebSocketConnection._namesOfPrivateProperties = {
   _connection,
   _generatorOfRequestId,
   _idOfRequestToPromise,
@@ -109,4 +109,4 @@ ResponsiveConnection._namesOfPrivateProperties = {
   _onClose
 };
 
-module.exports = ResponsiveConnection;
+module.exports = ResponsiveWebSocketConnection;
