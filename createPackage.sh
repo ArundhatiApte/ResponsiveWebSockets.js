@@ -8,7 +8,7 @@ tar -czvf ResponsiveWebSockets.package.tar.gz \
   --exclude='.git'\
   --exclude='examples'\
   --exclude=".gitignore"\
-  --exclude='*test*'\
-  --exclude='*tests.js'\
+  --exclude='test*'\
+  --exclude='tests.js'\
   --exclude='createPackage.sh'\
   .

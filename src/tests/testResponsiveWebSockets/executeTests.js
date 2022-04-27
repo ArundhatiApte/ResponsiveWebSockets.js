@@ -1,5 +1,7 @@
 "use strict";
 
+const _createConnectionToClientAndClient = require("./../modules/createConnectionToClientAndClient");
+
 const addCheckingUpgradingConnetionTests = require("./addingTests/addCheckingUpgradingConnetionTests");
 const addCheckingSendingMessagesTests = require("./addingTests/addCheckingSendingMessagesTests");
 const addCheckingClosingConnectionTests = require("./addingTests/addCheckingClosingConnectionTests");
@@ -54,26 +56,10 @@ const executeTests = function(describeTests, addTest, options) {
     addCheckingClosingConnectionTests(describeTests, addTest, createConnectionToClientAndClient);
 
     after(function() {
+      client.close();
       responsiveWebSocketServer.close();
-      connectionToClient.terminate();
-      client.terminate();
-      setTimeout(process.exit.bind(process, 0), 10);
+      setTimeout(process.exit.bind(process, 0), 20);
     });
-  });
-};
-
-const _createConnectionToClientAndClient = function(responsiveWebSocketServer, urlOfServer, ResponsiveWebSocketClient) {
-  return new Promise(function(resolve, reject) {
-    const acceptRequestByDefault = null;
-    responsiveWebSocketServer.setUpgradeListener(acceptRequestByDefault);
-
-    responsiveWebSocketServer.setConnectionListener(async function(connectionToClient) {
-      await connectingClient;
-      resolve({connectionToClient, client});
-    });
-
-    const client = new ResponsiveWebSocketClient();
-    const connectingClient = client.connect(urlOfServer);
   });
 };
 
