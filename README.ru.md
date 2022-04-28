@@ -35,21 +35,25 @@ console.log("ответ: ", message.slice(startIndex));
 "use strict";
 
 import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
-import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
+import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
+import uWebSockets from "ResponsiveWebSockets/uWebSockets";
 
 // const ResponsiveWebSocketServer = require("ResponsiveWebSockets/Server");
-// const W3CWebSocketClient = requre("ResponsiveWebSockets/W3CWebSocketClient"); // commonJS
 // const ResponsiveWebSocketClient = require("ResponsiveWebSockets/Client");
+// const W3CWebSocketClient = requre("ResponsiveWebSockets/W3CWebSocketClient");
+// const uWebSockets = requre("ResponsiveWebSockets/uWebSockets");
 
 (async () => {
-  const server = new ResponsiveWebSocketServer();
+  const server = new ResponsiveWebSocketServer({
+    compression: uWebSockets.DISABLED
+  });
   const port = 8443;
   await server.listen(port);
 
   ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const client = new ResponsiveWebSocketClient();
-  
+
   const connectionToClient = await new Promise((resolve, reject) => {
     server.setConnectionListener(async (connectionToClient) => {
       console.log("cleint connected, url: ", connectionToClient.url);
