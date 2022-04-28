@@ -40,7 +40,7 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
       const client = this[_connection] = options ?
         new W3CWebSocketClientClass(url, options) :
         new W3CWebSocketClientClass(url);
-        
+
       client.binaryType = "arrayBuffer";
 
       const self = this;
