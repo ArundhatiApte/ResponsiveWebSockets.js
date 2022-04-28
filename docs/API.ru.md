@@ -22,7 +22,7 @@
     * terminate()
     * static class TimeoutToReceiveResponseError
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
-    * new ResponsiveWebSocketClient()
+    * new ResponsiveWebSocketClient([options])
     * connect(url)
     * static setWebSocketClientClass(W3CWebSocketClient)
 - [Класс: ResponsiveWebSocketServer](#класс-responsivewebSocketserver)
@@ -222,18 +222,9 @@ serverConnection.setMalformedTextMessageListener(function() {
 const webSocketClient = new WebSocket("wss://example.com");
 
 webSocketClient.onopen = function() {
-  webSocketClient.send("abcdefg");
+  webSocketClient.send("zyxw");
 };
 ```
-
-Заметки:
-
-* если первый символ сообщения равен '\u0001' и сообщение длиннее двух символов,
-то сообщение расценивается как запрос
-* если первый символ сообщения равен '\u0002' и сообщение длиннее двух символов,
-то сообщение расценивается как ответ
-* если первый символ сообщения равен '\u0003',
-то сообщение расценивается как сообщение без ожидания ответа
 
 ### setMaxTimeMsToWaitResponse(timeMs)
 
@@ -296,9 +287,29 @@ webSocketClient.onopen = function() {
 
 Наследует `ResponsiveWebSocketConnection`.
 
-### new ResponsiveWebSocketClient()
+### new ResponsiveWebSocketClient([options])
 
-Cоздает объекта класс ResponsiveWebSocketClient, без параметров.
+* `options <Object>` только для ResponsiveWebSocketClient в node.js
+    * `followRedirects <boolean>` по умoлчанию `false`
+    * `generateMask <function>`
+    функция, используемая для создания маски, вызывается перед отправкой каждого сообщения.
+    Принимает `<Buffer>`, который должен быть заполнен синхронно.
+    По умолчанию в `<Buffer>` записывается случайные байты, созданные криптографически стойким алгоритмом.
+    * `handshakeTimeout <number>`
+    максимальное время в миллисекундах ожидания запроса рукопожатия.
+    * `maxPayload <number>`
+    максимальный размер сообщения в байтах. По умолчанию 100 MiB (104857600 байт).
+    * `maxRedirects <number>`
+    максимальное количество перенаправлений. По умолчанию 10.
+    * `origin <string>`
+    значение заголовка `Origin` или `Sec-WebSocket-Origin` в зависимости от `protocolVersion`.
+    * `protocolVersion <number>`
+    значение заголовка `Sec-WebSocket-Version`
+    * `skipUTF8Validation <boolean>`
+    указывает пропускать ли проверку текста в UTF-8 для сообщений.
+    По умoлчанию`false`.
+
+Cоздает объекта класс ResponsiveWebSocketClient.
 
 ### connect(url)
 

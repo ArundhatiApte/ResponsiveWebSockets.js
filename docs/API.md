@@ -22,7 +22,7 @@
     * terminate()
     * static class TimeoutToReceiveResponseError
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
-    * new ResponsiveWebSocketClient()
+    * new ResponsiveWebSocketClient([options])
     * connect(url)
     * static setWebSocketClientClass(W3CWebSocketClient)
 - [Class: ResponsiveWebSocketServer](#class-responsivewebSocketserver)
@@ -200,18 +200,9 @@ in browser:
 const webSocketClient = new WebSocket("wss://example.com");
 
 webSocketClient.onopen = function() {
-  webSocketClient.send("abcdefg");
+  webSocketClient.send("zyxw");
 };
 ```
-
-Notes:
-
-* if the first character of the message is '\u0001' and the message is longer than two characters,
-then the message is treated as a request
-* if the first character of the message is '\u0002' and the message is longer than two characters,
-then the message is treated as a response
-* if the first character of the message is '\u0003',
-then the message is treated as a unrequesting message
 
 ### setMaxTimeMsToWaitResponse(timeMs)
 
@@ -293,9 +284,31 @@ did not arrive during the max time for waiting response on request.
 
 * extends `ResponsiveWebSocketConnection`
 
-### new ResponsiveWebSocketClient()
+### new ResponsiveWebSocketClient([options])
 
-Creates new ResponsiveWebSocketClient, without arguments.
+* `options <Object>` only for ResponsiveWebSocketClient in node.js
+    * `followRedirects <boolean>`
+    whether or not to follow redirects. Defaults to `false`.
+    * `generateMask <function>`
+    the function used to generate the masking key.
+    It takes a `<Buffer>` that must be filled synchronously and is called before a message is sent,
+    for each message. By default the buffer is filled with cryptographically strong random bytes.
+    * `handshakeTimeout <number>`
+    timeout in milliseconds for the handshake request.
+    This is reset after every redirection.
+    * `maxPayload <number>`
+    the maximum allowed message size in bytes. Defaults to 100 MiB (104857600 bytes).
+    * `maxRedirects <number>`
+    the maximum number of redirects allowed. Defaults to 10.
+    * `origin <string>`
+    value of the `Origin` or `Sec-WebSocket-Origin` header depending on the `protocolVersion`.
+    * `protocolVersion <number>`
+    value of the `Sec-WebSocket-Version` header.
+    * `skipUTF8Validation <boolean>`
+    specifies whether or not to skip UTF-8 validation for text and close messages.
+    Defaults to `false`.
+
+Creates new ResponsiveWebSocketClient.
 
 ### connect(url)
 
