@@ -20,7 +20,7 @@
     "ws": "^8.4.0"
   },
   "scripts": {
-    "test": "npx mocha src/**/tests.js --recursive"
+    "test": "npx mocha src/**/tests.js --recursive --no-color"
   },
   "version": "1.1.2"
 }
