@@ -1,4 +1,6 @@
-## Содержание
+# Responsive Web Sockets API
+
+#### Содержание
 
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
@@ -68,7 +70,9 @@
 
 ### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
-* `bytes <ArrayBuffer>`
+* `bytes <ArrayBuffer>`  
+Клиент принимает `<ArrayBuffer>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 * `maxTimeMsToWaitResponse <number>`  
 опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
 * Возвращает `<Promise<ResponseData>>`
@@ -82,7 +86,9 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 
 ### sendTextRequest(text[, maxTimeMsToWaitResponse])
 
-* `text <string>`
+* `text <string>`  
+Клиент принимает `<string>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 * `maxTimeMsToWaitResponse <number>`  
 опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
 * Возвращает `<Promise<ResponseData>>`
@@ -96,7 +102,9 @@ Promise завершится исключнием TimeoutToReceiveResponseError.
 
 ### sendUnrequestingBinaryMessage(bytes)
 
-* `bytes <ArrayBuffer>`
+* `bytes <ArrayBuffer>`  
+Клиент принимает `<ArrayBuffer>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 
 Отправляет двоичное сообщение без ожидания ответа.
 При поступлении сообщения получателю, генерируется событие unrequestingBinaryMessage.
@@ -104,6 +112,8 @@ Promise завершится исключнием TimeoutToReceiveResponseError.
 ### sendUnrequestingTextMessage(text)
 
 * `text <string>`
+Клиент принимает `<string>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 
 Отправляет текстовое сообщение без ожидания ответа.
 При поступлении сообщения получателю, генерируется событие unrequestingTextMessage.
@@ -326,12 +336,12 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### new ResponsiveWebSocketServer([options])
 
-* options <Object>  
-    * `compression <number>` [См.](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#compression)
-    * `idleTimeout <number>` [См.](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#idleTimeout)
-    * `maxBackpressure <number>` [См.](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#maxBackpressure)
-    * `maxPayloadLength <number>` [См.](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#maxPayloadLength)
-    * `sendPingsAutomatically ` [См.](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#sendPingsAutomatically)
+* `options <Object>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html)  
+    * `compression <number>`
+    * `idleTimeout <number>`
+    * `maxBackpressure <number>`
+    * `maxPayloadLength <number>`
+    * `sendPingsAutomatically `
     * `server` `<App>` или `<SSLApp>` модуля uWebSockets.js  
 По умолчанию создается новый http сервер.
     * `url <string>`  
@@ -388,7 +398,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### sendFragmentsOfBinaryRequest(...fragments)
 
-* `...fragments <ArrayBuffer>` части запроса
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части запроса
 * Возвращает `<Promise<ResponseData>>`
 
 Отправляет двоичный запрос, также как `sendBinaryRequest`.
@@ -402,7 +412,7 @@ const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, 
 
 ### sendFragmentsOfTextRequest(...fragments)
 
-* `...fragments <string>` части запроса
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части запроса
 * Возвращает `<Promise<ResponseData>>`
 
 Отправляет текстовый запрос, также как `sendTextRequest`.
@@ -416,14 +426,14 @@ const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bi
 
 ### sendFragmentsOfUnrequestingBinaryMessage(...fragments)
 
-* `...fragments <ArrayBuffer>` части сообщения
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части сообщения
 
 Отправляет двоичное сообщение, без ожидания ответа, также как `sendUnrequestingBinaryMessage`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего сообщения.
 
 ### sendFragmentsOfUnrequestingTextMessage(...fragments)
 
-* `...fragments <string>` части сообщения
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части сообщения
 
 Отправляет текстовое сообщение, без ожидания ответа, также как `sendUnrequestingTextMessage`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего сообщения.
@@ -450,13 +460,17 @@ const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bi
 
 ### sendBinaryResponse(bytes)
 
-* `bytes <ArrayBuffer>` ответ
+* `bytes <ArrayBuffer>` ответ.
+Клиент принимает `<ArrayBuffer>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 
 Отправляет двоичный ответ.
 
 ### sendTextResponse(text)
 
-* `text <string>` ответ
+* `text <string>` ответ.
+Клиент принимает `<string>`.
+Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
 
 Отправляет текстовый ответ.
 
@@ -466,14 +480,14 @@ const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bi
 
 ### sendFragmentsOfBinaryResponse(...fragments)
 
-* `...fragments <ArrayBuffer>` части ответа
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части ответа
 
 Отправляет двоичный ответ, также как `sendBinaryResponse`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего ответа.
 
 ### sendFragmentsOfTextyResponse(...fragments)
 
-* `...fragments <string>` части ответа
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части ответа
 
 Отправляет текстовый ответ, также как `sendTextResponse`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего ответа.

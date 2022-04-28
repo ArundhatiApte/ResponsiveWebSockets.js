@@ -1,4 +1,6 @@
-## Table of contents
+# Responsive Web Sockets API
+
+#### Table of contents
 
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
@@ -54,8 +56,8 @@ Provides methods for sending requests and messages without waiting response.
 
 ### close([code, reason])
 
-* `code` `<number>`
-* `reason` `<string>`
+* `code <number>`
+* `reason <string>`
 
 Initiate a closing handshake.
 
@@ -67,7 +69,9 @@ Initiate a closing handshake.
 
 ### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
 
-* `bytes <ArrayBuffer>`
+* `bytes <ArrayBuffer>`  
+Client connection accepts `<ArrayBuffer>` as bytes.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as bytes.
 * `maxTimeMsToWaitResponse <number>`  
 optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 * Returns `<Promise<ResponseData>>`
@@ -79,7 +83,9 @@ Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendTextRequest(text[, maxTimeMsToWaitResponse])
 
-* `text <string>`
+* `text <string>`  
+Client connection accepts `<string>` as text.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as text.
 * `maxTimeMsToWaitResponse <number>`  
 optional, by default value setted by `setMaxTimeMsToWaitResponse` method
 * Returns `<Promise<ResponseData>>`
@@ -91,14 +97,18 @@ Example of usage: [sendingRequests.mjs](./examples/sendingRequests.mjs)
 
 ### sendUnrequestingBinaryMessage(bytes)
 
-* `bytes <ArrayBuffer>`
+* `bytes <ArrayBuffer>`  
+Client connection accepts `<ArrayBuffer>` as bytes.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as bytes.
 
 Sends binary message without waiting response.
 When a message arrives to the recipient, the "unrequestingBinaryMessage" event is emitted.
  
 ### sendUnrequestingTextMessage(text)
 
-* `text <string>`
+* `text <string>`  
+Client connection accepts `<string>` as text.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as text.
 
 Sends text message without waiting response.
 When a message arrives to the recipient, the "unrequestingTextMessage" event is emitted.
@@ -299,7 +309,6 @@ Connects to the WebSocket server.
 * `W3CWebSocketClient <function>`  
 class, implementing WebSocketClient interface by W3C
 
-
 Sets the WebSocket class, on the base of which objects of the ResponsiveWebSocketClient class will be created.
 The method must be called before the first call of the new ResponsiveWebSocketClient() constructor.
 
@@ -325,12 +334,12 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### new ResponsiveWebSocketServer([options])
 
-* options <Object>  
-    * `compression <number>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#compression)
-    * `idleTimeout <number>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#idleTimeout)
-    * `maxBackpressure <number>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#maxBackpressure)
-    * `maxPayloadLength <number>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#maxPayloadLength)
-    * `sendPingsAutomatically ` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html#sendPingsAutomatically)
+* `options <Object>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html)  
+    * `compression <number>`
+    * `idleTimeout <number>`
+    * `maxBackpressure <number>`
+    * `maxPayloadLength <number>`
+    * `sendPingsAutomatically `
     * `server` `<App>` or `<SSLApp>` from uWebSockets.js  
 By default, the new http server will be created.
     * `url <string>`
@@ -389,7 +398,7 @@ IPv6 is 16 byte long and can be converted to text by printing every byte as a di
 
 ### sendFragmentsOfBinaryRequest(...fragments)
 
-* `...fragments <ArrayBuffer>` parts of request
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of request
 * Returns `<Promise<ResponseData>>`
 
 Sends a binary request, similar as `sendBinaryRequest'.
@@ -404,7 +413,7 @@ const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, 
 
 ### sendFragmentsOfTextRequest(...fragments)
 
-* `...fragments <string>` parts of request
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of request
 * Returns `<Promise<ResponseData>>`
 
 Sends a text request, similar as `sendTextRequest'.
@@ -419,7 +428,7 @@ const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bi
 
 ### sendFragmentsOfUnrequestingBinaryMessage(...fragments)
 
-* `...fragments <ArrayBuffer>` parts of message
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of message
 
 Sends binary unrequesting message, similar as `sendUnrequestingBinaryMessage`.
 The method sends data in fragments, without connecting parts into one body,
@@ -427,7 +436,7 @@ avoiding memory allocation for the entire message.
 
 ### sendFragmentsOfUnrequestingTextMessage(...fragments)
 
-* `...fragments <string>` parts of message
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of message
 
 Sends text unrequesting message, similar as `sendUnrequestingTextMessage`.
 The method sends data in fragments, without connecting parts into one body,
@@ -455,11 +464,15 @@ The method for sending the response (sendBinaryResponse or sendTextResponse) is 
 
 ### sendBinaryResponse(bytes)
 
-* `bytes <ArrayBuffer>` the response
+* `bytes <string>` the response.
+Client connection accepts `<ArrayBuffer>` as bytes.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as bytes.
 
 ### sendTextResponse(text)
 
-* `text <string>` the response
+* `text <string>` the response.
+Client connection accepts `<string>` as response.
+Server connection accepts `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` as response.
 
 ## Class ServerResponseSender
 
@@ -467,7 +480,7 @@ The method for sending the response (sendBinaryResponse or sendTextResponse) is 
 
 ### sendFragmentsOfBinaryResponse(...fragments)
 
-* `...fragments <ArrayBuffer>` parts of response
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of response
 
 Sends binary response, similar as `sendBinaryResponse`.
 The method sends data in fragments, without connecting the parts into one body,
@@ -475,7 +488,7 @@ avoiding allocating memory for the entire response.
 
 ### sendFragmentsOfTextyResponse(...fragments)
 
-* `...fragments <string>` части ответа
+* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` parts of response
 
 Sends text response, similar as `sendTextResponse`.
 The method sends data in fragments, without connecting the parts into one body,
