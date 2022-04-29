@@ -22,7 +22,7 @@
     * terminate()
     * static class TimeoutToReceiveResponseError
 - [Class: ResponsiveWebSocketClient](#class-responsivewebsocketclient)
-    * new ResponsiveWebSocketClient([options])
+    * new ResponsiveWebSocketClient([protocols[, options]])
     * connect(url)
     * static setWebSocketClientClass(W3CWebSocketClient)
 - [Class: ResponsiveWebSocketServer](#class-responsivewebSocketserver)
@@ -284,8 +284,9 @@ did not arrive during the max time for waiting response on request.
 
 * extends `ResponsiveWebSocketConnection`
 
-### new ResponsiveWebSocketClient([options])
+### new ResponsiveWebSocketClient([protocols[, options]])
 
+* `protocols <string[]>` list of subprotocols
 * `options <Object>` only for ResponsiveWebSocketClient in node.js
     * `followRedirects <boolean>`
     whether or not to follow redirects. Defaults to `false`.

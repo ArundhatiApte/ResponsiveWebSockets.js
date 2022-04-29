@@ -22,7 +22,7 @@
     * terminate()
     * static class TimeoutToReceiveResponseError
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
-    * new ResponsiveWebSocketClient([options])
+    * new ResponsiveWebSocketClient([protocols[, options]])
     * connect(url)
     * static setWebSocketClientClass(W3CWebSocketClient)
 - [Класс: ResponsiveWebSocketServer](#класс-responsivewebSocketserver)
@@ -287,8 +287,9 @@ webSocketClient.onopen = function() {
 
 Наследует `ResponsiveWebSocketConnection`.
 
-### new ResponsiveWebSocketClient([options])
+### new ResponsiveWebSocketClient([protocols[, options]])
 
+* `protocols <string[]>` список протоколов
 * `options <Object>` только для ResponsiveWebSocketClient в node.js
     * `followRedirects <boolean>` по умoлчанию `false`
     * `generateMask <function>`

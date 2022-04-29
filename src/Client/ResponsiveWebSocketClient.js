@@ -19,12 +19,17 @@ const {
   _onClose
 } = ResponsiveWebSocketConnection._namesOfPrivateProperties;
 
+const _protocols = Symbol();
 const _options = Symbol();
 const _onError = Symbol();
 
 const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
-  constructor(options) {
+  constructor(protocols, options) {
     super();
+
+    if (protocols) {
+      this[_protocols] = protocols;
+    }
     if (options) {
       this[_options] = options;
     }
@@ -38,8 +43,8 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     return new Promise((resolve, reject) => {
       const options = this[_options];
       const client = this[_connection] = options ?
-        new W3CWebSocketClientClass(url, options) :
-        new W3CWebSocketClientClass(url);
+        new W3CWebSocketClientClass(url, this[_protocols], options) :
+        new W3CWebSocketClientClass(url, this[_protocols]);
 
       client.binaryType = "arrayBuffer";
 
