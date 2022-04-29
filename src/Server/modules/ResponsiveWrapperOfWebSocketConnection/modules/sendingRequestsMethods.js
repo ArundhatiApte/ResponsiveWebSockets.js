@@ -9,7 +9,7 @@ const sendRequestByResponsiveConnection = require(
 );
 
 const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
-const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
+const { _bufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
 
 const {
   binaryMessager: {
@@ -22,10 +22,9 @@ const {
 
 const sendBinaryChunksInRequest = function(responsiveConnection, idOfRequest, message) {
   const webSocket = responsiveConnection[_connection];
-  const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
-  fillBufferAsHeaderOfBinaryRequest(header, idOfRequest);
+  fillBufferAsHeaderOfBinaryRequest(_bufferForHeader, idOfRequest);
 
-  webSocket.sendFirstFragment(header, true);
+  webSocket.sendFirstFragment(_bufferForHeader, true);
   webSocket.sendLastFragment(message, true);
 };
 
@@ -40,10 +39,9 @@ const sendBinaryRequest = function(message, maxTimeMsToWaitResponse) {
 
 const sendTextChunksInRequest = function(responsiveConnection, idOfRequest, message) {
   const webSocket = responsiveConnection[_connection];
-  const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
-  fillBufferAsHeaderOfTextRequest(header, idOfRequest);
+  fillBufferAsHeaderOfTextRequest(_bufferForHeader, idOfRequest);
 
-  webSocket.sendFirstFragment(header);
+  webSocket.sendFirstFragment(_bufferForHeader);
   webSocket.sendLastFragment(message);
 };
 

@@ -65,9 +65,7 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveWebSocket
   }
 };
 
-const _symbolOfBufferForHeader = Symbol();
-ResponsiveWrapperOfWebSocketConnection._symbolOfBufferForHeader = _symbolOfBufferForHeader;
-ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader] = new ArrayBuffer(sizeOfRequestOrResponseHeader);
+ResponsiveWrapperOfWebSocketConnection._bufferForHeader = new ArrayBuffer(sizeOfRequestOrResponseHeader);
 
 module.exports = ResponsiveWrapperOfWebSocketConnection;
 

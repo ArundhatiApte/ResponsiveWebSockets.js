@@ -17,7 +17,7 @@ const createEntryAboutPromiseOfRequest = require(
 ).create;
 
 const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
-const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
+const { _bufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
 
 const {
   binaryMessager: {
@@ -49,9 +49,8 @@ const sendFragmentsOfRequest = function(
     const entryAboutPromise = createEntryAboutPromiseOfRequest(resolve, timeout);
     idOfRequestToPromise.set(idOfRequest, entryAboutPromise);
 
-    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
-    fillBufferAsHeaderOfRequest(header, idOfRequest);
-    sendHeaderAndFragments(responsiveConnection[_connection], header, isMessageBinary, fragments);
+    fillBufferAsHeaderOfRequest(_bufferForHeader, idOfRequest);
+    sendHeaderAndFragments(responsiveConnection[_connection], _bufferForHeader, isMessageBinary, fragments);
   });
 };
 

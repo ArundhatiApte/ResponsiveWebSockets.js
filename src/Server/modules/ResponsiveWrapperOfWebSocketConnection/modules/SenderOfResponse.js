@@ -1,7 +1,7 @@
 "use strict";
 
 const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
-const { _symbolOfBufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
+const { _bufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
 
 const {
   binaryMessager: {
@@ -22,27 +22,25 @@ const SenderOfResponse = class {
 
   sendBinaryResponse(message) {
     const connection = this[_connection];
-    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
-    fillBufferAsHeaderOfBinaryResponse(header, this[_idOfMessage]);
+    fillBufferAsHeaderOfBinaryResponse(_bufferForHeader, this[_idOfMessage]);
 
     const messageIsBinary = true;
-    connection.sendFirstFragment(header, messageIsBinary);
+    connection.sendFirstFragment(_bufferForHeader, messageIsBinary);
     connection.sendLastFragment(message, messageIsBinary);
   }
 
   sendTextResponse(message) {
     const connection = this[_connection];
-    const header = ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader];
-    fillBufferAsHeaderOfTextResponse(header, this[_idOfMessage]);
+    fillBufferAsHeaderOfTextResponse(_bufferForHeader, this[_idOfMessage]);
 
-    connection.sendFirstFragment(header);
+    connection.sendFirstFragment(_bufferForHeader);
     connection.sendLastFragment(message);
   }
 
   sendFragmentsOfBinaryResponse() {
     return fillHeaderThenSendItAndFragments(
       this[_connection],
-      ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader],
+      _bufferForHeader,
       fillBufferAsHeaderOfBinaryResponse,
       this[_idOfMessage],
       true,
@@ -53,7 +51,7 @@ const SenderOfResponse = class {
   sendFragmentsOfTextResponse() {
     return fillHeaderThenSendItAndFragments(
       this[_connection],
-      ResponsiveWrapperOfWebSocketConnection[_symbolOfBufferForHeader],
+      _bufferForHeader,
       fillBufferAsHeaderOfTextResponse,
       this[_idOfMessage],
       false,
