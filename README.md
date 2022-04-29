@@ -26,7 +26,7 @@ console.log("response body: ", message.slice(startIndex));
 
 ### Installation
 
-Download package from releases page. In folder of your project install module by pakcage manager:
+Download package from releases page. In folder of your project install module by package manager:
 `npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
 ### Usage
