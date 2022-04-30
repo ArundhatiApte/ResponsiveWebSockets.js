@@ -1,7 +1,6 @@
 "use strict";
 
-const WebSocketClientFromWS = require("ws").WebSocket,
-      bufferToArrayBuffer = require("./modules/bufferFromNodeJSToArrayBuffer");
+const WebSocketClientFromWS = require("ws").WebSocket;
 
 const _onMessage = Symbol("_onMessage");
 
@@ -14,7 +13,7 @@ const W3CWebSocketClient = class extends WebSocketClientFromWS {
   set onmessage(listener) {
     const prevListener = this[_onMessage];
     if (prevListener) {
-      this.removeEventListener("message", prevListener); 
+      this.removeEventListener("message", prevListener);
     }
     const wrapedListener = createWrappedListenerOfMessageEvent(listener);
     this.addEventListener("message", wrapedListener);
@@ -31,11 +30,15 @@ const createWrappedListenerOfMessageEvent= function(originalListener) {
     let {data} = event;
     if (typeof data !== "string" ) {
       if (!(data instanceof ArrayBuffer)) {
-        data = bufferToArrayBuffer(data);
+        data = bufferAsArrayBuffer(data);
       }
     }
     originalListener({data});
   };
+};
+
+const bufferAsArrayBuffer = function(nodejsBuffer) {
+  return nodejsBuffer.buffer;
 };
 
 module.exports = W3CWebSocketClient;
