@@ -63,7 +63,7 @@ const sendRequestsAndReceiveResponses = function(
   receiver[nameOfSettingListenerOfRequestMethod](listener);
 
   for (let i = 0; i < countOfRequests; i += 1) {
-    sendingMessages.push(sender[nameOfSendingRequestMethod](createMessageByNumberOfRequest(countOfRequests)));
+    sendingMessages.push(sender[nameOfSendingRequestMethod](createMessageByNumberOfRequest(sender, countOfRequests)));
   }
   return Promise.all(sendingMessages);
 };

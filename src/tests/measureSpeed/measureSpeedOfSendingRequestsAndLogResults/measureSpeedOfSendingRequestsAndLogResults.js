@@ -25,14 +25,9 @@ const measureSpeedOfSendingRequestsAndLogResults = async function(
 ) {
   writeHeader(writableStream, countOfRequests);
 
-  const nameOfSendingBinaryRequestMethod = "sendBinaryRequest",
-        nameOfSendingTextRequestMethod = "sendTextRequest";
-
-  const nameOfSettingListenerOfBinaryRequestMethod = "setBinaryRequestListener",
-        nameOfSettingListenerOfTextRequestMethod = "setTextRequestListener";
-
-  const nameOfSendingBinaryResponseMethod = "sendBinaryResponse",
-        nameOfSendingTextResponseMethod = "sendTextResponse";
+  const nameOfSendingBinaryRequestMethod = "sendBinaryRequest";
+  const nameOfSettingListenerOfBinaryRequestMethod = "setBinaryRequestListener";
+  const nameOfSendingBinaryResponseMethod = "sendBinaryResponse";
 
   const cases = [
     [
@@ -41,21 +36,10 @@ const measureSpeedOfSendingRequestsAndLogResults = async function(
       connectionToClient,
       client,
       nameOfSendingBinaryRequestMethod,
-      createBinaryMessageByNumberOfRequest,
+      createBinaryMessageByNumberOfRequestAtServer,
       nameOfSettingListenerOfBinaryRequestMethod,
       nameOfSendingBinaryResponseMethod,
       createBinaryResponse
-    ],
-    [
-      text,
-      fromServerToClient,
-      connectionToClient,
-      client,
-      nameOfSendingTextRequestMethod,
-      createTextMessageByNumberOfRequest,
-      nameOfSettingListenerOfTextRequestMethod,
-      nameOfSendingTextResponseMethod,
-      createTextResponse
     ],
     [
       binary,
@@ -63,21 +47,10 @@ const measureSpeedOfSendingRequestsAndLogResults = async function(
       client,
       connectionToClient,
       nameOfSendingBinaryRequestMethod,
-      createBinaryMessageByNumberOfRequest,
+      createBinaryMessageByNumberOfRequestAtClient,
       nameOfSettingListenerOfBinaryRequestMethod,
       nameOfSendingBinaryResponseMethod,
       createBinaryResponse
-    ],
-    [
-      text,
-      fromClientToServer,
-      client,
-      connectionToClient,
-      nameOfSendingTextRequestMethod,
-      createTextMessageByNumberOfRequest,
-      nameOfSettingListenerOfTextRequestMethod,
-      nameOfSendingTextResponseMethod,
-      createTextResponse
     ]
   ];
 
@@ -110,18 +83,26 @@ const measureSpeedOfSendingRequestsAndLogResults = async function(
   }
 };
 
-const createBinaryMessageByNumberOfRequest = function(n) {
-  n += 1;
-  return new Uint8Array([n, n * 2, n * 4, n * 8]);
+const createBinaryMessageByNumberOfRequestAtServer = function(sender, number) {
+  number += 1;
+  return new Uint8Array([number, number * 2, number * 4, number * 8]);
 };
-const createBinaryResponse = (message) => message;
-const createTextResponse = createBinaryResponse;
 
-const createTextMessageByNumberOfRequest = function(n) {
-  n += 1;
-  return stringFromCharCodes(n, n * 2, n * 4, n * 8);
+const createBinaryMessageByNumberOfRequestAtClient = function(sender, number) {
+  number += 1;
+  const sizeOfHeader = sender.sizeOfHeaderForBinaryRequest;
+  const out = new ArrayBuffer(sizeOfHeader + 4);
+
+  const uint8s = new Uint8Array(out);
+  uint8s[sizeOfHeader] = number;
+  uint8s[sizeOfHeader + 1] = number * 2;
+  uint8s[sizeOfHeader + 2] = number * 4;
+  uint8s[sizeOfHeader + 3] = number * 8;
+
+  return out;
 };
-const stringFromCharCodes = String.fromCharCode;
+
+const createBinaryResponse = (message) => message;
 
 const _measureSpeedOfSendingRequestsAndLogResult = async function(
   sender,

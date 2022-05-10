@@ -1,5 +1,6 @@
 "use strict";
 
+import isLittleEndian from "./../../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/isLittleEndian";
 import ResponsiveWebSocketClient from "./../../Client/ResponsiveWebSocketClient.js";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
@@ -11,27 +12,16 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
   await client.connect(url);
 
-  const sendTextAndReceiveResponse = async function(client, sendedText) {
-    const startIndex = client.startIndexOfBodyInTextResponse;
-    const {message} = await client.sendTextRequest(sendedText);
-    return message.slice(startIndex);
-  };
-
   const sendInt32AndReceiveInt32 = async function(client, sendedInt32) {
-    const message = new ArrayBuffer(4);
-    let dataView = new DataView(message);
-    dataView.setInt32(0, sendedInt32);
+    const sizeOfHeaderForBinaryRequest = client.sizeOfHeaderForBinaryRequest;
+    const message = new ArrayBuffer(sizeOfHeaderForBinaryRequest + 4);
+    new DataView(message).setInt32(sizeOfHeaderForBinaryRequest, sendedInt32, isLittleEndian);
 
-    const {message: response} = await client.sendBinaryRequest(message);
-    dataView = new DataView(response);
-    const startIndex = client.startIndexOfBodyInBinaryResponse;
-    return dataView.getInt32(startIndex);
+    const binaryResponse = await client.sendBinaryRequest(message);
+    return new DataView(binaryResponse).getInt32(client.startIndexOfBodyInBinaryResponse, isLittleEndian);
   };
 
-  const [textResponse, int32Response] = await Promise.all([
-    sendTextAndReceiveResponse(client, "Lorem Ipsum"),
-    sendInt32AndReceiveInt32(client, 123456)
-  ]);
+  const int32Response = await sendInt32AndReceiveInt32(client, 123456);
 
   const expectEqual = function(a, b) {
     if (a !== b) {
@@ -39,8 +29,6 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
     }
   };
 
-  expectEqual(textResponse, "Lorem Ipsum".toUpperCase());
   expectEqual(int32Response, 123456 * 4);
-
   console.log("Ok");
 })();

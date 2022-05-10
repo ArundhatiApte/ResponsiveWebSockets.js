@@ -30,7 +30,7 @@ const AcceptorOfRequestForUpgrade = class {
 const _request = Symbol(),
       _response = Symbol(),
       _usSocketContext = Symbol(),
-      _userData = "uD";
+      _userData = "_u";
 
 AcceptorOfRequestForUpgrade._userData = _userData;
 

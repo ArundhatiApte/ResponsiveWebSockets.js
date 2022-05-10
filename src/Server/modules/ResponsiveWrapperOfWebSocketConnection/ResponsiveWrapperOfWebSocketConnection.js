@@ -6,39 +6,29 @@ const ResponsiveWebSocketConnection = require(
 
 const {
   _connection,
-  _onMalformedBinaryMessage,
-  _onMalformedTextMessage,
 
   _onBinaryRequest,
-  _onTextRequest,
-
+  _onMalformedBinaryMessage,
   _onUnrequestingBinaryMessage,
-  _onUnrequestingTextMessage,
+  _onTextMessage,
+
   _onClose
 } = ResponsiveWebSocketConnection._namesOfPrivateProperties;
-
-const {
-  binary: contentTypesOfMessages_binary,
-  text: contentTypesOfMessages_text
-} = ResponsiveWebSocketConnection.contentTypesOfMessages;
 
 const { _userData } = require("./../AcceptorOfRequestForUpgrade");
 
 const {
-  sizeOfRequestOrResponseHeader,
-  binaryMessager: {
-    extractTypeOfIncomingMessage: extractTypeOfIncomingBinaryMessage,
-    extractIdOfMessage: extractIdOfBinaryMessage,
-    startIndexOfBodyInUnrequestingMessage: startIndexOfBodyInUnrequestingBinaryMessage,
-    startIndexOfBodyInRequest: startIndexOfBodyInBinaryRequest
-  },
-  textMessager: {
-    extractTypeOfIncomingMessage: extractTypeOfIncomingTextMessage,
-    extractIdOfMessage: extractIdOfTextMessage,
-    startIndexOfBodyInUnrequestingMessage: startIndexOfBodyInUnrequestingTextMessage,
-    startIndexOfBodyInRequest: startIndexOfBodyInTextRequest
-  }
-} = require("./modules/messaging/messaging");
+  extractTypeOfMessage: extractTypeOfBinaryMessage,
+  extractIdOfMessage: extractIdOfBinaryMessage,
+
+  fillHeaderAsUnrequestingMessage: fillHeaderAsUnrequestingBinaryMessage,
+
+  sizeOfHeaderForRequest: sizeOfHeaderForBinaryRequest,
+  sizeOfHeaderForResponse: sizeOfHeaderForBinaryResponse,
+  sizeOfHeaderForUnrequestingMessage: sizeOfHeaderForUnrequestingBinaryMessage
+} = require("./../../../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/binaryMessager");
+
+const EventOfClosing = require("./modules/EventOfClosing");
 
 const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveWebSocketConnection {
   constructor(uWSConnectionToClient) {
@@ -65,61 +55,43 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveWebSocket
   }
 };
 
-ResponsiveWrapperOfWebSocketConnection._bufferForHeader = new ArrayBuffer(sizeOfRequestOrResponseHeader);
+// sizeOfHeaderForBinaryRequest === sizeOfHeaderForBinaryResponse
+ResponsiveWrapperOfWebSocketConnection._bufferForHeaderOfRequestOrResponse = new ArrayBuffer(
+  sizeOfHeaderForBinaryRequest
+);
+ResponsiveWrapperOfWebSocketConnection._headerOfUnrequestingMessage = new ArrayBuffer(
+  sizeOfHeaderForUnrequestingBinaryMessage
+);
+fillHeaderAsUnrequestingBinaryMessage(ResponsiveWrapperOfWebSocketConnection._headerOfUnrequestingMessage);
 
 module.exports = ResponsiveWrapperOfWebSocketConnection;
 
 const SenderOfResponse = require("./modules/SenderOfResponse");
 
-const {
-  sendBinaryRequest,
-  sendTextRequest
-} = require("./modules/sendingRequestsMethods");
-
-const {
-  sendFragmentsOfBinaryRequest,
-  sendFragmentsOfTextRequest
-} = require("./modules/sendingFragmentsOfRequestMethods");
-
-const {
-  sendUnrequestingBinaryMessage,
-  sendUnrequestingTextMessage
-} = require("./modules/sendingUnrequestingMessageMethods");
-
-const {
-  sendFragmentsOfUnrequestingBinaryMessage,
-  sendFragmentsOfUnrequestingTextMessage
-} = require("./modules/sendingFragmentsOfUnrequestingMessageMethods");
-
 const Proto = ResponsiveWrapperOfWebSocketConnection.prototype;
 
-Proto.sendBinaryRequest = sendBinaryRequest;
-Proto.sendTextRequest = sendTextRequest;
+Proto.sendBinaryRequest = require("./modules/sendBinaryRequest");;
+Proto.sendFragmentsOfBinaryRequest = require("./modules/sendFragmentsOfBinaryRequest");;
+Proto.sendUnrequestingBinaryMessage = require("./modules/sendUnrequestingBinaryMessage");;
+Proto.sendFragmentsOfUnrequestingBinaryMessage = require("./modules/sendFragmentsOfUnrequestingBinaryMessage");;
 
-Proto.sendFragmentsOfBinaryRequest = sendFragmentsOfBinaryRequest;
-Proto.sendFragmentsOfTextRequest = sendFragmentsOfTextRequest;
-
-Proto.sendUnrequestingBinaryMessage = sendUnrequestingBinaryMessage;
-Proto.sendUnrequestingTextMessage = sendUnrequestingTextMessage;
-
-Proto.sendFragmentsOfUnrequestingBinaryMessage = sendFragmentsOfUnrequestingBinaryMessage;
-Proto.sendFragmentsOfUnrequestingTextMessage = sendFragmentsOfUnrequestingTextMessage;
-
-const listenEventOfMessageToInnerWebSocket = require(
-  "./../../../common/ResponsiveWebSocketConnection/utils/listenEventOfMessageToInnerWebSocket"
+const _acceptMessageFromInnerWebSocket = require(
+  "./../../../common/ResponsiveWebSocketConnection/utils/acceptMessageFromInnerWebSocket"
 );
 
+const _startIndexOfBodyInUnrequestingBinaryMessage = sizeOfHeaderForUnrequestingBinaryMessage;
+const _startIndexOfBodyInBinaryRequest = sizeOfHeaderForBinaryRequest;
+
 ResponsiveWrapperOfWebSocketConnection._acceptBinaryMessage = function(responsiveWrapper, message) {
-  return listenEventOfMessageToInnerWebSocket(
-    extractTypeOfIncomingBinaryMessage,
+  return _acceptMessageFromInnerWebSocket(
+    extractTypeOfBinaryMessage,
     extractIdOfBinaryMessage,
-    contentTypesOfMessages_binary,
 
     _onUnrequestingBinaryMessage,
-    startIndexOfBodyInUnrequestingBinaryMessage,
+    _startIndexOfBodyInUnrequestingBinaryMessage,
 
     _onBinaryRequest,
-    startIndexOfBodyInBinaryRequest,
+    _startIndexOfBodyInBinaryRequest,
     SenderOfResponse,
 
     _onMalformedBinaryMessage,
@@ -129,28 +101,14 @@ ResponsiveWrapperOfWebSocketConnection._acceptBinaryMessage = function(responsiv
   );
 };
 
-ResponsiveWrapperOfWebSocketConnection._acceptTextMessage = function(responsiveWrapper, message) {
-  return listenEventOfMessageToInnerWebSocket(
-    extractTypeOfIncomingTextMessage,
-    extractIdOfTextMessage,
-    contentTypesOfMessages_text,
+ResponsiveWrapperOfWebSocketConnection._acceptTextMessage = ResponsiveWebSocketConnection._acceptTextMessage;
 
-    _onUnrequestingTextMessage,
-    startIndexOfBodyInUnrequestingTextMessage,
-
-    _onTextRequest,
-    startIndexOfBodyInTextRequest,
-    SenderOfResponse,
-
-    _onMalformedTextMessage,
-
-    responsiveWrapper,
-    message
-  );
-};
-
-ResponsiveWrapperOfWebSocketConnection._emitOnClose = function(responsiveWrapper, code, reason) {
+ResponsiveWrapperOfWebSocketConnection._acceptEventOfClosing = function(
+  responsiveWrapper,
+  code,
+  reasonInArrayBufferInUTF8
+) {
   if (responsiveWrapper[_onClose]) {
-    responsiveWrapper[_onClose]({code, reason});
+    responsiveWrapper[_onClose](new EventOfClosing(code, reasonInArrayBufferInUTF8));
   }
 };

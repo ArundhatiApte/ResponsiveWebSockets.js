@@ -1,43 +1,39 @@
 "use strict";
 
 const {
-  checkSendingManyBinaryRequestsAtOnce,
-  checkSendingManyTextRequestsAtOnce
-} = require("./../checks/checkSendingManyRequestsAtOnce");
-
-const {
-  checkSendingAwaitingResponseBinaryMessages,
-  checkSendingUnrequestingBinaryMessages,
-  checkSendingAwaitingResponseTextMessages,
-  checkSendingUnrequestingTextMessages
-} = require("./../checks/checkSendingMessages");
-
-const checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages =
-  require("./../checks/checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages");
-
-const checkTimeout = require("./../checks/checkTimeout");
-
-const {
-  checkSendingFragmentsOfRequest: {
-    checkSendingFragmentsOfBinaryRequest,
-    checkSendingFragmentsOfTextRequest
+  checkSendingBinaryRequests: {
+    checkSendingBinaryRequestsByServer,
+    checkSendingBinaryRequestsByClient,
   },
-  checkSendingFragmentsOfResponse: {
-    checkSendingFragmentsOfBinaryResponse,
-    checkSendingFragmentsOfTextResponse
-  },
-  checkSendingFragmentsOfUnrequestingMessage: {
-    checkSendingFragmentsOfUnrequestingBinaryMessage,
-    checkSendingFragmentsOfUnrequestingTextMessage
+  checkSendingUnrequestingBinaryMessages: {
+    checkSendingUnrequestingBinaryMessagesByServer,
+    checkSendingUnrequestingBinaryMessagesByClient
   }
-} = require("./../checks/checkSendingFragmentsOfMessages");
+} = require("./../checks/messages/checkSendingMessages");
 
 const {
-  checkSendingMalformedBinaryMessagesFromServerToClient,
-  checkSendingMalformedTextMessagesFromServerToClient,
-  checkSendingMalformedBinaryMessagesFromClientToServer,
-  checkSendingMalformedTextMessagesFromClientToServer
-} = require("./../checks/checkSendingMalformedMessages");
+  checkSendingManyBinaryRequestsAtOnceByServer,
+  checkSendingManyBinaryRequestsAtOnceByClient
+} = require("./../checks/messages/checkSendingManyRequestsAtOnce");
+
+const {
+  checkTimeoutByServer,
+  checkTimeoutByClient
+} = require("./../checks/messages/checkTimeout");
+
+const {
+  checkSendingMalformedBinaryMessagesByServerToClient,
+  checkSendingTextMessagesByServerToClient,
+
+  checkSendingMalformedBinaryMessagesByClientToServer,
+  checkSendingTextMessagesByClientToServer
+} = require("./../checks/messages/checkSendingMalformedMessages");
+
+const {
+  checkSendingFragmentsOfBinaryRequestByServer,
+  checkSendingFragmentsOfBinaryResponseByServer,
+  checkSendingFragmentsOfUnrequestingBinaryMessageByServer
+} = require("./../checks/messages/checkSendingFragmentsOfMessages");
 
 const fromServerToClientPostfix = " by server to client";
 const fromClientToServerPostfix = " by client to server";
@@ -50,45 +46,57 @@ const addCheckingSendingMessagesTests = function(
 ) {
   return describeTests("sending messages", function() {
     add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
-      [checkSendingAwaitingResponseBinaryMessages, "send awaiting response binary messages"],
-      [checkSendingUnrequestingBinaryMessages, "send unrequesting binary messages"],
-
-      [checkSendingAwaitingResponseTextMessages, "send awaiting response text messages"],
-      [checkSendingUnrequestingTextMessages, "send unrequesting text messages"],
-
       [
-        checkSendingTextResponseOnBinaryAndBinaryResponseOnTextMessages,
-        "send text response on binary and binary response on text messages"
+        checkSendingBinaryRequestsByServer,
+        checkSendingBinaryRequestsByClient,
+        "send awaiting response binary messages"
+      ],
+      [
+        checkSendingUnrequestingBinaryMessagesByServer,
+        checkSendingUnrequestingBinaryMessagesByClient,
+        "send unrequesting binary messages"
       ]
     ]);
 
     describeTests("timeouts", function() {
-      add2SidesTests(
-        addTest,
-        createFnToTestFromServerToClient,
-        createFnToTestFromClientToServer,
-        [[checkTimeout, "timeout to receive response on request"]]
-      );
+      add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
+        [checkTimeoutByServer, checkTimeoutByClient, "timeout to receive response on request"]
+      ]);
     });
 
-    addCheckingSendingBrokenMessagesTests(
-      addTest,
-      createFnToTestFromServerToClient,
-      createFnToTestFromClientToServer
-    );
+    add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
+      [
+        checkSendingMalformedBinaryMessagesByServerToClient,
+        checkSendingMalformedBinaryMessagesByClientToServer,
+        "send malformed binary messages"
+      ]
+    ]);
+    add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
+      [
+        checkSendingTextMessagesByServerToClient,
+        checkSendingTextMessagesByClientToServer,
+        "send text messages"
+      ]
+    ]);
 
     describeTests("sending many requests at once", function() {
       const maxTimeMsToSendMessages = 4000;
       this.timeout(maxTimeMsToSendMessages);
-      this.slow(4000);
+      this.slow(maxTimeMsToSendMessages);
+
       add2SidesTests(addTest, createFnToTestFromServerToClient, createFnToTestFromClientToServer, [
-        [checkSendingManyBinaryRequestsAtOnce, "send many binary requests at once"],
-        [checkSendingManyTextRequestsAtOnce, "send many text requests at once"]
+        [
+          checkSendingManyBinaryRequestsAtOnceByServer,
+          checkSendingManyBinaryRequestsAtOnceByClient,
+          "send many binary requests at once"
+        ]
       ]);
     });
 
     addTestsFromServer(addTest, createFnToTestFromServerToClient);
-    addTestsFromClient(addTest, createFnToTestFromClientToServer);
+    addTest("send fragments of binary response by server to client", createFnToTestFromClientToServer(
+      checkSendingFragmentsOfBinaryResponseByServer
+    ));
   });
 };
 
@@ -98,17 +106,17 @@ const add2SidesTests = function(
   createFnToTestFromClientToServer,
   checkToNameOfTest
 ) {
-  for (const [check, nameOfTest] of checkToNameOfTest) {
+  for (const [checkAtServer, checkAtClient, nameOfTest] of checkToNameOfTest) {
     addTestFormOneSideToAnotherToTester(
       addTest,
-      check,
+      checkAtServer,
       nameOfTest,
       createFnToTestFromServerToClient,
       fromServerToClientPostfix
     );
     addTestFormOneSideToAnotherToTester(
       addTest,
-      check,
+      checkAtClient,
       nameOfTest,
       createFnToTestFromClientToServer,
       fromClientToServerPostfix
@@ -127,33 +135,10 @@ const addTestFormOneSideToAnotherToTester = function(
   addTest(name, createFnToTestOneSideToAnother(check));
 };
 
-const addCheckingSendingBrokenMessagesTests = function(
-  addTest,
-  createFnToTestFromServerToClient,
-  createFnToTestFromClientToServer
-) {
-  addTest(
-    "send malformed binary messages by server to client",
-    createFnToTestFromServerToClient(checkSendingMalformedBinaryMessagesFromServerToClient)
-  );
-  addTest(
-    "send malformed text messages by server to client",
-    createFnToTestFromServerToClient(checkSendingMalformedTextMessagesFromServerToClient));
-  addTest(
-    "send malformed binary messages by client to server",
-    createFnToTestFromClientToServer(checkSendingMalformedBinaryMessagesFromClientToServer));
-  addTest(
-    "send malformed text messages by client to server",
-    createFnToTestFromClientToServer(checkSendingMalformedTextMessagesFromClientToServer)
-  );
-}
-
 const addTestsFromServer = function(addTest, createFnToTestFromServerToClient) {
   const checkToNameOfTest = [
-    [checkSendingFragmentsOfBinaryRequest, "send fragments of binary request"],
-    [checkSendingFragmentsOfTextRequest, "send fragments of text request"],
-    [checkSendingFragmentsOfUnrequestingBinaryMessage, "send fragments of unrequesting binary message"],
-    [checkSendingFragmentsOfUnrequestingTextMessage, "send fragments of unrequesting text message"]
+    [checkSendingFragmentsOfBinaryRequestByServer, "send fragments of binary request"],
+    [checkSendingFragmentsOfUnrequestingBinaryMessageByServer, "send fragments of unrequesting binary message"]
   ];
 
   for (const [check, nameOfTest] of checkToNameOfTest) {
@@ -164,16 +149,6 @@ const addTestsFromServer = function(addTest, createFnToTestFromServerToClient) {
       createFnToTestFromServerToClient,
       fromServerToClientPostfix
     );
-  }
-};
-
-const addTestsFromClient = function(addTest, createFnToTestFromClientToServer) {
-  const checkToNameOfTest = [
-    [checkSendingFragmentsOfBinaryResponse, "send fragments of binary response by server to client"],
-    [checkSendingFragmentsOfTextResponse, "send fragments of text response by server to client"]
-  ];
-  for (const [check, name] of checkToNameOfTest) {
-    addTest(name, createFnToTestFromClientToServer(check));
   }
 };
 

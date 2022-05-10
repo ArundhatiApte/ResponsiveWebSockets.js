@@ -56,9 +56,10 @@ const executeTests = function(describeTests, addTest, options) {
     addCheckingClosingConnectionTests(describeTests, addTest, createConnectionToClientAndClient);
 
     after(function() {
-      client.close();
+      client.terminate();
+      connectionToClient.terminate();
       responsiveWebSocketServer.close();
-      setTimeout(process.exit.bind(process, 0), 20);
+      // setTimeout(process.exit.bind(process, 0), 20);
     });
   });
 };

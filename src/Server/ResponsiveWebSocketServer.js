@@ -101,29 +101,19 @@ const _emitClientsMessageEvent = function(connectionToClient, message, isBinary)
 const {
   _acceptBinaryMessage,
   _acceptTextMessage,
-  _emitOnClose
+  _acceptEventOfClosing
 } = ResponsiveWrapperOfWebSocketConnection;
 
 const _emitClientsBinaryMessageEvent = function(connectionToClient, message) {
-  const responsiveWrapper = connectionToClient[_wrapper];
-  _acceptBinaryMessage(responsiveWrapper, message);
+  return _acceptBinaryMessage(connectionToClient[_wrapper], message);
 };
 
-const _emitClientsTextMessageEvent = function(connectionToClient, message) {
-  const responsiveWrapper = connectionToClient[_wrapper];
-  const string = _decodeBytesToString(message);
-  _acceptTextMessage(responsiveWrapper, string);
+const _emitClientsTextMessageEvent = function(connectionToClient, messageInArrayBufferInUTF8) {
+  return _acceptTextMessage(connectionToClient[_wrapper], messageInArrayBufferInUTF8);
 };
-const _decodeBytesToString = TextDecoder.prototype.decode.bind(new TextDecoder("utf8"));
 
-const _emitClientsCloseEvent = function(connectionToClient, code, reason) {
-  let responsiveWrapper = connectionToClient[_wrapper];
-  if (reason) {
-    reason = _decodeBytesToString(reason);
-    _emitOnClose(responsiveWrapper, code, reason);
-  } else {
-    _emitOnClose(responsiveWrapper, code);
-  }
+const _emitClientsCloseEvent = function(connectionToClient, code, reasonInArrayBufferInUTF8) {
+  return _acceptEventOfClosing(connectionToClient[_wrapper], code, reasonInArrayBufferInUTF8);
 };
 
 const _upgradeToWebSocketByDefaulOrCallListener = (function() {

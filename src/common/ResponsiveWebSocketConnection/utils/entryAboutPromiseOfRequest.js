@@ -7,8 +7,8 @@ const create = function(resolvePromise, timeoutToWait) {
   };
 };
 
-const nameOfPromiseResolver = Symbol(),
-      nameOfTimeout = Symbol();
+const nameOfPromiseResolver = Symbol();
+const nameOfTimeout = Symbol();
 
 module.exports = {
   create,

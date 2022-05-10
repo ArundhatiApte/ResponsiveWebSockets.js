@@ -1,16 +1,17 @@
 "use strict";
 
-const ResponsiveWebSocketConnection = require("./../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
+const ResponsiveWebSocketConnection = require(
+  "./../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
+);
 
 const {
-  binaryMessager: {
-    createUnrequestingMessage: createUnrequestingBinaryMessage
-  },
-  textMessager: {
-    createUnrequestingMessage: createUnrequestingTextMessage
-  },
-} = require("./modules/messaging/messaging");
-const _emitEventByIncomingMessage = require("./methods/emitEventByIncomingMessage");
+  fillHeaderAsUnrequestingMessage: fillHeaderAsUnrequestingBinaryMessage,
+  sizeOfHeaderForRequest: sizeOfHeaderForBinaryRequest,
+  sizeOfHeaderForResponse: sizeOfHeaderForBinaryResponse,
+  sizeOfHeaderForUnrequestingMessage: sizeOfHeaderForUnrequestingBinaryMessage
+} = require("./../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/binaryMessager");
+
+const _emitEventByIncomingMessage = require("./utils/emitEventByIncomingMessage");
 
 let W3CWebSocketClientClass = null;
 
@@ -33,6 +34,18 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     if (options) {
       this[_options] = options;
     }
+  }
+
+  get sizeOfHeaderForBinaryRequest() {
+    return sizeOfHeaderForBinaryRequest;
+  }
+
+  get sizeOfHeaderForBinaryResponse() {
+    return sizeOfHeaderForBinaryResponse;
+  }
+
+  get sizeOfHeaderForUnrequestingBinaryMessage() {
+    return sizeOfHeaderForUnrequestingBinaryMessage;
   }
 
   setErrorListener(listenerOrNull) {
@@ -75,6 +88,13 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     webSocketClient.onclose = _emitOnClose.bind(this);
     webSocketClient.onmessage = _emitEventByIncomingMessage.bind(this);
   }
+
+  sendBinaryRequest = require("./utils/sendBinaryRequest");
+
+  sendUnrequestingBinaryMessage(messageInArrayBuffer) {
+    fillHeaderAsUnrequestingBinaryMessage(messageInArrayBuffer);
+    this[_connection].send(messageInArrayBuffer);
+  }
 };
 
 ResponsiveWebSocketClient.setWebSocketClientClass = function setWebSocketClientClass(W3CWebSocket) {
@@ -94,17 +114,3 @@ const _emitOnClose = function(event) {
 };
 
 module.exports = ResponsiveWebSocketClient;
-
-const Proto = ResponsiveWebSocketClient.prototype;
-
-Proto.sendBinaryRequest = require("./methods/sendBinaryRequest");
-Proto.sendTextRequest = require("./methods/sendTextRequest");
-
-const createMethodToSendUnrequestingMessage = function(createUnrequestingMessage) {
-  return function sendUnrequestingMessage(message) {
-    return this[_connection].send(createUnrequestingMessage(message));
-  };
-};
-
-Proto.sendUnrequestingBinaryMessage = createMethodToSendUnrequestingMessage(createUnrequestingBinaryMessage);
-Proto.sendUnrequestingTextMessage = createMethodToSendUnrequestingMessage(createUnrequestingTextMessage);

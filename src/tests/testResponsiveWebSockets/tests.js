@@ -2,7 +2,7 @@
 
 const ResponsiveWebSocketServer = require("./../../Server/ResponsiveWebSocketServer");
 const ResponsiveWebSocketClient = require("./../../Client/ResponsiveWebSocketClient");
-const WebSocketClientFromW3C = require("./../../W3CWebSocketClient/W3CWebSocketClient");
+const WebSocketClientFromW3C = require("./../../W3CWebSocketClient");
 
 const executeTests = require("./executeTests");
 
@@ -17,5 +17,5 @@ executeTests(describe, it, {
   responsiveWebSocketServer,
   port,
   urlOfServer: url,
-  ResponsiveWebSocketClient: ResponsiveWebSocketClient
+  ResponsiveWebSocketClient
 });

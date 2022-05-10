@@ -10,7 +10,7 @@ const fillHeaderThenSendItAndFragments = function(
   isMessageBinary,
   fragments
 ) {
-  fillHeader(arrayBufferAsHeader, idOfMessage);
+  fillHeader(idOfMessage, arrayBufferAsHeader);
   sendHeaderAndFragments(uWsWebSocket, arrayBufferAsHeader, isMessageBinary, fragments);
 };
 

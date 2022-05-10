@@ -34,7 +34,7 @@ const executeTestAndCloseConnectionsIfFail = async function(
   try {
     await checkClosingConnection(closer, acceptor);
   } catch(error) {
-    closer.close();
+    closer.terminate();
     throw error;
   }
 };

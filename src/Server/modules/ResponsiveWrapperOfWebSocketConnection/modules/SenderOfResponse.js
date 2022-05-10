@@ -1,16 +1,10 @@
 "use strict";
 
-const ResponsiveWrapperOfWebSocketConnection = require("./../ResponsiveWrapperOfWebSocketConnection");
-const { _bufferForHeader } = ResponsiveWrapperOfWebSocketConnection;
+const { _bufferForHeaderOfRequestOrResponse } = require("./../ResponsiveWrapperOfWebSocketConnection");
 
 const {
-  binaryMessager: {
-    fillBufferAsHeaderOfResponse: fillBufferAsHeaderOfBinaryResponse
-  },
-  textMessager: {
-    fillBufferAsHeaderOfResponse: fillBufferAsHeaderOfTextResponse
-  }
-} = require("./messaging/messaging");
+  fillHeaderAsResponse: fillArrayBufferAsHeaderOfBinaryResponse
+} = require("./../../../../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/binaryMessager");
 
 const fillHeaderThenSendItAndFragments = require("./utilsForWebSocket/fillHeaderThenSendItAndFragments");
 
@@ -22,39 +16,20 @@ const SenderOfResponse = class {
 
   sendBinaryResponse(message) {
     const connection = this[_connection];
-    fillBufferAsHeaderOfBinaryResponse(_bufferForHeader, this[_idOfMessage]);
+    fillArrayBufferAsHeaderOfBinaryResponse(this[_idOfMessage], _bufferForHeaderOfRequestOrResponse);
 
     const messageIsBinary = true;
-    connection.sendFirstFragment(_bufferForHeader, messageIsBinary);
+    connection.sendFirstFragment(_bufferForHeaderOfRequestOrResponse, messageIsBinary);
     connection.sendLastFragment(message, messageIsBinary);
-  }
-
-  sendTextResponse(message) {
-    const connection = this[_connection];
-    fillBufferAsHeaderOfTextResponse(_bufferForHeader, this[_idOfMessage]);
-
-    connection.sendFirstFragment(_bufferForHeader);
-    connection.sendLastFragment(message);
   }
 
   sendFragmentsOfBinaryResponse() {
     return fillHeaderThenSendItAndFragments(
       this[_connection],
-      _bufferForHeader,
-      fillBufferAsHeaderOfBinaryResponse,
+      _bufferForHeaderOfRequestOrResponse,
+      fillArrayBufferAsHeaderOfBinaryResponse,
       this[_idOfMessage],
       true,
-      arguments
-    );
-  }
-
-  sendFragmentsOfTextResponse() {
-    return fillHeaderThenSendItAndFragments(
-      this[_connection],
-      _bufferForHeader,
-      fillBufferAsHeaderOfTextResponse,
-      this[_idOfMessage],
-      false,
       arguments
     );
   }

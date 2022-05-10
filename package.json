@@ -4,7 +4,7 @@
     ".": "./src/Server/ResponsiveWebSocketServer.js",
     "./Server": "./src/Server/ResponsiveWebSocketServer.js",
     "./Client": "./src/Client/ResponsiveWebSocketClient.js",
-    "./W3CWebSocketClient": "./src/W3CWebSocketClient/W3CWebSocketClient.js",
+    "./W3CWebSocketClient": "./src/W3CWebSocketClient.js",
     "./uWebSockets": "./src/uWebSockets.js"
   },
   "devDependencies": {
@@ -22,5 +22,5 @@
   "scripts": {
     "test": "npx mocha src/**/tests.js --recursive --no-color"
   },
-  "version": "1.1.2"
+  "version": "0.4.0"
 }
