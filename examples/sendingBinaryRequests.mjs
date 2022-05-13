@@ -5,13 +5,13 @@ import W3CWebSocketClient from "./../src/W3CWebSocketClient.js";
 import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient.js";
 
 (async function() {
-  const server = new ResponsiveWebSocketServer(),
-        port = 4443;
+  const server = new ResponsiveWebSocketServer();
+  const port = 4443;
+
   await server.listen(port);
 
   ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const client = new ResponsiveWebSocketClient();
-  const sizeOfClientHeaderForBinaryRequest = client.sizeOfHeaderForBinaryRequest;
 
   const connectionToClient = await new Promise(function(resolve, reject) {
     server.setConnectionListener(async function(connectionToClient) {
@@ -23,32 +23,51 @@ import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient
   });
 
   {
-    const sendCountOfProducts = function(bytes, startIndex, responseSender) {
-      const idOfItem = new DataView(bytes).getUint16(startIndex),
-            countOfProducts = idOfProductToCount.get(idOfItem);
+    console.log("sending binary requests from server");
 
-      const response = new Uint16Array([countOfProducts]);
+    client.setBinaryRequestListener(function(messageWithHeader, startIndex, responseSender) {
+      console.log("binary request to client: ", new Uint8Array(messageWithHeader, startIndex));
+
+      const sizeOfHeader = client.sizeOfHeaderForBinaryResponse;
+      const sizeOfBody = 4;
+      const response = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+      new DataView(response).setInt32(sizeOfHeader, 123456);
       responseSender.sendBinaryResponse(response);
-    };
-    connectionToClient.setBinaryRequestListener(sendCountOfProducts);
+    });
 
-    const idOfProductToCount = new Map([
-      [1111, 2222],
-      [333, 444]
-    ]);
+    const message = new Uint8Array([11, 22, 33, 44]);
+    const binaryResponse = await connectionToClient.sendBinaryRequest(message);
+    console.log("binary response from client: ", new Uint8Array(
+      binaryResponse,
+      connectionToClient.startIndexOfBodyInBinaryResponse
+    ));
+  }
+  {
+    console.log("\nsending binary requests from client");
 
-    await getCountOfProductsByIdAndLogResult(client, 1111);
-    await getCountOfProductsByIdAndLogResult(client, 333);
+    connectionToClient.setBinaryRequestListener(function(messageWithHeader, startIndex, responseSender) {
+      console.log("binary request to server: ", new Uint8Array(messageWithHeader, startIndex));
 
-    async function getCountOfProductsByIdAndLogResult(clientConnection, idOfProduct) {
-      const request = new ArrayBuffer(sizeOfClientHeaderForBinaryRequest + 2);
-      new DataView(request).setUint16(sizeOfClientHeaderForBinaryRequest, idOfProduct);
+      const response = new ArrayBuffer(4);
+      new DataView(response).setInt32(0, 123456);
+      responseSender.sendBinaryResponse(response);
+    });
 
-      const binaryResponse = await clientConnection.sendBinaryRequest(request);
-      const startIndex = clientConnection.startIndexOfBodyInBinaryResponse;
-      const count = new DataView(binaryResponse).getUint16(startIndex);
-      console.log("Count of products (id: ", idOfProduct, "): ", count);
-    }
+    const sizeOfHeader = client.sizeOfHeaderForBinaryRequest;
+    const sizeOfBody = 4;
+    const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+    const startIndex = sizeOfHeader;
+    const uint8s = new Uint8Array(message, startIndex);
+    uint8s[0] = 11;
+    uint8s[1] = 22;
+    uint8s[2] = 33;
+    uint8s[3] = 44;
+
+    const binaryResponse = await client.sendBinaryRequest(message);
+    console.log("binary response from server: ", new Uint8Array(
+      binaryResponse,
+      client.startIndexOfBodyInBinaryResponse
+    ));
   }
 
   connectionToClient.close();
