@@ -8,20 +8,20 @@ Size of request header and response header is 3 byte, unrequesting message heade
 
 Standard web socket has method for sending messages and event of incoming message.
 Sometimes thing to do simething like this may come:
+
 ```js
 const connection = new WebSocket("wss://example.com/translator");
 // ...
-const response = await connection.send("translate this to indian");
+const response = await connection.sendRequest(message);
 ```
 
 ResposiveWebSockets module provides opportunity to send requests and get response via web sockets,
-and opportunity to send
-messages without waiting response:
+and opportunity to send messages without waiting response:
+
 ```js
-const responseData = await connection.sendTextRequest("some request");
-const {message, contentType} = responseData;
-const startIndex = connection.startIndexOfBodyInTextResponse;
-console.log("response body: ", message.slice(startIndex));
+const response = await connection.sendBinaryRequest(new Uint8Array([1, 2, 3, 4]).buffer);
+const startIndex = connection.startIndexOfBodyInBinaryResponse;
+console.log("response: ", new Uint8Array(response, startIndex));
 ```
 
 ### Installation
@@ -31,85 +31,114 @@ Download package from releases page. In folder of your project install module by
 
 ### Usage
 
-#### Example in node.js
+Using methods to send requests, responses and unrequesting messages has a difference
+between a client and a server connection.  
+Example of using a server connection:
 
 ```js
-"use strict";
+let message = new Uint8Array([11, 22, 33, 44]);
+const binaryResponse = await serverConnection.sendBinaryRequest(message);
+console.log("binary response: ", new Uint8Array(
+  binaryResponse,
+  serverConnection.startIndexOfBodyInBinaryResponse
+));
 
-import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
-import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
-import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
-import uWebSockets from "ResponsiveWebSockets/uWebSockets";
+message = new Uint8Array([55, 66]);
+serverConnection.sendUnrequestingBinaryMessage(message);
 
-// const ResponsiveWebSocketServer = require("ResponsiveWebSockets/Server");
-// const ResponsiveWebSocketClient = require("ResponsiveWebSockets/Client");
-// const W3CWebSocketClient = requre("ResponsiveWebSockets/W3CWebSocketClient");
-// const uWebSockets = requre("ResponsiveWebSockets/uWebSockets");
-
-(async () => {
-  const server = new ResponsiveWebSocketServer({
-    compression: uWebSockets.DISABLED
-  });
-  const port = 8443;
-  await server.listen(port);
-
-  ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
-  const client = new ResponsiveWebSocketClient();
-
-  const connectionToClient = await new Promise((resolve, reject) => {
-    server.setConnectionListener(async (connectionToClient) => {
-      console.log("cleint connected, url: ", connectionToClient.url);
-      await connectingClient;
-      resolve(connectionToClient);
-    });
-    const connectingClient = client.connect("ws://127.0.0.1:" + port + "/room/12345");
-  });
-
-  connectionToClient.setTextRequestListener((message, startIndex, responseSender) => {
-    const body = message.slice(startIndex);
-
-    if (body === "get some text") {
-      responseSender.sendTextResponse("Lorem Ipsum");
-      return;
-    }
-    if (body === "What is the answer on everything?") {
-      const response = new ArrayBuffer(1);
-      const dataView = new DataView(response);
-      dataView.setUint8(0, 42);
-      responseSender.sendBinaryResponse(response);
-    }
-  });
-
-  {
-    const {
-      message,
-      contentType
-    } = await client.sendTextRequest("get some text");
-    const startIndex = client.startIndexOfBodyInTextResponse;
-    console.log("get some text -> ", message.slice(startIndex));
-  }
-
-  {
-    const {
-      message,
-      contentType
-    } = await client.sendTextRequest("What is the answer on everything?");
-    const startIndex = client.startIndexOfBodyInBinaryResponse;
-    const number = new DataView(message).getUint8(startIndex);
-    console.log("The answer on everything is ", number);
-  }
-
-  {
-    client.setUnrequestingTextMessageListener((message, startIndex) => {
-      console.log("message: ", message.slice(startIndex, 40), " ...");
-    });
-
-    const smallHeader = "abcd";
-    const bigBody = "Avoid allocation of memory. 0x0123".repeat(20);
-    connectionToClient.sendFragmentsOfUnrequestingTextMessage(smallHeader, bigBody);
-  }
-})();
+serverConnection.setBinaryRequestListener(function echo(messageWithHeader, startIndex, responseSender) {
+  responseSender.sendBinaryResponse(new Uint8Array(messageWithHeader, startIndex));
+});
 ```
+
+The server connection accepts typed arrays or `ArrayBuffer` as a parameter,
+the client connection accepts only `ArrayBuffer`. Since the WebSocket in the browser does not have a way to send
+a message in parts, in different frames, for performance purposes, the client connection, when sending
+a request, response or an unrequesting message, expects to receive an `ArrayBuffer` with an empty space
+at the beginning for the header. (Avoiding allocating a new block of memory for the header + message body)  
+Example of using a client connection:
+
+```js
+{
+  const sizeOfHeader = client.sizeOfHeaderForBinaryRequest;
+  const sizeOfBody = 4;
+  const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+  // fill the message from index = sizeOfHeader
+  const binaryResponse = await client.sendBinaryRequest(message);
+  console.log("binary response: ", new Uint8Array(
+    binaryResponse,
+    client.startIndexOfBodyInBinaryResponse
+  ));
+}
+{
+  const sizeOfHeader = client.sizeOfHeaderForUnrequestingBinaryMessage;
+  const sizeOfBody = 2;
+  const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+  // fill the message from index = sizeOfHeader
+  client.sendUnrequestingBinaryMessage(message);
+}
+
+client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) => {
+  const sizeOfHeader = client.sizeOfHeaderForBinaryResponse;
+  const sizeOfBody = 4;
+  const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+  // fill the message from index = sizeOfHeader
+  responseSender.sendBinaryResponse(message);
+});
+```
+
+Examples:
+[sendingBinaryRequests.mjs](./examples/sendingBinaryRequests.mjs),
+[sendingUnrequestingBinaryMessages.mjs](./examples/sendingUnrequestingBinaryMessages.mjs)
+
+#### Text messages
+
+Responsive WebSockets don't have methods for sending text requests, unrequesting messages or responses,
+thar accepts a string as parametr, for performance reasons
+(strings are immutable, unlike `ArrayBuffer`, the client will have to allocate a block of memory for the message).
+To send text,
+[TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder)
+and
+[TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder),
+will help, allowing you to fill the `ArrayBuffer` with bytes of a string in UTF-8.  
+Example of sending text in request by client:
+
+```js
+const textEncoder = new TextEncoder("utf-8");
+const textDecoder = new TextDecoder("utf-8");
+
+const stringMessage = "hello";
+const byteSizeOfStringMesageInUTF8 = 5;
+const sizeOfHeader = client.sizeOfHeaderForBinaryRequest;
+const message = new ArrayBuffer(sizeOfHeader + byteSizeOfStringMesageInUTF8);
+
+const startIndex = sizeOfHeader;
+textEncoder.encodeInto(stringMessage, new Uint8Array(message, startIndex));
+
+const binaryResponse = await client.sendBinaryRequest(message);
+console.log("text in response: ", textDecoder.decode(new Uint8Array(
+  binaryResponse,
+  client.startIndexOfBodyInBinaryResponse
+)));
+```
+
+
+Example of sending text in request by server connection:
+
+```js
+const textEncoder = new TextEncoder("utf-8");
+const textDecoder = new TextDecoder("utf-8");
+
+const message = textEncoder.encode("hello");
+
+const binaryResponse = await serverConnection.sendBinaryRequest(message);
+console.log("text in response: ", textDecoder.decode(new Uint8Array(
+  binaryResponse,
+  serverConnection.startIndexOfBodyInBinaryResponse
+)));
+```
+
+Example: [sendingTextInBinaryRequests.mjs](./examples/sendingTextInBinaryRequests.mjs)
 
 #### Usage in browser
 
@@ -124,6 +153,10 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 After call `setWebSocketClientClass(window.WebSocket)`, class `ResponsiveWebSocketClient` is ready for usage.
 Because the code of `ResponsiveWebSocketClient` does not depend on node.js modules, webpack compiles the class code.
+
+### Compatible implementation in another language
+
+[Description of messages headers format](./docs/messagesgHeadersFormat.ru.md)
 
 ### Links:
 

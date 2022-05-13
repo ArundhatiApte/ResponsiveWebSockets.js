@@ -5,20 +5,25 @@
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
     * static contentTypesOfMessages
+    * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
+    * sendTextRequest(text[, maxTimeMsToWaitResponse])
+    * sendUnrequestingBinaryMessage(bytes)
+    * sendUnrequestingTextMessage(text)
     * setBinaryRequestListener(listener)
+    * setTextRequestListener(listener)
     * setCloseListener(listener)
     * setMalformedBinaryMessageListener(listener)
+    * setMalformedTextMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
-    * setTextMessageListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
+    * setUnrequestingTextMessageListener(listener)
     * startIndexOfBodyInBinaryResponse
+    * startIndexOfBodyInTextResponse
     * terminate()
     * static class TimeoutToReceiveResponseError
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
     * new ResponsiveWebSocketClient([protocols[, options]])
     * connect(url)
-    * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
-    * sendUnrequestingBinaryMessage(bytes)
     * static setWebSocketClientClass(W3CWebSocketClient)
 - [Класс: ResponsiveWebSocketServer](#класс-responsivewebSocketserver)
     * new ResponsiveWebSocketServer()
