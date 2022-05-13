@@ -5,13 +5,13 @@ import W3CWebSocketClient from "./../src/W3CWebSocketClient.js";
 import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient.js";
 
 (async function() {
-  const server = new ResponsiveWebSocketServer(),
-        port = 4443;
+  const server = new ResponsiveWebSocketServer();
+  const port = 4443;
+
   await server.listen(port);
 
   ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const client = new ResponsiveWebSocketClient();
-  const sizeOfClientHeaderForUnrequestingBinaryMessage = client.sizeOfHeaderForUnrequestingBinaryMessage;
 
   const connectionToClient = await new Promise(function(resolve, reject) {
     server.setConnectionListener(async function(connectionToClient) {
@@ -23,42 +23,38 @@ import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient
   });
 
   {
-    connectionToClient.setUnrequestingBinaryMessageListener(manageShopBasket);
+    client.setUnrequestingBinaryMessageListener(function(messageWithHeader, startIndex) {
+      console.log("unrequesting binary message from server: ", new Uint8Array(
+        messageWithHeader,
+        startIndex
+      ));
+    });
+    const message = new Uint8Array([1, 2, 3, 4]);
+    connectionToClient.sendUnrequestingBinaryMessage(message);
+  }
+  {
+    connectionToClient.setUnrequestingBinaryMessageListener(function(messageWithHeader, startIndex) {
+      console.log("unrequesting binary message from client: ", new Uint8Array(
+        messageWithHeader,
+        startIndex
+      ));
+    });
 
-    function manageShopBasket(bytesWithHeader, startIndex) {
-      const dataView = new DataView(bytesWithHeader),
-            idOfAction = dataView.getUint8(startIndex),
-            idOfItem = dataView.getUint16(startIndex + 1);
-
-      if (idOfAction === action.addingItem) {
-        console.log("User added new item (id:", idOfItem, ") to basket.");
-      } else if (idOfAction === action.removingItem) {
-        console.log("User removed item (id:", idOfItem, ") from basket.");
-      }
-    }
-
-    const action = {addingItem: 1, removingItem: 2};
-
-    let idOfItem = 42;
-    sendClientAction(client, action.addingItem, idOfItem);
-    sendClientAction(client, action.addingItem, 1200);
-    sendClientAction(client, action.removingItem, idOfItem);
-
-    function sendClientAction(clientConnection, idOfAction, idOfItem) {
-      const message = new ArrayBuffer(sizeOfClientHeaderForUnrequestingBinaryMessage + 3),
-            dataView = new DataView(message),
-            startIndex = sizeOfClientHeaderForUnrequestingBinaryMessage;
-
-      dataView.setUint8(startIndex, idOfAction);
-      dataView.setUint16(startIndex + 1, idOfItem);
-      clientConnection.sendUnrequestingBinaryMessage(message);
-    }
+    const sizeOfHeader = client.sizeOfHeaderForUnrequestingBinaryMessage;
+    const sizeOfBody = 4;
+    const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+    const startIndex = sizeOfHeader;
+    const uint8sOfBody = new Uint8Array(message, startIndex);
+    uint8sOfBody[0] = 1;
+    uint8sOfBody[1] = 2;
+    uint8sOfBody[2] = 3;
+    uint8sOfBody[3] = 4;
+    client.sendUnrequestingBinaryMessage(message);
   }
 
-  await new Promise(function wait(resolve) {
-    return setTimeout(resolve, 200);
-  });
-  connectionToClient.close();
-  client.close();
-  server.close();
+  setTimeout(async function close() {
+    connectionToClient.terminate();
+    client.terminate();
+    await server.close();
+  }, 200);
 })();

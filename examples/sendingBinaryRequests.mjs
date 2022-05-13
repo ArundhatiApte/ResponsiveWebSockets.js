@@ -57,11 +57,11 @@ import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient
     const sizeOfBody = 4;
     const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
     const startIndex = sizeOfHeader;
-    const uint8s = new Uint8Array(message, startIndex);
-    uint8s[0] = 11;
-    uint8s[1] = 22;
-    uint8s[2] = 33;
-    uint8s[3] = 44;
+    const uint8sOfBody = new Uint8Array(message, startIndex);
+    uint8sOfBody[0] = 11;
+    uint8sOfBody[1] = 22;
+    uint8sOfBody[2] = 33;
+    uint8sOfBody[3] = 44;
 
     const binaryResponse = await client.sendBinaryRequest(message);
     console.log("binary response from server: ", new Uint8Array(
@@ -70,7 +70,7 @@ import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient
     ));
   }
 
-  connectionToClient.close();
-  client.close();
-  server.close();
+  connectionToClient.terminate();
+  client.terminate();
+  await server.close();
 })();
