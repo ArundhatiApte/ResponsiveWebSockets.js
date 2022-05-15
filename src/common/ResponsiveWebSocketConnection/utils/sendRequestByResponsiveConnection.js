@@ -2,7 +2,7 @@
 
 const {
   _connection,
-  _generatorOfRequestId,
+  _getNextIdOfRequest,
   _idOfRequestToPromise,
   _maxTimeMsToWaitResponse,
 } = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
@@ -20,7 +20,7 @@ const sendRequestByResponsiveConnection = function(
     if (!maxTimeMsToWaitResponse) {
       maxTimeMsToWaitResponse = responsiveConnection[_maxTimeMsToWaitResponse];
     }
-    const idOfRequest = responsiveConnection[_generatorOfRequestId].getNext();
+    const idOfRequest = responsiveConnection[_getNextIdOfRequest]();
     const idOfRequestToPromise = responsiveConnection[_idOfRequestToPromise];
     const timeout = createTimeoutToReceiveResponse(
       idOfRequestToPromise,

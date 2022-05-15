@@ -1,6 +1,6 @@
 "use strict";
 
-const GeneratorOfRequestId = require("./modules/SequenceGeneratorOfInts/SequenceGeneratorOfInts");
+const createGeneratorOfRequestId = require("./modules/createSequenceGeneratorOfInts/createSequenceGeneratorOfInts");
 
 const startIndexOfBodyInBinaryResponse = require(
   "./modules/messaging/binaryMessages/binaryMessager"
@@ -11,7 +11,7 @@ const TimeoutToReceiveResponseError = class extends Error {};
 const ResponsiveWebSocketConnection = class {
   constructor() {
     this[_maxTimeMsToWaitResponse] = defaultMaxTimeMsToWaitResponse;
-    this[_generatorOfRequestId] = new GeneratorOfRequestId(Uint16Array);
+    this[_getNextIdOfRequest] = createGeneratorOfRequestId(Uint16Array);
     this[_idOfRequestToPromise] = new Map();
   }
 
@@ -55,7 +55,7 @@ const ResponsiveWebSocketConnection = class {
 };
 
 const _connection = Symbol(),
-      _generatorOfRequestId = Symbol(),
+      _getNextIdOfRequest = Symbol(),
       _idOfRequestToPromise = Symbol(),
       _maxTimeMsToWaitResponse = Symbol(),
 
@@ -70,7 +70,7 @@ const defaultMaxTimeMsToWaitResponse = 2000;
 
 ResponsiveWebSocketConnection._namesOfPrivateProperties = {
   _connection,
-  _generatorOfRequestId,
+  _getNextIdOfRequest,
   _idOfRequestToPromise,
   _maxTimeMsToWaitResponse,
 

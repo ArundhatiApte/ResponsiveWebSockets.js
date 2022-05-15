@@ -3,7 +3,7 @@
 const {
   _namesOfPrivateProperties: {
     _connection,
-    _generatorOfRequestId,
+    _getNextIdOfRequest,
     _idOfRequestToPromise,
     _maxTimeMsToWaitResponse,
   }
@@ -25,7 +25,7 @@ const sendHeaderAndFragments = require("./utilsForWebSocket/sendHeaderAndFragmen
 
 const sendFragmentsOfBinaryRequest = function() {
   return new Promise((resolve, reject) => {
-    const idOfRequest = this[_generatorOfRequestId].getNext();
+    const idOfRequest = this[_getNextIdOfRequest]();
     const idOfRequestToPromise = this[_idOfRequestToPromise];
     const timeout = createTimeoutToReceiveResponse(
       idOfRequestToPromise,
