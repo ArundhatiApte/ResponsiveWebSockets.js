@@ -22,55 +22,65 @@ import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient
     const connectingClient = client.connect("ws://127.0.0.1:" + port + "/room/12345");
   });
 
+  const nameOfEncoding = "utf-8";
+  const textEncoder = new TextEncoder(nameOfEncoding);
+  const textDecoder = new TextDecoder(nameOfEncoding);
+
   {
-    console.log("sending binary request from server");
+    console.log("sending text in binary request from server");
 
     client.setBinaryRequestListener(function(messageWithHeader, startIndex, responseSender) {
-      console.log("binary request to client: ", new Uint8Array(messageWithHeader, startIndex));
+      const textInRequest = textDecoder.decode(new Uint8Array(messageWithHeader, startIndex));
+      console.log("text in binary request to client: ", textInRequest);
 
+      const stringMessage = "aloha";
+      const byteSizeOfStingMessage = 5;
       const sizeOfHeader = client.sizeOfHeaderForBinaryResponse;
-      const sizeOfBody = 4;
-      const response = new ArrayBuffer(sizeOfHeader + sizeOfBody);
-      new DataView(response).setInt32(sizeOfHeader, 123456);
-      responseSender.sendBinaryResponse(response);
+      const message = new ArrayBuffer(sizeOfHeader + byteSizeOfStingMessage);
+
+      const startIndexOfText = sizeOfHeader;
+      textEncoder.encodeInto(stringMessage, new Uint8Array(message, startIndexOfText));
+      responseSender.sendBinaryResponse(message);
     });
 
-    const message = new Uint8Array([11, 22, 33, 44]);
+    const message = textEncoder.encode("hello");
     const binaryResponse = await connectionToClient.sendBinaryRequest(message);
-    console.log("binary response from client: ", new Uint8Array(
+
+    const textInResponse = textDecoder.decode(new Uint8Array(
       binaryResponse,
       connectionToClient.startIndexOfBodyInBinaryResponse
     ));
+    console.log("text in binary response from client: ", textInResponse);
   }
   {
-    console.log("\nsending binary request from client");
+    console.log("\nsending text in binary request from client");
 
     connectionToClient.setBinaryRequestListener(function(messageWithHeader, startIndex, responseSender) {
-      console.log("binary request to server: ", new Uint8Array(messageWithHeader, startIndex));
+      const textInRequest = textDecoder.decode(new Uint8Array(messageWithHeader, startIndex));
+      console.log("text in binary request to server: ", textInRequest);
 
-      const response = new ArrayBuffer(4);
-      new DataView(response).setInt32(0, 123456);
-      responseSender.sendBinaryResponse(response);
+      responseSender.sendBinaryResponse(textEncoder.encode("aloha"));
     });
 
+    const stringMessage = "hello";
+    const byteSizeOfStingMessage = 5;
     const sizeOfHeader = client.sizeOfHeaderForBinaryRequest;
-    const sizeOfBody = 4;
-    const message = new ArrayBuffer(sizeOfHeader + sizeOfBody);
+    const message = new ArrayBuffer(sizeOfHeader + byteSizeOfStingMessage);
+
     const startIndex = sizeOfHeader;
-    const uint8sOfBody = new Uint8Array(message, startIndex);
-    uint8sOfBody[0] = 11;
-    uint8sOfBody[1] = 22;
-    uint8sOfBody[2] = 33;
-    uint8sOfBody[3] = 44;
+    textEncoder.encodeInto(stringMessage, new Uint8Array(message, startIndex));
 
     const binaryResponse = await client.sendBinaryRequest(message);
-    console.log("binary response from server: ", new Uint8Array(
+
+    const textInResponse = textDecoder.decode(new Uint8Array(
       binaryResponse,
       client.startIndexOfBodyInBinaryResponse
     ));
+    console.log("binary response from server: ", textInResponse);
   }
 
   connectionToClient.terminate();
   client.terminate();
   await server.close();
 })();
+
