@@ -74,8 +74,9 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     });
   }
 
-  close(code, reason) {
-    return this[_connection].close(code, reason);
+  close(code, reason) { // args: code, reason
+    const connection = this[_connection];
+    return connection.close.apply(connection, arguments);
   }
 
   // only in nodejs

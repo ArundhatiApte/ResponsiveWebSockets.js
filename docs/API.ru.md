@@ -1,156 +1,68 @@
-# Responsive Web Sockets API
+# API Отзывчивых Web Sockets
 
 #### Содержание
 
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code, reason])
-    * static contentTypesOfMessages
-    * setBinaryRequestListener(listener)
     * setCloseListener(listener)
     * setMalformedBinaryMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
-    * setTextMessageListener(listener)
     * setUnrequestingBinaryMessageListener(listener)
     * startIndexOfBodyInBinaryResponse
     * terminate()
     * static class TimeoutToReceiveResponseError
+    * url
 - [Класс: ResponsiveWebSocketClient](#класс-responsivewebsocketclient)
     * new ResponsiveWebSocketClient([protocols[, options]])
     * connect(url)
-    * sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
-    * sendUnrequestingBinaryMessage(bytes)
+    * sendBinaryRequest(message[, maxTimeMsToWaitResponse])
+    * sendUnrequestingBinaryMessage(message)
+    * setBinaryRequestListener(listener)
+    * setTextMessageListener(listener)
     * static setWebSocketClientClass(W3CWebSocketClient)
-- [Класс: ResponsiveWebSocketServer](#класс-responsivewebSocketserver)
-    * new ResponsiveWebSocketServer()
+    * sizeOfHeaderForBinaryRequest
+    * sizeOfHeaderForBinaryResponse
+    * sizeOfHeaderForUnrequestingBinaryMessage
+- [Клаcc: ClientResponseSender](#класс-clientresponsesender)
+    * sendBinaryResponse(message)
+- [Класс: ResponsiveWebSocketServer](#класс-responsivewebsocketserver)
+    * new ResponsiveWebSocketServer([options])
     * close()
     * listen(port)
     * setConnectionListener(listener)
     * setUpgradeListener(listener)
-- [Класс: ResponsiveWebSocketServerConnection](#класс-responsivewebsocketserverconnection)
-    * getRemoteAddress()
-    * sendFragmentsOfBinaryRequest(...fragments)
-    * sendFragmentsOfTextRequest(...fragments)
-    * sendFragmentsOfUnrequestingBinaryMessage(...fragments)
-    * sendFragmentsOfUnrequestingTextMessage(...fragments)
-    * url
-    * userData
-- [Класс: ResponseSender](#класс-responsesender)
-    * sendBinaryResponse(response)
-    * sendTextResponse(response)
-- [Класс: ServerResponseSender](#класс-serverresponsesender)
-    * sendFragmentsOfBinaryResponse(...fragments)
-    * sendFragmentsOfTextResponse(...fragments)
-- [Класс: ResponseData](#класс-responsedata)
 - [Класс: HandshakeAction](класс-handshakeaction)
     * acceptConnection([userData])
     * cancelConnection()
+- [Класс: ResponsiveWebSocketServerConnection](#класс-responsivewebsocketserverconnection)
+    * getRemoteAddress()
+    * sendBinaryRequest(message[, maxTimeMsToWaitResponse])
+    * sendFragmentsOfBinaryRequest(...fragments)
+    * sendFragmentsOfUnrequestingBinaryMessage(...fragments)
+    * sendUnrequestingBinaryMessage(message)
+    * setBinaryRequestListener(listener)
+    * setTextMessageListener(listener)
+    * url
+    * userData  
+- [Класс: ServerConnectionResponseSender](#класс-serverresponsesender)
+    * sendBinaryResponse(message)
+    * sendFragmentsOfBinaryResponse(...fragments)
 
 ## Класс: ResponsiveWebSocketConnection
 
-Супер класс для соединения с клиентом и клиента.
-Предоставляет возможность отправки сообщений с ожиданием и без ожидания ответа.
+Базовый класс для серверного соединения и клиента.
 
 ### close([code, reason])
 
-* `code` `<integer>`
-* `reason` `<string>`
+* `code <integer>`
+* `reason <string>`
 
 Закрывает соединение.
-
-### статичное свойтсво contentTypesOfMessages
-
-Объект со следующими свойствами:
-* `binary <number>` тип двоичного сообщения
-* `text <number>` тип текстового сообщения
-
-### sendBinaryRequest(bytes[, maxTimeMsToWaitResponse])
-
-* `bytes <ArrayBuffer>`  
-Клиент принимает `<ArrayBuffer>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
-* `maxTimeMsToWaitResponse <number>`  
-опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
-* Возвращает `<Promise<ResponseData>>`
- 
-Отправляет двоичное сообщение, ожидающее ответ.
-Получатель имеет возможность отправить ответ,
-установив обработчик события binaryRequest методом `setBinaryRequestListener`.
-Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд,
-Promise завершится исключением `TimeoutToReceiveResponseError`.  
-Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
-
-### sendTextRequest(text[, maxTimeMsToWaitResponse])
-
-* `text <string>`  
-Клиент принимает `<string>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
-* `maxTimeMsToWaitResponse <number>`  
-опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
-* Возвращает `<Promise<ResponseData>>`
-
-Отправляет текстовое сообщение, ожидающее ответ.
-Получатель имеет возможность отправить ответ,
-установив обработчик события textRequest методом `setTextRequestListener`.
-Если ответ не придет в течении maxTimeMsToWaitResponse миллисекунд,
-Promise завершится исключнием TimeoutToReceiveResponseError.  
-Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
-
-### sendUnrequestingBinaryMessage(bytes)
-
-* `bytes <ArrayBuffer>`  
-Клиент принимает `<ArrayBuffer>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
-
-Отправляет двоичное сообщение без ожидания ответа.
-При поступлении сообщения получателю, генерируется событие unrequestingBinaryMessage.
- 
-### sendUnrequestingTextMessage(text)
-
-* `text <string>`
-Клиент принимает `<string>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
-
-Отправляет текстовое сообщение без ожидания ответа.
-При поступлении сообщения получателю, генерируется событие unrequestingTextMessage.
-
-### setBinaryRequestListener(listener)
-
-* `listener <function>`  
-сигнатура обработчика: `(bytes, startIndex, responseSender)`, где
-    * `bytes <ArrayBuffer>`  
-    сообщение, cодержащее заголовок и переданное отправителем тело
-    * `startIndex <number>`  
-    индекс первого байта тела сообщения
-    * `responseSender <ResponseSender>`  
-    объект для отправки бинарного или текстового ответа  
-
-Устанавливает обработчик события, возникающего при двоичного получении сообщения,
-отправитель которого ожидает ответ.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.  
-Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs)
-
-### setTextRequestListener(listener)
-
-* `listener <function>`  
-сигнатура обработчика: `(text, startIndex, responseSender)`, где
-    * `text <string>`  
-    сообщение, cодержащее заголовок и переданное отправителем тело
-    * `startIndex <number>`  
-    индекс первого символа в строке text, с которого начинается тело сообщения
-    * `responseSender <ResponseSender>`    
-    объект для отправки текстового или бинарного ответа  
-
-Устанавливает обработчик события, возникающего при получении текстового cообщения,
-отправитель которого ожидает ответ.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.  
-Пример использования см. в [sendingRequests.mjs](./examples/sendingRequests.mjs))
 
 ### setCloseListener(listener)
 
 * `listener <function>`  
-сигнатура обработчика: `(event)`, где
+сигнатура обработчика: `(event)`
     * `event <Object>`
         * `code <number>`
         * `reason <string>`
@@ -158,7 +70,7 @@ Promise завершится исключнием TimeoutToReceiveResponseError.
 
 Устанавливает обработчик закрытия WebSocket соединения.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.
+`listener` может быть равен `null`.
 
 ### setMalformedBinaryMessageListener(listener)
 
@@ -168,16 +80,19 @@ Promise завершится исключнием TimeoutToReceiveResponseError.
 
 Устанавливает обработчик события, возникающего при получении двоичного сообщения без верного заголовка.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.
+`listener` может быть равен `null`.
 
 Пример:  
 в node.js:
+
 ```js
 serverConnection.setMalformedBinaryMessageListener(function() {
   this.terminate();
 });
 ```
+
 в браузере:
+
 ```js
 const webSocketClient = new WebSocket("wss://example.com");
 
@@ -195,68 +110,26 @@ webSocketClient.onopen = function() {
 * если первый байт сообщения равен 3 (как беззнаковое целое),
 то сообщение расценивается как сообщение без ожидания ответа
 
-### setMalformedTextMessageListener(listener)
-
-* `listener <function>`  
-сигнатура обработчика: `(message)`
-    * `message <string>`
-
-Устанавливает обработчик события, возникающего при получении текстового сообщения без верного заголовка.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.
-
-Пример:  
-в node.js:
-```js
-serverConnection.setMalformedTextMessageListener(function() {
-  this.terminate();
-});
-```
-в браузере:
-```js
-const webSocketClient = new WebSocket("wss://example.com");
-
-webSocketClient.onopen = function() {
-  webSocketClient.send("zyxw");
-};
-```
-
 ### setMaxTimeMsToWaitResponse(timeMs)
 
-* `timeMs <number>`
+* `timeMs <number>` Максимальное время ожидания ответа
 
 Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений
-с помощью методов sendBinaryRequest и sendTextRequest.
+с помощью метода `sendBinaryRequest`.
 Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
 По умолчанию 2000.
 
 ### setUnrequestingBinaryMessageListener(listener)
 
 * `listener <function>`  
-сигнатура обработчика: `(bytes, startIndex)`, где
-    * `bytes <ArrayBuffer>`  
-    сообщение, cодержащее заголовок и переданное отправителем тело
-    * `startIndex <number>`  
-    индекс первого байта тела сообщения
+сигнатура обработчика: `(bytes, startIndex)`
+    * `bytes <ArrayBuffer>` Сообщение, cодержащее заголовок и переданное отправителем тело
+    * `startIndex <number>` Индекс первого байта тела сообщения
 
 Устанавливает обработчик события, возникающего при получении двоичного cообщения, без ожидания ответа отправителем.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.  
-Пример использования см. в [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs).
-
-### setUnrequestingTextMessageListener(listener)
-
-* `listener <function>`  
-сигнатура обработчика: `(text, startIndex)`, где
-    * `text <string>`  
-    сообщение, cодержащее заголовок и переданное отправителем тело
-    * `startIndex <number>`  
-    индекс первого символа в строке text, с которого начинается тело сообщения
-
-Устанавливает обработчик события, возникающего при получении текстового cообщения, без ожидания ответа отправителем.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть `null` или `undefined`.  
-Пример использования см. в [sendingUnrequestingMessages.mjs](./examples/sendingUnrequestingMessages.mjs).
+`listener` может быть равен `null`.  
+Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
 
 ### startIndexOfBodyInBinaryResponse
 
@@ -264,19 +137,20 @@ webSocketClient.onopen = function() {
 
 Первый индекс байта в ответе, с которого начинается тело сообщения.
 
-### startIndexOfBodyInTextResponse
-
-* `<number>`
-
-Первый индекс символа в ответе, с которого начинается тело сообщения.
-
 ### terminate()
 
-Разрывает соединение. У экземпляров класса ResponsiveWebSocketClient в браузере данный метод отсутствует.
+Разрывает соединение. У экземпляров класса `ResponsiveWebSocketClient` в браузере данный метод отсутствует.
 
 ### Cтатичный класс TimeoutToReceiveResponseError
 
-Исключение возникает, когда ответ на запрос не пришел за отведённое время maxTimeMsToWaitResponse.
+Исключение, возникающее при вызове метода `sendBinaryRequest`,
+когда ответ на запрос не пришёл за отведённое время maxTimeMsToWaitResponse.
+
+### url
+
+* `<string>`
+
+Адрес подключения WebSocket клиента.
 
 ## Класс ResponsiveWebSocketClient
 
@@ -284,60 +158,140 @@ webSocketClient.onopen = function() {
 
 ### new ResponsiveWebSocketClient([protocols[, options]])
 
-* `protocols <string[]>` список протоколов
-* `options <Object>` только для ResponsiveWebSocketClient в node.js
-    * `followRedirects <boolean>` по умoлчанию `false`
+* `protocols <string[]>` Список протоколов
+* `options <Object>` Только для ResponsiveWebSocketClient в node.js
+    * `followRedirects <boolean>` По умoлчанию `false`
     * `generateMask <function>`
-    функция, используемая для создания маски, вызывается перед отправкой каждого сообщения.
+    Функция, используемая для создания маски, вызывается перед отправкой каждого сообщения.
     Принимает `<Buffer>`, который должен быть заполнен синхронно.
     По умолчанию в `<Buffer>` записывается случайные байты, созданные криптографически стойким алгоритмом.
     * `handshakeTimeout <number>`
-    максимальное время в миллисекундах ожидания запроса рукопожатия.
+    Максимальное время в миллисекундах ожидания запроса рукопожатия.
     * `maxPayload <number>`
-    максимальный размер сообщения в байтах. По умолчанию 100 MiB (104857600 байт).
+    Максимальный размер сообщения в байтах. По умолчанию 100 MiB (104857600 байт).
     * `maxRedirects <number>`
-    максимальное количество перенаправлений. По умолчанию 10.
+    Максимальное количество перенаправлений. По умолчанию 10.
     * `origin <string>`
-    значение заголовка `Origin` или `Sec-WebSocket-Origin` в зависимости от `protocolVersion`.
+    Значение заголовка `Origin` или `Sec-WebSocket-Origin` в зависимости от `protocolVersion`.
     * `protocolVersion <number>`
-    значение заголовка `Sec-WebSocket-Version`
+    Значение заголовка `Sec-WebSocket-Version`
     * `skipUTF8Validation <boolean>`
-    указывает пропускать ли проверку текста в UTF-8 для сообщений.
+    Указывает пропускать ли проверку текста в UTF-8 для сообщений.
     По умoлчанию`false`.
 
 Cоздает объекта класс ResponsiveWebSocketClient.
 
 ### connect(url)
 
-* `url <string>` адрес сервера
+* `url <string>` Адрес сервера
 * Возвращает `<Promise>`
 
 Подключается к WebSocket серверу.
 
+### sendBinaryRequest(message[, maxTimeMsToWaitResponse])
+
+* `message <ArrayBuffer>`
+Сообщение запроса, содержащее в начале свободное место для заголовка.
+Размер заголовка равен значению свойства `sizeOfHeaderForBinaryRequest`.
+* `maxTimeMsToWaitResponse <number>`
+Максимальное время ожидания ответа.
+Опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
+* Возвращает `<Promise<ArrayBuffer>>`
+
+Отправляет двоичное сообщение, ожидающее ответ.
+Получатель имеет возможность отправить ответ, установив обработчик события методом `setBinaryRequestListener`.
+Если ответ не придет в течении `maxTimeMsToWaitResponse` миллисекунд,
+Promise завершится исключением `TimeoutToReceiveResponseError`.  
+Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
+
+### sendUnrequestingBinaryMessage(message)
+
+* `message <ArrayBuffer>`
+Сообщение, содержащее в начале свободное место для заголовка.
+Размер заголовка равен значению свойства `sizeOfHeaderForUnrequestingBinaryMessage`.
+
+Отправляет двоичное сообщение без ожидания ответа.
+Получатель имеет возможность увидеть данные,
+установив обработчик события методом `setUnrequestingBinaryMessageListener`.
+Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
+
+### setBinaryRequestListener(listener)
+
+* `listener <function>`  
+сигнатура обработчика: `(bytes, startIndex, responseSender)`
+    * `bytes <ArrayBuffer>` Сообщение, cодержащее заголовок и переданное отправителем тело
+    * `startIndex <number>` Индекс первого байта тела сообщения
+    * `responseSender <ClientResponseSender>` Объект для отправки ответа
+
+Устанавливает обработчик события, возникающего при получении двоичного сообщения, отправитель которого ожидает ответ.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+`listener` может быть равен `null`.  
+Пример использования см. в [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
+
+### setTextMessageListener(listener)
+
+* `listener <function>`
+сигнатура обработчика: `(message)`
+    * `message <string>` Текстовое сообщение, полученное WebSocket-ом
+
+Устанавливает обработчик события, возникающего при получении текстового сообщения.
+
 ### static setWebSocketClientClass(W3CWebSocketClient)
 
-* `W3CWebSocketClient <function>`  
-класс реализующий интерфейс WebSocketClient от W3C
+* `W3CWebSocketClient <function>` Класс реализующий интерфейс WebSocketClient от W3C
 
-Устанавливает класс WebSocket, на основе которого будут создаваться объекты класса ResponsiveWebSocketClient.
-Метод нужно вызвать перед первым вызовом конструктора new ResponsiveWebSocketClient().
+Устанавливает класс `WebSocket`, на основе которого будут создаваться объекты класса `ResponsiveWebSocketClient`.
+Метод нужно вызвать перед первым вызовом конструктора `ResponsiveWebSocketClient`.
 
 Функция позволяет использовать ResponsiveWebSocketClient в браузере и node.js.  
 Пример:  
-в node.js:  
+в node.js:
+
 ```js
 import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
 import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
-```  
+```
+
 в браузере:
+
 ```js
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
 ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
-```  
+```
+
+### sizeOfHeaderForBinaryRequest
+
+* `<number>`
+
+Размер заголовка для двоичного запроса.
+
+### sizeOfHeaderForBinaryResponse
+
+* `<number>`
+
+Размер заголовка для двоичного ответа.
+
+### sizeOfHeaderForUnrequestingBinaryMessage
+
+* `<number>`
+
+Размер заголовка для незапрашивающего двоичного сообщения.
+
+## Класс ClientResponseSender
+
+Класс на стороне клиента, отправляющий ответ на запрос.
+Метод для отправки ответа вызывается только 1 раз.
+
+### sendBinaryResponse(message)
+
+* `message <ArrayBuffer>` Сообщение, содержащее в начале свободное место для заголовка.
+Размер заголовка равен значению свойства `sizeOfHeaderForBinaryResponse` объекта класса `ResponsiveWebSocketClient`.
+
+Отправляет двоичный ответ. Пример: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs).
 
 ## Класс ResponsiveWebSocketServer
 
@@ -349,11 +303,10 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
     * `maxBackpressure <number>`
     * `maxPayloadLength <number>`
     * `sendPingsAutomatically `
-    * `server` `<App>` или `<SSLApp>` модуля uWebSockets.js  
-По умолчанию создается новый http сервер.
-    * `url <string>`  
-Адрес подключения к webSocket серверу. Пример: "/wsAPI/*", "/room/*".  
-По умолчанию "/*".
+    * `server` `<App>` или `<SSLApp>` модуля uWebSockets.js
+    По умолчанию создается новый http сервер.
+    * `url <string>`
+    Адрес подключения к webSocket серверу. Пример: "/wsAPI/*", "/room/*". По умолчанию "/*".
 
 Создает отзывчивый WebSocket сервер.
 
@@ -372,28 +325,43 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 * `listener <function>`  
 сигнатура обработчика: `(connection)`
-    * `connection <ResponsiveWebSocketServerConnection>` соединение с клиентом
+    * `connection <ResponsiveWebSocketServerConnection>` Cоединение с клиентом
 
 Событие connection возникает при подключении WebSocket клиента к серверу.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebServer`.
-`listener` может быть `null` или `undefined`.
+`listener` может быть равен `null`.
 
 ### setUpgradeListener(listener)
 
 * `listenet <function>`
 сигнатура обработчика: `(httpRequest, handshakeAction)`
-    * `httpRequest <HttpRequest>` запрос из модуля uWebSockets.js
+    * `httpRequest <HttpRequest>` Запрос из модуля uWebSockets.js
     * `handshakeAction <HandshakeAction>`
-    объект, позволяющий принять или отклонить запрос на создание WebSocket соединения
+    Объект, позволяющий принять или отклонить запрос на создание WebSocket соединения
 
 Устанавливает обработчик события, происходящего при запросе на создание WebSocket соединения.
 По умолчанию все подключения принимаются.
 Ссылка `this` внутри обработчика указывает на объект экземпляра `ResponsiveWebSocketServer`.
-`listener` может быть `null` или `undefined`.
+`listener` может быть равен `null`.
+
+## Класс HandshakeAction
+
+Класс, принимающий или отклоняющий запросы на создание WebSocket соединения.
+
+### acceptConnection([userData])
+
+* `userData <any>`
+Данные, прикрепляемые к объекту соединеия с клиентом. Опциональный параметр.
+
+Принимает запрос на создание WebSocket соединения.
+
+### cancelConnection()
+
+Отклоняет запрос на создание WebSocket соединения.
 
 ## Класс ResponsiveWebSocketServerConnection
 
-Наследует ResponsiveWebSocketConnection. Соединение с клиентом.
+Наследует `ResponsiveWebSocketConnection`. Соединение с клиентом.
 
 ### getRemoteAddress()
 
@@ -403,129 +371,103 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 путем печати каждого байта как числа от 0 до 256. IPv4 адрес состоит из 16 байт и может быть переведен в текст,
 путем печати каждого байта как числа от 0 до 256 в шестнадцатеричной системе счисления.
 
+### sendBinaryRequest(message[, maxTimeMsToWaitResponse])
+
+* `message <ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Сообщение запроса
+* `maxTimeMsToWaitResponse <number>`
+Максимальное время ожидания ответа.
+Опционально, по умолчанию равно значению, установленному методом `setMaxTimeMsToWaitResponse`.
+* Возвращает `<Promise<ArrayBuffer>>`
+
+Отправляет двоичное сообщение, ожидающее ответ.
+Метод ожидает получить тело сообщения без свободного метса для заголовка в отличии от
+`sendBinaryRequest` класса `ResponsiveWebSocketClient`.
+Получатель имеет возможность отправить ответ, установив обработчик события методом `setBinaryRequestListener`.
+Если ответ не придет в течении `maxTimeMsToWaitResponse` миллисекунд,
+Promise завершится исключением `TimeoutToReceiveResponseError`.  
+Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
+
 ### sendFragmentsOfBinaryRequest(...fragments)
 
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части запроса
-* Возвращает `<Promise<ResponseData>>`
+* `...fragments <ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Части запроса
+* Возвращает `<Promise<ArrayBuffer>>`
 
 Отправляет двоичный запрос, также как `sendBinaryRequest`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего запроса.  
 Пример использования:
+
 ```js
 const smallHeader = new Uint8Array([1, 2, 3, 4]).buffer;
 const bigBody = new Uint8Array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1, 2, 3, 4, 5, 6, 7, 8, 9]).buffer;
 const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, bigBody);
 ```
 
-### sendFragmentsOfTextRequest(...fragments)
-
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части запроса
-* Возвращает `<Promise<ResponseData>>`
-
-Отправляет текстовый запрос, также как `sendTextRequest`.
-Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего запроса.  
-Пример использования:
-```js
-const smallHeader = "abcd";
-const bigBody = "Lorem Ipsum. ".repeat(20);
-const responseData = await connection.sendFragmentsOfTextRequest(smallHeader, bigBody);
-```
-
 ### sendFragmentsOfUnrequestingBinaryMessage(...fragments)
 
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части сообщения
+* `...fragments <ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Части сообщения
 
 Отправляет двоичное сообщение, без ожидания ответа, также как `sendUnrequestingBinaryMessage`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего сообщения.
 
-### sendFragmentsOfUnrequestingTextMessage(...fragments)
+### sendUnrequestingBinaryMessage(message)
 
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части сообщения
+* `message <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Сообщение
 
-Отправляет текстовое сообщение, без ожидания ответа, также как `sendUnrequestingTextMessage`.
-Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего сообщения.
+Отправляет двоичное сообщение без ожидания ответа.
+Метод ожидает получить тело сообщения без свободного метса для заголовка в отличии от
+`sendUnrequestingBinaryMessage` класса `ResponsiveWebSocketClient`.
+Получатель имеет возможность увидеть данные,
+установив обработчик события методом `setUnrequestingBinaryMessageListener`.
 
-### url
+### setBinaryRequestListener(listener)
 
-* `<string>`
+* `listener <function>`  
+сигнатура обработчика: `(bytes, startIndex, responseSender)`
+    * `bytes <ArrayBuffer>` Cообщение, cодержащее заголовок и переданное отправителем тело
+    * `startIndex <number>` Индекс первого байта тела сообщения
+    * `responseSender <ServerConnectionResponseSender>` Объект для отправки ответа  
 
-Адрес подключения WebSocket клиента.
+Устанавливает обработчик события, возникающего при двоичного получении сообщения,
+отправитель которого ожидает ответ.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketServerConnection`.
+`listener` может быть равен `null`.  
+Пример использования см. в [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
+
+### setTextMessageListener(listener)
+
+* `listener <function>`
+сигнатура обработчика: `(message)`
+    * `message <ArrayBuffer>` Двоичные данные с текстовом сообщением в кодировке UTF8, полученным WebSocket-ом
+
+Устанавливает обработчик события, возникающего при получении текстового сообщения.
 
 ### userData
 
 * `<any>`
 
 Опциональное поле, для сведений, прикреплённых к объекту соединения с клиентом,
-при вызове метода `acceptConnection(userData)` экземпляра `HandshakeAction`.
+при вызове метода `acceptConnection(userData)` объекта `HandshakeAction`.
 
-## Класс ResponseSender
+### Класс ServerConnectionResponseSender
 
-Объект, передаваемый обработчикам событий 'binaryRequest' и 'textRequest'.
-На двоичный запрос можно оправить двоичный или текстовый ответ.
-На текстовый запрос можно оправить текстовый или двоичный ответ.
-Метод для отправки ответа (sendBinaryResponse или sendTextResponse) вызывается только 1 раз.
+Класс на стороне сервера, отправляющий ответ на запрос. Метод для отправки ответа вызывается только 1 раз.
 
-### sendBinaryResponse(bytes)
+### sendBinaryResponse(message)
 
-* `bytes <ArrayBuffer>` ответ.
-Клиент принимает `<ArrayBuffer>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
+* `message <ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Ответ
 
-Отправляет двоичный ответ.
-
-### sendTextResponse(text)
-
-* `text <string>` ответ.
-Клиент принимает `<string>`.
-Серверное соединение принимает `<string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`.
-
-Отправляет текстовый ответ.
-
-### Класс ServerResponseSender
-
-Наследует `ResponseSender`.
+Отправляет двоичный ответ. Метод ожидает получить только тело сообщения, без свободного места для заголовка
+в отличии от `sendBinaryResponse` класса `ClientResponseSender`.
 
 ### sendFragmentsOfBinaryResponse(...fragments)
 
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части ответа
+* `...fragments <ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>`
+Части ответа
 
 Отправляет двоичный ответ, также как `sendBinaryResponse`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего ответа.
-
-### sendFragmentsOfTextyResponse(...fragments)
-
-* `...fragments <string|ArrayBuffer|Uint8Array|Int8Array|Uint16Array|Int16Array|Uint32Array|Int32Array|Float32Array|Float64Array>` части ответа
-
-Отправляет текстовый ответ, также как `sendTextResponse`.
-Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего ответа.
-
-## Класс ResponseData
-
-Информация об ответе на запрос.
-
-### contentType
-
-* `<number>`
-
-Тип контента ответного сообщения. Значение перечисления contentTypesOfMessages binary или text.
-    
-### message
-
-* `<ArrayBuffer>` или `<string>`
-
-Ответ, полученный по веб сокету, содержащий служебный заголовок и тело.
-
-## Класс HandshakeAction
-
-Класс, принимающий, или отклоняющий запросы на создание WebSocket соединения.
-
-### acceptConnection([userData])
-
-* `userData <any>`
-данные, прикрепляемые к объекту соединеия с клиентом. Опциональный параметр.
-
-Принимает запрос на создание WebSocket соединения.
-
-### cancelConnection()
-
-Отклоняет запрос на создание WebSocket соединения.
