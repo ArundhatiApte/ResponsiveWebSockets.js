@@ -156,7 +156,7 @@ Because the code of `ResponsiveWebSocketClient` does not depend on node.js modul
 
 ### Compatible implementation in another language
 
-[Description of messages headers format](./docs/messagesgHeadersFormat.ru.md)
+[Description of messages headers format](./docs/messagesHeadersFormat.md)
 
 ### Links:
 

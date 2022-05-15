@@ -156,7 +156,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### Совместимая реализация на другом языке
 
-[Описание формата заголовков сообщений](./docs/messagesgHeadersFormat.ru.md)
+[Описание формата заголовков сообщений](./docs/messagesHeadersFormat.ru.md)
 
 ### Ссылки:
 
