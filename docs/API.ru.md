@@ -3,7 +3,7 @@
 #### Содержание
 
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
-    * close([code, reason])
+    * close([code[, reason]])
     * setCloseListener(listener)
     * setMalformedBinaryMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
@@ -52,7 +52,7 @@
 
 Базовый класс для серверного соединения и клиента.
 
-### close([code, reason])
+### close([code[, reason]])
 
 * `code <integer>`
 * `reason <string>`
@@ -150,7 +150,7 @@ webSocketClient.onopen = function() {
 
 * `<string>`
 
-Адрес подключения WebSocket клиента.
+Адрес WebSocket соединения.
 
 ## Класс ResponsiveWebSocketClient
 
@@ -224,9 +224,9 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
     * `responseSender <ClientResponseSender>` Объект для отправки ответа
 
 Устанавливает обработчик события, возникающего при получении двоичного сообщения, отправитель которого ожидает ответ.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketClient`.
 `listener` может быть равен `null`.  
-Пример использования см. в [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
+Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 
 ### setTextMessageListener(listener)
 
@@ -235,10 +235,12 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
     * `message <string>` Текстовое сообщение, полученное WebSocket-ом
 
 Устанавливает обработчик события, возникающего при получении текстового сообщения.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketClient`.
+`listener` может быть равен `null`.
 
 ### static setWebSocketClientClass(W3CWebSocketClient)
 
-* `W3CWebSocketClient <function>` Класс реализующий интерфейс WebSocketClient от W3C
+* `W3CWebSocketClient <function>` Класс, реализующий интерфейс WebSocketClient от W3C
 
 Устанавливает класс `WebSocket`, на основе которого будут создаваться объекты класса `ResponsiveWebSocketClient`.
 Метод нужно вызвать перед первым вызовом конструктора `ResponsiveWebSocketClient`.
@@ -321,7 +323,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 Начинает прослушивание указаного порта.
 
-### setConnectionListener(httpRequest, listener)
+### setConnectionListener(listener)
 
 * `listener <function>`  
 сигнатура обработчика: `(connection)`
