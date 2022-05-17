@@ -126,7 +126,7 @@ webSocketClient.onopen = function() {
     * `bytes <ArrayBuffer>` Сообщение, cодержащее заголовок и переданное отправителем тело
     * `startIndex <number>` Индекс первого байта тела сообщения
 
-Устанавливает обработчик события, возникающего при получении двоичного cообщения, без ожидания ответа отправителем.
+Устанавливает обработчик события, возникающего при получении двоичного cообщения без ожидания ответа отправителем.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
 `listener` может быть равен `null`.  
 Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
@@ -243,7 +243,7 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 * `W3CWebSocketClient <function>` Класс, реализующий интерфейс WebSocketClient от W3C
 
 Устанавливает класс `WebSocket`, на основе которого будут создаваться объекты класса `ResponsiveWebSocketClient`.
-Метод нужно вызвать перед первым вызовом конструктора `ResponsiveWebSocketClient`.
+Метод нужно вызвать перед первым использованием конструктора `ResponsiveWebSocketClient`.
 
 Функция позволяет использовать ResponsiveWebSocketClient в браузере и node.js.  
 Пример:  
@@ -353,7 +353,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 ### acceptConnection([userData])получении
 
 * `userData <any>`
-Данные, прикрепляемые к объекту соединеия с клиентом. Опциональный параметр.
+Данные, прикрепляемые к объекту серверного соединеия с клиентом. Опциональный параметр.
 
 Принимает запрос на создание WebSocket соединения.
 
