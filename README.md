@@ -26,7 +26,8 @@ console.log("response: ", new Uint8Array(response, startIndex));
 
 ### Installation
 
-Download package from releases page. In folder of your project install module by package manager:
+Download repo. In root folder of project execute script createPackage.sh.
+In folder of your project install module by package manager:
 `npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
 ### Usage
