@@ -89,8 +89,8 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 ```
 
 Examples:
-[sendingBinaryRequests.mjs](./examples/sendingBinaryRequests.mjs),
-[sendingUnrequestingBinaryMessages.mjs](./examples/sendingUnrequestingBinaryMessages.mjs)
+[sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs),
+[sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
 
 #### Text messages
 
@@ -139,7 +139,7 @@ console.log("text in response: ", textDecoder.decode(new Uint8Array(
 )));
 ```
 
-Example: [sendingTextInBinaryRequests.mjs](./examples/sendingTextInBinaryRequests.mjs)
+Example: [sendingTextInBinaryRequests.mjs](/examples/sendingTextInBinaryRequests.mjs)
 
 #### Usage in browser
 
@@ -157,12 +157,12 @@ Because the code of `ResponsiveWebSocketClient` does not depend on node.js modul
 
 ### Compatible implementation in another language
 
-[Description of messages headers format](./docs/messagesHeadersFormat.md)
+[Description of messages headers format](/doc/messagesHeadersFormat.md)
 
 ### Links:
 
-- [API documentation](./docs/API.md)
-- [examples of usage](./examples)
+- [API documentation](/doc/API.md)
+- [examples of usage](/examples)
 
 ### Launching tests
 
