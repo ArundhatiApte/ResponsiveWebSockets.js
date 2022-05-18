@@ -90,8 +90,8 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 ```
 
 Примеры:  
-[sendingBinaryRequests.mjs](./examples/sendingBinaryRequests.mjs),
-[sendingUnrequestingBinaryMessages.mjs](./examples/sendingUnrequestingBinaryMessages.mjs)
+[sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs),
+[sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
 
 #### Текстовые сообщения
 
@@ -139,7 +139,7 @@ console.log("текст в ответе: ", textDecoder.decode(new Uint8Array(
 )));
 ```
 
-Пример: [sendingTextInBinaryRequests.mjs](./examples/sendingTextInBinaryRequests.mjs)
+Пример: [sendingTextInBinaryRequests.mjs](/examples/sendingTextInBinaryRequests.mjs)
 
 #### Использование в браузере
 
@@ -157,12 +157,12 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### Совместимая реализация на другом языке
 
-[Описание формата заголовков сообщений](./docs/messagesHeadersFormat.ru.md)
+[Описание формата заголовков сообщений](/doc/translations/messagesHeadersFormat.ru.md)
 
 ### Ссылки:
 
-- [Документация по API](./docs/API.ru.md)
-- [Примеры использования](./examples)
+- [Документация по API](/doc/translations/API.ru.md)
+- [Примеры использования](/examples)
 
 ### Запуск тестов
 
