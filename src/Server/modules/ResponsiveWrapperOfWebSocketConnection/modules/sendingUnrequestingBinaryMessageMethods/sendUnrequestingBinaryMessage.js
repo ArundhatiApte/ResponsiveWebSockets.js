@@ -2,9 +2,9 @@
 
 const {
   _namesOfPrivateProperties: { _connection }
-} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
+} = require("./../../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
-const { _headerOfUnrequestingMessage } = require("./../ResponsiveWrapperOfWebSocketConnection");
+const { _headerOfUnrequestingMessage } = require("./../../ResponsiveWrapperOfWebSocketConnection");
 
 const sendUnrequestingBinaryMessage = function(message) {
   const connection = this[_connection];

@@ -71,10 +71,15 @@ const SenderOfResponse = require("./modules/SenderOfResponse");
 
 const Proto = ResponsiveWrapperOfWebSocketConnection.prototype;
 
-Proto.sendBinaryRequest = require("./modules/sendBinaryRequest");;
-Proto.sendFragmentsOfBinaryRequest = require("./modules/sendFragmentsOfBinaryRequest");;
-Proto.sendUnrequestingBinaryMessage = require("./modules/sendUnrequestingBinaryMessage");;
-Proto.sendFragmentsOfUnrequestingBinaryMessage = require("./modules/sendFragmentsOfUnrequestingBinaryMessage");;
+Proto.sendBinaryRequest = require("./modules/sendingBinaryRequestMethods/sendBinaryRequest");
+Proto.sendFragmentsOfBinaryRequest = require("./modules/sendingBinaryRequestMethods/sendFragmentsOfBinaryRequest");
+
+Proto.sendUnrequestingBinaryMessage = require(
+  "./modules/sendingUnrequestingBinaryMessageMethods/sendUnrequestingBinaryMessage"
+);
+Proto.sendFragmentsOfUnrequestingBinaryMessage = require(
+  "./modules/sendingUnrequestingBinaryMessageMethods/sendFragmentsOfUnrequestingBinaryMessage"
+);
 
 const _acceptMessageFromInnerWebSocket = require(
   "./../../../common/ResponsiveWebSocketConnection/utils/acceptMessageFromInnerWebSocket"

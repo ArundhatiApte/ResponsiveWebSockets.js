@@ -7,21 +7,21 @@ const {
     _idOfRequestToPromise,
     _maxTimeMsToWaitResponse,
   }
-} = require("./../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
+} = require("./../../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const createTimeoutToReceiveResponse = require(
-  "./../../../../common/ResponsiveWebSocketConnection/utils/createTimeoutToReceiveResponse"
+  "./../../../../../common/ResponsiveWebSocketConnection/utils/createTimeoutToReceiveResponse"
 );
 const createEntryAboutPromiseOfRequest = require(
-  "./../../../../common/ResponsiveWebSocketConnection/utils/entryAboutPromiseOfRequest"
+  "./../../../../../common/ResponsiveWebSocketConnection/utils/entryAboutPromiseOfRequest"
 ).create;
 
 const {
   fillHeaderAsRequest: fillArrayBufferAsHeaderOfBinaryRequest
-} = require("./../../../../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/binaryMessager");
+} = require("./../../../../../common/ResponsiveWebSocketConnection/modules/messaging/binaryMessages/binaryMessager");
 
-const { _bufferForHeaderOfRequestOrResponse } = require("./../ResponsiveWrapperOfWebSocketConnection");
-const sendHeaderAndFragments = require("./utilsForWebSocket/sendHeaderAndFragments");
+const { _bufferForHeaderOfRequestOrResponse } = require("./../../ResponsiveWrapperOfWebSocketConnection");
+const sendHeaderAndFragments = require("./../utilsForWebSocket/sendHeaderAndFragments");
 
 const sendFragmentsOfBinaryRequest = function() {
   return new Promise((resolve, reject) => {
