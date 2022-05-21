@@ -1,9 +1,9 @@
 "use strict";
 
-const checkCancelRequestOnUpgrade = function(webSocketServer, urlOfServer, WebSocketClient) {
+const checkRejectingRequestOnUpgrade = function(webSocketServer, urlOfServer, WebSocketClient) {
   return new Promise(async function(resolve, reject) {
     webSocketServer.setUpgradeListener(function(request, acceptor) {
-      return acceptor.cancelConnection();
+      return acceptor.rejectConnection();
     });
     webSocketServer.setConnectionListener(function() {
       return reject(new Error("Connection was created."));
@@ -23,4 +23,4 @@ const assertFailureAtConnection = async function(client, urlOfServer, reject) {
   onError(new Error("Connection was created."));
 };
 
-module.exports = checkCancelRequestOnUpgrade;
+module.exports = checkRejectingRequestOnUpgrade;

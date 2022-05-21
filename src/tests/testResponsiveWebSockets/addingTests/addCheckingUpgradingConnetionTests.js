@@ -1,7 +1,7 @@
 "use strict";
 
 const checkAcceptingRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkAcceptingRequestOnUpgrade");
-const checkCancelRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkCancelRequestOnUpgrade");
+const checkRejectingRequestOnUpgrade = require("./../checks/checkUpgradingConnection/checkRejectingRequestOnUpgrade");
 
 const addCheckingUpgradingConnetionTests = function(
   describeTests,
@@ -16,8 +16,8 @@ const addCheckingUpgradingConnetionTests = function(
       checkAcceptingRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient)
     );
     addTest(
-      "cancel request on upgrade",
-      checkCancelRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient)
+      "reject request on upgrade",
+      checkRejectingRequestOnUpgrade.bind(null, webSocketServer, urlOfServer, WebSocketClient)
     );
   });
 };

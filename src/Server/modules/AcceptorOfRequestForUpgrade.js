@@ -22,7 +22,7 @@ const AcceptorOfRequestForUpgrade = class {
     );
   }
 
-  cancelConnection() {
+  rejectConnection() {
     return this[_response].close();
   }
 };
