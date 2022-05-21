@@ -33,7 +33,7 @@
     * setUpgradeListener(listener)
 - [Класс: HandshakeAction](класс-handshakeaction)
     * acceptConnection([userData])
-    * cancelConnection()
+    * rejectConnection()
 - [Класс: ResponsiveWebSocketServerConnection](#класс-responsivewebsocketserverconnection)
     * getRemoteAddress()
     * sendBinaryRequest(message[, maxTimeMsToWaitResponse])
@@ -357,7 +357,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 Принимает запрос на создание WebSocket соединения.
 
-### cancelConnection()
+### rejectConnection()
 
 Отклоняет запрос на создание WebSocket соединения.
 

@@ -33,7 +33,7 @@
     * setUpgradeListener(listener)
 - [Class: HandshakeAction](class-handshakeaction)
     * acceptConnection([userData])
-    * cancelConnection()
+    * rejectConnection()
 - [Class: ResponsiveWebSocketServerConnection](#class-responsivewebsocketserverconnection)
     * getRemoteAddress()
     * sendBinaryRequest(message[, maxTimeMsToWaitResponse])
@@ -351,7 +351,7 @@ Data attached to the server connection object. Optional parameter.
 
 Accepts a request to create a WebSocket connection.
 
-### cancelConnection()
+### rejectConnection()
 
 Rejects the request to create a WebSocket connection.
 
