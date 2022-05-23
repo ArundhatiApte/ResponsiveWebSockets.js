@@ -13,6 +13,8 @@ const checkAcceptingRequestOnUpgrade = function(webSocketServer, urlOfServer, We
         return reject(new Error("Invalid interface of ServerConnection."));
       }
       if (connectionToClient.userData.some === "foo") {
+        connectionToClient.terminate();
+        client.terminate();
         return resolve();
       }
       reject(new Error("Different user data."));

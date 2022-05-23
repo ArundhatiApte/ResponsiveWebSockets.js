@@ -59,7 +59,6 @@ const executeTests = function(describeTests, addTest, options) {
       client.terminate();
       connectionToClient.terminate();
       responsiveWebSocketServer.close();
-      // setTimeout(process.exit.bind(process, 0), 20);
     });
   });
 };
