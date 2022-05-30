@@ -127,8 +127,7 @@ listener's signature: `(bytes, startIndex)`
 
 Sets the listener of event, that occurs when a binary message is received,
 the sender of which is not waiting for a response.
-`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
-`listener` can be `null`.  
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.  
 Example of usage: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
 
 ### startIndexOfBodyInBinaryResponse
@@ -225,8 +224,7 @@ listener's signature: `(bytes, startIndex, responseSender)`
 
 Sets the listener of event, that occurs when a binary message is received,
 the sender of which is waiting for a response.
-`this` link inside the handler points to an instance of the `ResponsiveWebSocketClient` class.
-`listener` can be `null`.  
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketClient` class.  
 Example of usage: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 
 ### setTextMessageListener(listener)
@@ -431,8 +429,7 @@ listener's signature: `(bytes, startIndex, responseSender)`
 
 Sets the listener of event, that occurs when a binary message is received,
 the sender of which is waiting for a response.
-`this` link inside the handler points to an instance of the `ResponsiveWebSocketServerConnection` class.
-`listener` can be `null`.  
+`this` link inside the handler points to an instance of the `ResponsiveWebSocketServerConnection` class.  
 Example of usage: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 
 ### setTextMessageListener(listener)

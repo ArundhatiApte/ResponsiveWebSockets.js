@@ -50,7 +50,7 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
   }
 
   setErrorListener(listener) {
-    return _setListenerOfEvents(this, _onError, listener);
+    this[_onError] = listener;
   }
 
   connect(url) {

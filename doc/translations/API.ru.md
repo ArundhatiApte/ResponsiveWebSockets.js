@@ -127,8 +127,7 @@ webSocketClient.onopen = function() {
     * `startIndex <number>` Индекс первого байта тела сообщения
 
 Устанавливает обработчик события, возникающего при получении двоичного cообщения без ожидания ответа отправителем.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
-`listener` может быть равен `null`.  
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.  
 Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
 
 ### startIndexOfBodyInBinaryResponse
@@ -212,7 +211,7 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 
 Отправляет двоичное сообщение без ожидания ответа.
 Получатель имеет возможность увидеть данные,
-установив обработчик события методом `setUnrequestingBinaryMessageListener`.
+установив обработчик события методом `setUnrequestingBinaryMessageListener`.  
 Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
 
 ### setBinaryRequestListener(listener)
@@ -224,8 +223,7 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
     * `responseSender <ClientResponseSender>` Объект для отправки ответа
 
 Устанавливает обработчик события, возникающего при получении двоичного сообщения, отправитель которого ожидает ответ.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketClient`.
-`listener` может быть равен `null`.  
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketClient`.  
 Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 
 ### setTextMessageListener(listener)
@@ -293,7 +291,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 * `message <ArrayBuffer>` Сообщение, содержащее в начале свободное место для заголовка.
 Размер заголовка равен значению свойства `sizeOfHeaderForBinaryResponse` объекта класса `ResponsiveWebSocketClient`.
 
-Отправляет двоичный ответ. Пример: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs).
+Отправляет двоичный ответ. Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs).
 
 ## Класс ResponsiveWebSocketServer
 
@@ -434,8 +432,7 @@ const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, 
     * `responseSender <ServerConnectionResponseSender>` Объект для отправки ответа
 
 Устанавливает обработчик события, возникающего при получении двоичного сообщения, отправитель которого ожидает ответ.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketServerConnection`.
-`listener` может быть равен `null`.  
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketServerConnection`.  
 Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 
 ### setTextMessageListener(listener)

@@ -44,7 +44,7 @@ const ResponsiveWrapperOfWebSocketConnection = class extends ResponsiveWebSocket
     return this[_connection][_userData];
   }
 
-  setErrorListener(listnerOrNull) {}
+  setErrorListener(listenerOrNull) {}
 
   close() { // args: code, reason
     const connection = this[_connection];

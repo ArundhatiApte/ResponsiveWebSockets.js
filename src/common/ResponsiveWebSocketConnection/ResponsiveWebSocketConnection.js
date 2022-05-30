@@ -41,11 +41,11 @@ const ResponsiveWebSocketConnection = class {
   }
 
   setMalformedBinaryMessageListener(listener) {
-    return _setListenerOfEvents(this, _onMalformedBinaryMessage, listener);
+    this[_onMalformedBinaryMessage] = listener;
   }
 
   setTextMessageListener(listener) {
-    return _setListenerOfEvents(this, _onTextMessage, listener);
+    this[_onTextMessage] = listener;
   }
 
   setUnrequestingBinaryMessageListener(listener) {
@@ -53,7 +53,7 @@ const ResponsiveWebSocketConnection = class {
   }
 
   setCloseListener(listener) {
-    return _setListenerOfEvents(this, _onClose, listener);
+    this[_onClose] = listener;
   }
 };
 
