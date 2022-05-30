@@ -101,9 +101,8 @@ const _emitUnrequestingMessageEvent = function(
   responsiveWebSocket,
   rawPayload
 ) {
-  if (responsiveWebSocket[nameOfUnrequestingMessageEventListener]) {
-    responsiveWebSocket[nameOfUnrequestingMessageEventListener](rawPayload, startIndexOfBodyInUnrequestingMessage);
-  }
+  // listener by default is empty fn, responsiveWebSocket prohibit to set other than fn
+  responsiveWebSocket[nameOfUnrequestingMessageEventListener](rawPayload, startIndexOfBodyInUnrequestingMessage);
 };
 
 const _emitAwaitingResponseMessageEvent = function(
@@ -115,22 +114,21 @@ const _emitAwaitingResponseMessageEvent = function(
   responsiveWebSocket,
   rawPayload
 ) {
-  if (responsiveWebSocket[nameOfRequestEventListener]) {
-    let numOfMessage;
-    try {
-      numOfMessage = extractIdOfMessage(rawPayload);
-    } catch(error) {
-      _emitMalformedMessageEvent(responsiveWebSocket, nameOfMalformedMessageListener, rawPayload);
-      return;
-    }
-
-    const senderOfResponse = new SenderOfResponse(responsiveWebSocket[_connection], numOfMessage);
-    responsiveWebSocket[nameOfRequestEventListener](
-      rawPayload,
-      startIndexOfBodyInRequest,
-      senderOfResponse
-    );
+  let numOfMessage;
+  try {
+    numOfMessage = extractIdOfMessage(rawPayload);
+  } catch(error) {
+    _emitMalformedMessageEvent(responsiveWebSocket, nameOfMalformedMessageListener, rawPayload);
+    return;
   }
+
+  const senderOfResponse = new SenderOfResponse(responsiveWebSocket[_connection], numOfMessage);
+  // listener by default is empty fn, responsiveWebSocket prohibit to set other than fn
+  responsiveWebSocket[nameOfRequestEventListener](
+    rawPayload,
+    startIndexOfBodyInRequest,
+    senderOfResponse
+  );
 };
 
 const _emitMalformedMessageEvent = function(responsiveWebSocket, nameOfMalformedMessageListener, incomingMessage) {

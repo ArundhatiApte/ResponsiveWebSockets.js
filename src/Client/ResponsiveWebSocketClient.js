@@ -17,7 +17,8 @@ let W3CWebSocketClientClass = null;
 
 const {
   _connection,
-  _onClose
+  _onClose,
+  _setListenerOfEvents
 } = ResponsiveWebSocketConnection._namesOfPrivateProperties;
 
 const _protocols = Symbol();
@@ -48,8 +49,8 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     return sizeOfHeaderForUnrequestingBinaryMessage;
   }
 
-  setErrorListener(listenerOrNull) {
-    this[_onError] = listenerOrNull;
+  setErrorListener(listener) {
+    return _setListenerOfEvents(this, _onError, listener);
   }
 
   connect(url) {
@@ -63,12 +64,11 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
 
       const self = this;
       client.onopen = function onWebSocketLoad() {
-        self._setupListenersOfEvents(client);
-        client.onerror = _emitOnError.bind(this);
+        _setupListenersOfEvents(self, client);
         resolve();
       };
       client.onerror = function onWebSocketFail(error) {
-        _emitOnError.call(this, error);
+        _emitOnError.call(self, error);
         reject(error);
       };
     });
@@ -84,18 +84,18 @@ const ResponsiveWebSocketClient = class extends ResponsiveWebSocketConnection {
     return this[_connection].terminate();
   }
 
-  _setupListenersOfEvents(webSocketClient) {
-    webSocketClient.onerror = _emitOnError.bind(this);
-    webSocketClient.onclose = _emitOnClose.bind(this);
-    webSocketClient.onmessage = _emitEventByIncomingMessage.bind(this);
-  }
-
   sendBinaryRequest = require("./utils/sendBinaryRequest");
 
   sendUnrequestingBinaryMessage(messageInArrayBuffer) {
     fillHeaderAsUnrequestingBinaryMessage(messageInArrayBuffer);
     this[_connection].send(messageInArrayBuffer);
   }
+};
+
+const _setupListenersOfEvents = function(responsiveWebSocketClient, webSocketClient) {
+  webSocketClient.onerror = _emitOnError.bind(responsiveWebSocketClient);
+  webSocketClient.onclose = _emitOnClose.bind(responsiveWebSocketClient);
+  webSocketClient.onmessage = _emitEventByIncomingMessage.bind(responsiveWebSocketClient);
 };
 
 ResponsiveWebSocketClient.setWebSocketClientClass = function setWebSocketClientClass(W3CWebSocket) {

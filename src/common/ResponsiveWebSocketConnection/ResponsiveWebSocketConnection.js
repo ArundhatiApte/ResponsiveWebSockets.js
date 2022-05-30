@@ -10,9 +10,12 @@ const TimeoutToReceiveResponseError = class extends Error {};
 
 const ResponsiveWebSocketConnection = class {
   constructor() {
-    this[_maxTimeMsToWaitResponse] = defaultMaxTimeMsToWaitResponse;
+    this[_maxTimeMsToWaitResponse] = _defaultMaxTimeMsToWaitResponse;
     this[_getNextIdOfRequest] = createGeneratorOfRequestId(Uint16Array);
     this[_idOfRequestToPromise] = new Map();
+
+    this[_onBinaryRequest] = _emptyFunction;
+    this[_onUnrequestingBinaryMessage] = _emptyFunction;
   }
 
   static TimeoutToReceiveResponseError = TimeoutToReceiveResponseError;
@@ -33,24 +36,24 @@ const ResponsiveWebSocketConnection = class {
     return this[_connection].url;
   }
 
-  setBinaryRequestListener(listnerOrNull) {
-    this[_onBinaryRequest] = listnerOrNull;
+  setBinaryRequestListener(listener) {
+    return _setListenerOfEvents(this, _onBinaryRequest, listener);
   }
 
-  setMalformedBinaryMessageListener(listnerOrNull) {
-    this[_onMalformedBinaryMessage] = listnerOrNull;
+  setMalformedBinaryMessageListener(listener) {
+    return _setListenerOfEvents(this, _onMalformedBinaryMessage, listener);
   }
 
-  setTextMessageListener(listnerOrNull) {
-    this[_onTextMessage] = listnerOrNull;
+  setTextMessageListener(listener) {
+    return _setListenerOfEvents(this, _onTextMessage, listener);
   }
 
-  setUnrequestingBinaryMessageListener(listnerOrNull) {
-    this[_onUnrequestingBinaryMessage] = listnerOrNull;
+  setUnrequestingBinaryMessageListener(listener) {
+    return _setListenerOfEvents(this, _onUnrequestingBinaryMessage, listener);
   }
 
-  setCloseListener(listnerOrNull) {
-    this[_onClose] = listnerOrNull;
+  setCloseListener(listener) {
+    return _setListenerOfEvents(this, _onClose, listener);
   }
 };
 
@@ -59,14 +62,24 @@ const _connection = Symbol(),
       _idOfRequestToPromise = Symbol(),
       _maxTimeMsToWaitResponse = Symbol(),
 
-      _onBinaryRequest = Symbol(),
+      _onBinaryRequest = Symbol("br"),
       _onMalformedBinaryMessage = Symbol(),
       _onUnrequestingBinaryMessage = Symbol(),
       _onTextMessage = Symbol(),
 
       _onClose = Symbol();
 
-const defaultMaxTimeMsToWaitResponse = 2000;
+const _defaultMaxTimeMsToWaitResponse = 2000;
+
+const _emptyFunction = function() {};
+
+const _setListenerOfEvents = function(responsiveWebSocketConnection, nameOfEvent, listener) {
+  if (typeof listener !== "function") {
+    throw new Error("Listener is different from function.");
+  }
+  responsiveWebSocketConnection[nameOfEvent] = listener;
+};
+ResponsiveWebSocketConnection._setListenerOfEvents = _setListenerOfEvents;
 
 ResponsiveWebSocketConnection._namesOfPrivateProperties = {
   _connection,
