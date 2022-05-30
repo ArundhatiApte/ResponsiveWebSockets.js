@@ -5,7 +5,7 @@ const createFnToCheckSendingMalformedMessages = require("./utils/createFnToCheck
 const sendMessageByWebSocket = (webSocket, message) => webSocket.send(message);
 
 const checkSendingMalformedBinaryMessagesByClientToServer = createFnToCheckSendingMalformedMessages(
-  require("./utils/brokenBinaryMessages"),
+  require("./utils/malformedBinaryMessages"),
   "setMalformedBinaryMessageListener",
   sendMessageByWebSocket
 );

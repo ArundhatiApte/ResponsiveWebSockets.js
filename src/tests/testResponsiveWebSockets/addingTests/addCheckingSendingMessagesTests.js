@@ -9,17 +9,17 @@ const {
     checkSendingUnrequestingBinaryMessagesByServer,
     checkSendingUnrequestingBinaryMessagesByClient
   }
-} = require("./../checks/messages/checkSendingMessages");
+} = require("./../checks/checkSendingMessages/checkSendingMessages");
 
 const {
   checkSendingManyBinaryRequestsAtOnceByServer,
   checkSendingManyBinaryRequestsAtOnceByClient
-} = require("./../checks/messages/checkSendingManyRequestsAtOnce");
+} = require("./../checks/checkSendingMessages/checkSendingManyRequestsAtOnce");
 
 const {
   checkTimeoutByServer,
   checkTimeoutByClient
-} = require("./../checks/messages/checkTimeout");
+} = require("./../checks/checkSendingMessages/checkTimeout");
 
 const {
   checkSendingMalformedBinaryMessagesByServerToClient,
@@ -27,13 +27,13 @@ const {
 
   checkSendingMalformedBinaryMessagesByClientToServer,
   checkSendingTextMessagesByClientToServer
-} = require("./../checks/messages/checkSendingMalformedMessages");
+} = require("./../checks/checkSendingMessages/checkSendingMalformedMessages");
 
 const {
   checkSendingFragmentsOfBinaryRequestByServer,
   checkSendingFragmentsOfBinaryResponseByServer,
   checkSendingFragmentsOfUnrequestingBinaryMessageByServer
-} = require("./../checks/messages/checkSendingFragmentsOfMessages");
+} = require("./../checks/checkSendingMessages/checkSendingFragmentsOfMessages");
 
 const fromServerToClientPostfix = " by server to client";
 const fromClientToServerPostfix = " by client to server";
