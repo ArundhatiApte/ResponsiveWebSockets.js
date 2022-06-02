@@ -10,6 +10,9 @@ const measureSpeedOfSendingRequests = async function(
   createResponse,
   nameOfSendingResponseMethod
 ) {
+  const listener = sendResponse.bind(null, createResponse, nameOfSendingResponseMethod);
+  receiver[nameOfSettingListenerOfRequestMethod](listener);
+
   const timeOfStart = Date.now();
   let countOfSendedRequests = 0;
 
@@ -19,24 +22,16 @@ const measureSpeedOfSendingRequests = async function(
       countOfRequests -= maxCountOfRequestsAtOnce;
       await sendRequestsAndReceiveResponses(
         sender,
-        receiver,
         countOfSendedRequests,
         nameOfSendingRequestMethod,
-        nameOfSettingListenerOfRequestMethod,
-        createMessageByNumberOfRequest,
-        createResponse,
-        nameOfSendingResponseMethod
+        createMessageByNumberOfRequest
       );
     } else {
       await sendRequestsAndReceiveResponses(
         sender,
-        receiver,
-        countOfRequests,
+        countOfSendedRequests,
         nameOfSendingRequestMethod,
-        nameOfSettingListenerOfRequestMethod,
-        createMessageByNumberOfRequest,
-        createResponse,
-        nameOfSendingResponseMethod
+        createMessageByNumberOfRequest
       );
       break;
     }
@@ -49,21 +44,14 @@ const maxCountOfRequestsAtOnce = Math.pow(2, 16) - 1;
 
 const sendRequestsAndReceiveResponses = function(
   sender,
-  receiver,
   countOfRequests,
   nameOfSendingRequestMethod,
-  nameOfSettingListenerOfRequestMethod,
-  createMessageByNumberOfRequest,
-  createResponse,
-  nameOfSendingResponseMethod
+  createMessageByNumberOfRequest
 ) {
   const sendingMessages = [];
 
-  const listener = sendResponse.bind(null, createResponse, nameOfSendingResponseMethod);
-  receiver[nameOfSettingListenerOfRequestMethod](listener);
-
   for (let i = 0; i < countOfRequests; i += 1) {
-    sendingMessages.push(sender[nameOfSendingRequestMethod](createMessageByNumberOfRequest(sender, countOfRequests)));
+    sendingMessages.push(sender[nameOfSendingRequestMethod](createMessageByNumberOfRequest(sender, i)));
   }
   return Promise.all(sendingMessages);
 };

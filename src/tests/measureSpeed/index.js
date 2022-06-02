@@ -27,6 +27,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(W3CWebSocketClient);
   const countOfRequests = 100_000;
   await measureSpeedOfSendingRequestsAndLogResults(connectionToClient, client, countOfRequests, process.stdout);
 
-  client.close();
+  connectionToClient.terminate();
+  client.terminate();
   await server.close();
 })();
