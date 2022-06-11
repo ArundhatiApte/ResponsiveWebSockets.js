@@ -155,6 +155,19 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 After call `setWebSocketClientClass(window.WebSocket)`, class `ResponsiveWebSocketClient` is ready for usage.
 Because the code of `ResponsiveWebSocketClient` does not depend on node.js modules, webpack compiles the class code.
 
+#### Note about sending a large number of requests at a once
+
+Internally, the responsive WebSocket connection uses a 16-bit number to recognize request and response messages.
+When sending a large number of requests at the same time, 2 requests with the same identifier may be sent,
+which will lead to the loss of one of the responses
+(and recognition of the response to the first request as a response to the second,
+if the response to the first comes earlier).
+The described problem will appear if:
+
+* The connection has sent N requests and is waiting for responses to them, after which more than
+65536 - N requests were sent.
+* The connection is not waiting for responses to requests and has sent more than 65536 requests.
+
 ### Compatible implementation in another language
 
 [Description of messages headers format](/doc/messagesHeadersFormat.md)
