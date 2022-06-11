@@ -1,4 +1,4 @@
-# API Отзывчивых Web Sockets
+﻿# API Отзывчивых WebSockets
 
 #### Содержание
 
@@ -125,17 +125,17 @@ webSocketClient.onopen = function() {
 
 Задает максимальное время в миллисекундах ожидания ответа по умолчанию для отправленных сообщений
 с помощью метода `sendBinaryRequest`.
-Можно переопределить во 2-м парметре метода для отправки ожидающего ответа сообщения.
+Можно переопределить во 2-ом параметре метода для отправки ожидающего ответа сообщения.
 По умолчанию 2000.
 
 ### setUnrequestingBinaryMessageListener(listener)
 
 * `listener <function>`  
 сигнатура обработчика: `(bytes, startIndex)`
-    * `bytes <ArrayBuffer>` Сообщение, cодержащее заголовок и переданное отправителем тело
+    * `bytes <ArrayBuffer>` Сообщение, содержащее заголовок и переданное отправителем тело
     * `startIndex <number>` Индекс первого байта тела сообщения
 
-Устанавливает обработчик события, возникающего при получении двоичного cообщения без ожидания ответа отправителем.
+Устанавливает обработчик события, возникающего при получении двоичного сообщения без ожидания ответа отправителем.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.  
 Пример использования: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs).
 
@@ -172,7 +172,7 @@ webSocketClient.onopen = function() {
     * `generateMask <function>`
     Функция, используемая для создания маски, вызывается перед отправкой каждого сообщения.
     Принимает `<Buffer>`, который должен быть заполнен синхронно.
-    По умолчанию в `<Buffer>` записывается случайные байты, созданные криптографически стойким алгоритмом.
+    По умолчанию в `<Buffer>` записывается случайные байты, созданные криптографически-стойким алгоритмом.
     * `handshakeTimeout <number>`
     Максимальное время в миллисекундах ожидания запроса рукопожатия.
     * `maxPayload <number>`
@@ -185,9 +185,9 @@ webSocketClient.onopen = function() {
     Значение заголовка `Sec-WebSocket-Version`
     * `skipUTF8Validation <boolean>`
     Указывает пропускать ли проверку текста в UTF-8 для сообщений.
-    По умoлчанию`false`.
+    По умoлчанию `false`.
 
-Cоздает объекта класс ResponsiveWebSocketClient.
+Создает объекта класса `ResponsiveWebSocketClient`.
 
 ### connect(url)
 
@@ -227,7 +227,7 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 
 * `listener <function>`  
 сигнатура обработчика: `(bytes, startIndex, responseSender)`
-    * `bytes <ArrayBuffer>` Сообщение, cодержащее заголовок и переданное отправителем тело
+    * `bytes <ArrayBuffer>` Сообщение, содержащее заголовок и переданное отправителем тело
     * `startIndex <number>` Индекс первого байта тела сообщения
     * `responseSender <ClientResponseSender>` Объект для отправки ответа
 
@@ -252,7 +252,7 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 Устанавливает класс `WebSocket`, на основе которого будут создаваться объекты класса `ResponsiveWebSocketClient`.
 Метод нужно вызвать перед первым использованием конструктора `ResponsiveWebSocketClient`.
 
-Функция позволяет использовать ResponsiveWebSocketClient в браузере и node.js.  
+Функция позволяет использовать `ResponsiveWebSocketClient` в браузере и node.js.  
 Пример:  
 в node.js:
 
@@ -328,13 +328,13 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 * `port <number>`
 * Возвращает `<Promise>`
 
-Начинает прослушивание указаного порта.
+Начинает прослушивание указанного порта.
 
 ### setConnectionListener(listener)
 
 * `listener <function>`  
 сигнатура обработчика: `(connection)`
-    * `connection <ResponsiveWebSocketServerConnection>` Cоединение с клиентом
+    * `connection <ResponsiveWebSocketServerConnection>` Соединение с клиентом
 
 Событие connection возникает при подключении WebSocket клиента к серверу.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebServer`.
@@ -360,7 +360,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 ### acceptConnection([userData])получении
 
 * `userData <any>`
-Данные, прикрепляемые к объекту серверного соединеия с клиентом. Опциональный параметр.
+Данные, прикрепляемые к объекту серверного соединения с клиентом. Опциональный параметр.
 
 Принимает запрос на создание WebSocket соединения.
 
@@ -436,7 +436,7 @@ const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, 
 
 * `listener <function>`  
 сигнатура обработчика: `(bytes, startIndex, responseSender)`
-    * `bytes <ArrayBuffer>` Cообщение, cодержащее заголовок и переданное отправителем тело
+    * `bytes <ArrayBuffer>` Сообщение, содержащее заголовок и переданное отправителем тело
     * `startIndex <number>` Индекс первого байта тела сообщения
     * `responseSender <ServerConnectionResponseSender>` Объект для отправки ответа
 

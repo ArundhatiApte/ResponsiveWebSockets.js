@@ -1,6 +1,6 @@
 ## ResposiveWebSockets
 
-Sending requests and unrequesting messages wrapper for web sockets.
+Sending requests and unrequesting messages wrapper for WebSockets.
 Client works in a browser and node.js. Module use lightweight message format.
 Size of request header and response header is 3 byte, unrequesting message header is 1 byte.
 

@@ -3,7 +3,7 @@
 #### Table of Contents
 
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
-    * close([code, reason])
+    * close([code[, reason]])
     * setCloseListener(listener)
     * setErrorListener(listener)
     * setMalformedBinaryMessageListener(listener)
