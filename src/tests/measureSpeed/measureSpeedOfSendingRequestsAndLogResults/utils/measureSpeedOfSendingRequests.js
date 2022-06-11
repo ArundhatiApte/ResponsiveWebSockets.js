@@ -10,24 +10,50 @@ const measureSpeedOfSendingRequests = async function(
   createResponse,
   nameOfSendingResponseMethod
 ) {
+
+  const timeOfStart = Date.now();
+  await sendNRequestsAndReceiveAllResponses(
+    sender,
+    receiver,
+    countOfRequests,
+    nameOfSendingRequestMethod,
+    nameOfSettingListenerOfRequestMethod,
+    createMessageByNumberOfRequest,
+    createResponse,
+    nameOfSendingResponseMethod
+  );
+  const timeOfEnd = Date.now();
+  return timeOfEnd - timeOfStart;
+};
+
+const maxCountOfRequestsAtOnce = Math.pow(2, 16) - 1;
+
+const sendNRequestsAndReceiveAllResponses = async function(
+  sender,
+  receiver,
+  countOfRequests,
+  nameOfSendingRequestMethod,
+  nameOfSettingListenerOfRequestMethod,
+  createMessageByNumberOfRequest,
+  createResponse,
+  nameOfSendingResponseMethod
+) {
   const listener = sendResponse.bind(null, createResponse, nameOfSendingResponseMethod);
   receiver[nameOfSettingListenerOfRequestMethod](listener);
 
-  const timeOfStart = Date.now();
   let countOfSendedRequests = 0;
-
   while (countOfRequests > 0) {
     if (countOfRequests > maxCountOfRequestsAtOnce) {
       countOfSendedRequests = maxCountOfRequestsAtOnce;
       countOfRequests -= maxCountOfRequestsAtOnce;
-      await sendRequestsAndReceiveResponses(
+      await sendRequestsAndReceiveAllResponses(
         sender,
         countOfSendedRequests,
         nameOfSendingRequestMethod,
         createMessageByNumberOfRequest
       );
     } else {
-      await sendRequestsAndReceiveResponses(
+      await sendRequestsAndReceiveAllResponses(
         sender,
         countOfSendedRequests,
         nameOfSendingRequestMethod,
@@ -36,13 +62,9 @@ const measureSpeedOfSendingRequests = async function(
       break;
     }
   }
-  const timeOfEnd = Date.now();
-  return timeOfEnd - timeOfStart;
 };
 
-const maxCountOfRequestsAtOnce = Math.pow(2, 16) - 1;
-
-const sendRequestsAndReceiveResponses = function(
+const sendRequestsAndReceiveAllResponses = function(
   sender,
   countOfRequests,
   nameOfSendingRequestMethod,

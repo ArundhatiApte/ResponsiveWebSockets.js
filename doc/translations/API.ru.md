@@ -5,6 +5,7 @@
 - [Класс: ResponsiveWebSocketConnection](#класс-responsivewebsocketconnection)
     * close([code[, reason]])
     * setCloseListener(listener)
+    * setErrorListener(listener)
     * setMalformedBinaryMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
@@ -71,6 +72,14 @@
 Устанавливает обработчик закрытия WebSocket соединения.
 Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketConnection`.
 `listener` может быть равен `null`.
+
+### setErrorListener(listener)
+
+* `listener <function>`  
+сигнатура обработчика: `(error)`
+    * `error <Error>`
+
+Устанавливает обработчик ошибок внутреннего WebSocket соединения.
 
 ### setMalformedBinaryMessageListener(listener)
 

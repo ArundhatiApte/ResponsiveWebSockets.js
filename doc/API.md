@@ -5,6 +5,7 @@
 - [Class: ResponsiveWebSocketConnection](#class-responsivewebsocketconnection)
     * close([code, reason])
     * setCloseListener(listener)
+    * setErrorListener(listener)
     * setMalformedBinaryMessageListener(listener)
     * setMaxTimeMsToWaitResponse(timeMs)
     * setUnrequestingBinaryMessageListener(listener)
@@ -71,6 +72,14 @@ listener's signature: `(event)`
 Sets the WebSocket connection close event listener.
 `this` link inside the handler points to an instance of the `ResponsiveWebSocketConnection` class.
 `listener` can be `null`.
+
+### setErrorListener(listener)
+
+* `listener <function>`  
+listener's signature: `(error)`
+    * `error <Error>`
+
+Sets listener of error from inner WebSocket connection.
 
 ### setMalformedBinaryMessageListener(listener)
 
@@ -392,7 +401,7 @@ Parts of request
 
 Sends binary request, similar as `sendBinaryRequest`.
 The method sends data in fragments, without connecting the parts into one body,
-avoiding allocating memory for the entire response.
+avoiding allocating memory for the entire response.  
 Example of usage:
 
 ```js
@@ -417,7 +426,7 @@ avoiding memory allocation for the entire message.
 Sends binary message without waiting response.
 The method expects to receive the message body without free space for the header, unlike
 `sendUnrequestingBinaryMessage` of the `ResponsiveWebSocketClient` class.
-Recepient can handle data by setting listener whith `setUnrequestingBinaryMessageListener` method. 
+Recepient can handle data by setting listener whith `setUnrequestingBinaryMessageListener` method.
 
 ### setBinaryRequestListener(listener)
 
