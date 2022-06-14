@@ -15,7 +15,7 @@ const connection = new WebSocket("wss://example.com/translator");
 const response = await connection.sendRequest(message);
 ```
 
-ResposiveWebSockets module provides opportunity to send requests and get response via web sockets,
+ResponsiveWebSockets module provides opportunity to send requests and get response via web sockets,
 and opportunity to send messages without waiting response:
 
 ```js
