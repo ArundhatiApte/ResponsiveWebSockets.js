@@ -1,4 +1,4 @@
-# Responsive Web Sockets API
+# Responsive WebSockets API
 
 #### Table of Contents
 
@@ -143,7 +143,7 @@ Example of usage: [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnreq
 
 * `<number>`
 
-Index of the first byte, from which the message body begins.
+Index of the first byte in binary response, from which the message body begins.
 
 ### terminate()
 

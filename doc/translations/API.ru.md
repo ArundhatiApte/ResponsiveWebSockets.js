@@ -58,7 +58,7 @@
 * `code <integer>`
 * `reason <string>`
 
-Закрывает соединение.
+Начинает процедуру закрытия соединения.
 
 ### setCloseListener(listener)
 
@@ -143,11 +143,12 @@ webSocketClient.onopen = function() {
 
 * `<number>`
 
-Первый индекс байта в ответе, с которого начинается тело сообщения.
+Первый индекс байта в двоичном ответе, с которого начинается тело сообщения.
 
 ### terminate()
 
-Разрывает соединение. У экземпляров класса `ResponsiveWebSocketClient` в браузере данный метод отсутствует.
+Разрывает соединение без процедуры закрытия.
+У экземпляров класса `ResponsiveWebSocketClient` в браузере данный метод отсутствует.
 
 ### Cтатичный класс TimeoutToReceiveResponseError
 
@@ -393,7 +394,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 Метод ожидает получить тело сообщения без свободного места для заголовка в отличии от
 `sendBinaryRequest` класса `ResponsiveWebSocketClient`.
 Получатель имеет возможность отправить ответ, установив обработчик события методом `setBinaryRequestListener`.
-Если ответ не придет в течении `maxTimeMsToWaitResponse` миллисекунд,
+Если ответ не придет в течение `maxTimeMsToWaitResponse` миллисекунд,
 Promise завершится исключением `TimeoutToReceiveResponseError`.  
 Пример использования: [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs)
 

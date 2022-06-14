@@ -1,4 +1,4 @@
-## ResposiveWebSockets
+## ResponsiveWebSockets
 
 Sending requests and unrequesting messages wrapper for WebSockets.
 Client works in a browser and node.js. Module use lightweight message format.
