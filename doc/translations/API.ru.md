@@ -248,7 +248,8 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 
 ### static setWebSocketClientClass(W3CWebSocketClient)
 
-* `W3CWebSocketClient <function>` Класс, реализующий интерфейс WebSocketClient от W3C
+* `W3CWebSocketClient <function>` Класс, реализующий интерфейс
+[WebSocketClient](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) от W3C
 
 Устанавливает класс `WebSocket`, на основе которого будут создаваться объекты класса `ResponsiveWebSocketClient`.
 Метод нужно вызвать перед первым использованием конструктора `ResponsiveWebSocketClient`.

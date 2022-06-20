@@ -248,7 +248,8 @@ Sets the listener of event, that occurs when a text message is received.
 
 ### static setWebSocketClientClass(W3CWebSocketClient)
 
-* `W3CWebSocketClient <function>` Class, implementing WebSocketClient interface by W3C
+* `W3CWebSocketClient <function>` Class, implementing
+[WebSocketClient](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) interface by W3C
 
 Sets the WebSocket class, on the base of which objects of the `ResponsiveWebSocketClient` class will be created.
 The method must be applied before the first call of the `ResponsiveWebSocketClient` constructor.

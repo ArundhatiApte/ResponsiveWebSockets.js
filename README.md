@@ -26,7 +26,7 @@ console.log("response: ", new Uint8Array(response, startIndex));
 
 ### Installation
 
-Download repo. In root folder of project execute script createPackage.sh.
+Download repo. In root folder of the project execute script createPackage.sh.
 In folder of your project install module by package manager:
 `npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
@@ -52,11 +52,11 @@ serverConnection.setBinaryRequestListener(function echo(messageWithHeader, start
 });
 ```
 
-The server connection accepts typed arrays or `ArrayBuffer` as a parameter,
-the client connection accepts only `ArrayBuffer`. Since the WebSocket in the browser does not have a way to send
+The server connection accepts typed arrays or `ArrayBuffer` as a parameter.
+The client connection accepts only `ArrayBuffer`. Since the WebSocket in the browser does not have a way to send
 a message in parts, in different frames, for performance purposes, the client connection, when sending
 a request, response or an unrequesting message, expects to receive an `ArrayBuffer` with an empty space
-at the beginning for the header. (Avoiding allocating a new block of memory for the header + message body)  
+at the beginning for the header. (Avoiding allocating a new block of memory for the header + message body.)  
 Example of using a client connection:
 
 ```js
