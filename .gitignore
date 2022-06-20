@@ -1,4 +1,4 @@
-node_modules/
-package-lock.json
-src/tests/testInBrowser/webpackedScriptForBrowser.js
-ResponsiveWebSockets.package.tar.gz
+project/node_modules/
+project/package-lock.json
+project/src/tests/testInBrowser/webpackedScriptForBrowser.js
+project/ResponsiveWebSockets.package.tar.gz

@@ -27,7 +27,8 @@ console.log("ответ: ", new Uint8Array(response, startIndex));
 
 ### Установка
 
-Скачайте репозиторий. Запустите скрипт createPackage.sh.
+Скачайте репозиторий.
+Запустите скрипт createPackage.sh, после чего появится файл ResponsiveWebSockets.package.tar.gz.
 В каталоге вашего проекта установите модуль менеджером пакетов:
 `npm install path/to/ResponsiveWebSockets.package.tar.gz`.
 
