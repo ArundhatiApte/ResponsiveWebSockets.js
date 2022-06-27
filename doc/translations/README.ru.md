@@ -4,16 +4,49 @@
 Клиент работает в браузере и node.js. Модуль использует легковесный формат сообщений.
 Для запросов и ответов заголовок размером 3 байта, для незапрашивающих сообщений - 1 байт.
 
-### Обзор
+### Краткий обзор
 
 Стандартный веб сокет имеет метод для отправки сообщения и событие входящего сообщения,
 без возможности отправки запроса.
+
+сообщение WebSocket
+
+```
+client|           |server
+      |  message  |
+      |---------->|
+      |           |
+      |  message  |
+      |<----------|
+```
+
 Может возникнуть мысль сделать что-либо подобное:
 
 ```js
 const connection = new WebSocket("wss://example.com/translator");
 // ...
 const response = await connection.sendRequest(message);
+```
+
+запрос/ответ HTTP
+
+```
+client|           |server
+      |  request  |
+      |---------->|
+      |  response |
+      |<----------|
+```
+
+запрос/ответ в ResponsiveWebSockets
+
+```
+client|             |server
+      |  request A  |
+      |------------>|
+      |             |
+      |  response A |
+      |<------------|
 ```
 
 Модуль предоставляет возможность для отправки запросов и получения ответов
@@ -25,6 +58,33 @@ const startIndex = connection.startIndexOfBodyInBinaryResponse;
 console.log("ответ: ", new Uint8Array(response, startIndex));
 ```
 
+ResponsiveWebSockets также могут отправлять более 1-го запроса за раз.
+
+```
+client|             |server
+      |  request A  |
+      |------------>|
+      |             |
+      |  request B  |
+      |------------>|
+      |             |
+      |  response A |
+      |<------------|
+      |             |
+      |  request C  |
+      |------------>|
+      |             |
+      |  response C |
+      |<------------|
+      |             |
+      |  response B |
+      |<------------|
+```
+
+ResponsiveWebSocket сервер обёртывает [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/).
+ResponsiveWebSocket клиент использует класс,
+реализующий интерфейс [WebSocket от W3C](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket).
+
 ### Установка
 
 Скачайте репозиторий.
@@ -35,7 +95,7 @@ console.log("ответ: ", new Uint8Array(response, startIndex));
 ### Использование
 
 Использование методов для отправки запросов, незапрашивающих сообщений и ответов имеет различие
-между клиентом и серверным соединением.  
+между клиентом и серверным соединением.
 Пример использования серверного соединения:
 
 ```js
@@ -58,7 +118,7 @@ serverConnection.setBinaryRequestListener(function echo(messageWithHeader, start
 клиентское - только `ArrayBuffer`. Поскольку у WebSocket'а в браузере отсутствует способ отправки
 сообщения частями, в разных фреймах, в целях производительности клиентское соединение при отправке
 запроса, незапрашивающего сообщения или ответа ожидает получить `ArrayBuffer` с пустым местом в начале
-для заголовка. (Избегание выделения нового блока памяти для заголовок + тело сообщения)  
+для заголовка. (Избегание выделения нового блока памяти для заголовок + тело сообщения)
 Пример использования клиентского соединения:
 
 ```js
@@ -90,7 +150,7 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 });
 ```
 
-Примеры:  
+Примеры:
 [sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs),
 [sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
 
@@ -103,7 +163,7 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder)
 и
 [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder),
-позволяющие заполнить `ArrayBuffer` байтами строки в UTF-8.  
+позволяющие заполнить `ArrayBuffer` байтами строки в UTF-8.
 Пример отправки текстового запроса клиентом:
 
 ```js

@@ -7,12 +7,45 @@ Size of request header and response header is 3 byte, unrequesting message heade
 ### Overview
 
 Standard web socket has method for sending messages and event of incoming message.
+
+WebSocket message
+
+```
+client|           |server
+      |  message  |
+      |---------->|
+      |           |
+      |  message  |
+      |<----------|
+```
+
 Sometimes thing to do simething like this may come:
 
 ```js
 const connection = new WebSocket("wss://example.com/translator");
 // ...
 const response = await connection.sendRequest(message);
+```
+
+HTTP request/response
+
+```
+client|           |server
+      |  request  |
+      |---------->|
+      |  response |
+      |<----------|
+```
+
+request/response in ResponsiveWebSockets
+
+```
+client|             |server
+      |  request A  |
+      |------------>|
+      |             |
+      |  response A |
+      |<------------|
 ```
 
 ResponsiveWebSockets module provides opportunity to send requests and get response via web sockets,
@@ -24,6 +57,33 @@ const startIndex = connection.startIndexOfBodyInBinaryResponse;
 console.log("response: ", new Uint8Array(response, startIndex));
 ```
 
+ResponsiveWebSockets can send more than one request at once.
+
+```
+client|             |server
+      |  request A  |
+      |------------>|
+      |             |
+      |  request B  |
+      |------------>|
+      |             |
+      |  response A |
+      |<------------|
+      |             |
+      |  request C  |
+      |------------>|
+      |             |
+      |  response C |
+      |<------------|
+      |             |
+      |  response B |
+      |<------------|
+```
+
+ResponsiveWebSocket server wraps [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/).
+ResponsiveWebSocket client use class,
+that implements [W3C WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) interface.
+
 ### Installation
 
 Download repo. In root folder of the module execute script createPackage.sh.
@@ -34,7 +94,7 @@ In directory of your project install module by package manager:
 ### Usage
 
 Using methods to send requests, responses and unrequesting messages has a difference
-between a client and a server connection.  
+between a client and a server connection.
 Example of using a server connection:
 
 ```js
@@ -57,7 +117,7 @@ The server connection accepts typed arrays or `ArrayBuffer` as a parameter.
 The client connection accepts only `ArrayBuffer`. Since the WebSocket in the browser does not have a way to send
 a message in parts, in different frames, for performance purposes, the client connection, when sending
 a request, response or an unrequesting message, expects to receive an `ArrayBuffer` with an empty space
-at the beginning for the header. (Avoiding allocating a new block of memory for the header + message body.)  
+at the beginning for the header. (Avoiding allocating a new block of memory for the header + message body.)
 Example of using a client connection:
 
 ```js
@@ -102,7 +162,7 @@ To send text,
 [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder)
 and
 [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder),
-will help, allowing you to fill the `ArrayBuffer` with bytes of a string in UTF-8.  
+will help, allowing you to fill the `ArrayBuffer` with bytes of a string in UTF-8.
 Example of sending text in request by client:
 
 ```js
