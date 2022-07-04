@@ -2,7 +2,7 @@
 
 const { _connection } = require(
   "./../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection"
-)._namesOfPrivateProperties;
+)._namesOfProtectedProperties;
 
 const sendRequestByResponsiveConnection = require(
   "./../../common/ResponsiveWebSocketConnection/utils/sendRequestByResponsiveConnection"

@@ -81,7 +81,7 @@ const _setListenerOfEvents = function(responsiveWebSocketConnection, nameOfEvent
 };
 ResponsiveWebSocketConnection._setListenerOfEvents = _setListenerOfEvents;
 
-ResponsiveWebSocketConnection._namesOfPrivateProperties = {
+ResponsiveWebSocketConnection._namesOfProtectedProperties = {
   _connection,
   _getNextIdOfRequest,
   _idOfRequestToPromise,

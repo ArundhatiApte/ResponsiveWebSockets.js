@@ -1,7 +1,7 @@
 "use strict";
 
 const {
-  _namesOfPrivateProperties: { _connection }
+  _namesOfProtectedProperties: { _connection }
 } = require("./../../../../../common/ResponsiveWebSocketConnection/ResponsiveWebSocketConnection");
 
 const { _headerOfUnrequestingMessage } = require("./../../ResponsiveWrapperOfWebSocketConnection");

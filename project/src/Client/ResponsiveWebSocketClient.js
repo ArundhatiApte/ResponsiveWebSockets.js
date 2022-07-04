@@ -19,7 +19,7 @@ const {
   _connection,
   _onClose,
   _setListenerOfEvents
-} = ResponsiveWebSocketConnection._namesOfPrivateProperties;
+} = ResponsiveWebSocketConnection._namesOfProtectedProperties;
 
 const _protocols = Symbol();
 const _options = Symbol();

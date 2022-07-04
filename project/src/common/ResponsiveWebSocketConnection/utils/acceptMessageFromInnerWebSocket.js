@@ -11,7 +11,7 @@ const ErrorAtParsing = require("./../modules/messaging/ErrorAtParsing");
 const {
   _connection,
   _idOfRequestToPromise
-} = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
+} = require("./../ResponsiveWebSocketConnection")._namesOfProtectedProperties;
 
 const {
   create: entryAboutPromiseOfRequest_create,

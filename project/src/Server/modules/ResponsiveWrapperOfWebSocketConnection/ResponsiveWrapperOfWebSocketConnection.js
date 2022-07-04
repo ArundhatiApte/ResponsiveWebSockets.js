@@ -13,7 +13,7 @@ const {
   _onTextMessage,
 
   _onClose
-} = ResponsiveWebSocketConnection._namesOfPrivateProperties;
+} = ResponsiveWebSocketConnection._namesOfProtectedProperties;
 
 const { _userData } = require("./../AcceptorOfRequestForUpgrade");
 

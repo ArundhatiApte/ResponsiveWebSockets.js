@@ -1,7 +1,7 @@
 "use strict";
 
 const {
-  _namesOfPrivateProperties: {
+  _namesOfProtectedProperties: {
     _connection,
     _idOfRequestToPromise,
 

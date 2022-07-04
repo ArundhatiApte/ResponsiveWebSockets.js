@@ -5,7 +5,7 @@ const {
   _getNextIdOfRequest,
   _idOfRequestToPromise,
   _maxTimeMsToWaitResponse,
-} = require("./../ResponsiveWebSocketConnection")._namesOfPrivateProperties;
+} = require("./../ResponsiveWebSocketConnection")._namesOfProtectedProperties;
 
 const createTimeoutToReceiveResponse = require("./createTimeoutToReceiveResponse");
 const createEntryAboutPromiseOfRequest = require("./entryAboutPromiseOfRequest").create;
