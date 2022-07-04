@@ -1,11 +1,14 @@
 "use strict";
 
-import ResponsiveWebSocketServer from "./../project/src/Server/ResponsiveWebSocketServer.js";
-import W3CWebSocketClient from "./../project/src/W3CWebSocketClient.js";
-import ResponsiveWebSocketClient from "./../project/src/Client/ResponsiveWebSocketClient.js";
+import uWebSockets from "uWebSockets.js";
+
+import ResponsiveWebSocketServer from "./../src/Server/ResponsiveWebSocketServer.js";
+import W3CWebSocketClient from "./../src/W3CWebSocketClient.js";
+import ResponsiveWebSocketClient from "./../src/Client/ResponsiveWebSocketClient.js";
 
 (async function() {
-  const server = new ResponsiveWebSocketServer();
+  ResponsiveWebSocketServer.setUWebSockets(uWebSockets);
+  const server = new ResponsiveWebSocketServer({server: new uWebSockets.App({})});
   const port = 4443;
 
   await server.listen(port);
