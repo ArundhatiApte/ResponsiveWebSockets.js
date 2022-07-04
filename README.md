@@ -80,7 +80,7 @@ client|             |server
       |<------------|
 ```
 
-ResponsiveWebSocket server wraps [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/)
+ResponsiveWebSocket server wraps [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
 with major version 20.
 ResponsiveWebSocket client use class,
 that implements [W3C WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) interface.

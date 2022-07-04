@@ -81,7 +81,8 @@ client|             |server
       |<------------|
 ```
 
-ResponsiveWebSocket сервер обёртывает [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/).
+ResponsiveWebSocket сервер обёртывает [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
+версии 20.x.x.
 ResponsiveWebSocket клиент использует класс,
 реализующий интерфейс [WebSocket от W3C](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket).
 
@@ -151,8 +152,8 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 ```
 
 Примеры:
-[sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs),
-[sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
+[sendingBinaryRequests.mjs](project/examples/sendingBinaryRequests.mjs),
+[sendingUnrequestingBinaryMessages.mjs](project/examples/sendingUnrequestingBinaryMessages.mjs)
 
 #### Текстовые сообщения
 
@@ -200,7 +201,7 @@ console.log("текст в ответе: ", textDecoder.decode(new Uint8Array(
 )));
 ```
 
-Пример: [sendingTextInBinaryRequests.mjs](/examples/sendingTextInBinaryRequests.mjs)
+Пример: [sendingTextInBinaryRequests.mjs](project/examples/sendingTextInBinaryRequests.mjs)
 
 #### Использование в браузере
 
@@ -230,12 +231,13 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### Совместимая реализация на другом языке
 
-[Описание формата заголовков сообщений](/doc/translations/messagesHeadersFormat.ru.md)
+- [Описание формата заголовков сообщений](/doc/translations/messagesHeadersFormat.ru.md)
+- [ResponsiveWebSockets на Java](https://github.com/ArundhatiApte/ResponsiveWebSockets)
 
 ### Ссылки:
 
 - [Документация по API](/doc/translations/API.ru.md)
-- [Примеры использования](/examples)
+- [Примеры использования](project/examples)
 
 ### Запуск тестов
 
