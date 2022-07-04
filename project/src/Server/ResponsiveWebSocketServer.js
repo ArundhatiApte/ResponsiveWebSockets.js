@@ -1,7 +1,5 @@
 "use strict";
 
-const uWebSockets = require("uWebSockets.js");
-
 const ResponsiveWrapperOfWebSocketConnection = require(
   "./modules/ResponsiveWrapperOfWebSocketConnection/ResponsiveWrapperOfWebSocketConnection"
 );
@@ -10,7 +8,10 @@ const AcceptorOfRequestForUpgrade = require("./modules/AcceptorOfRequestForUpgra
 const ResponsiveWebSocketServer = class {
   constructor(options) {
     this[_socketOfServer] = null;
-    this[_server] = _createServer(this, options);
+    if (!options) {
+      throw new Error("Options is missed.");
+    }
+    this[_server] = _createServerWithEventListeners(this, options);
   }
 
   setConnectionListener(listenerOrNull) {
@@ -37,7 +38,13 @@ const ResponsiveWebSocketServer = class {
   close() {
     return uWebSockets.us_listen_socket_close(this[_socketOfServer]);
   }
+
+  static setUWebSockets(uWebSocketsImpl) {
+    uWebSockets = uWebSocketsImpl;
+  }
 };
+
+let uWebSockets;
 
 const _socketOfServer = Symbol(),
       _server = Symbol(),
@@ -49,33 +56,17 @@ const defaultIsCompressionUsed = false,
       defaultMaxPayloadLength =  10 * 1024 * 1024,
       defaultIdleTimeout = 600;
 
-const _createServer = function(responsiveWebSocketServer, options) {
-  return options ?
-    _createServerWithEventListeners(responsiveWebSocketServer, options) :
-    _createDefaultServerWithEventListeners(responsiveWebSocketServer);
-};
-
 const _createServerWithEventListeners = function(responsiveWebSocketServer, options) {
-  const server = options.server || new uWebSockets.App({}),
-        url = options.url || "/*";
+  const server = options.server;
+  if (!server) {
+    throw new Error("uWebSockets server is missed.")
+  }
+  const url = options.url || "/*";
 
   return server.ws(url, {
     compression: options.useCompression || defaultIsCompressionUsed,
     maxPayloadLength: options.maxPayloadLength || defaultMaxPayloadLength,
     idleTimeout: options.idleTimeout || defaultIdleTimeout,
-
-    open: _emitConnectionEvent.bind(responsiveWebSocketServer),
-    close: _emitClientsCloseEvent,
-    message: _emitClientsMessageEvent,
-    upgrade: _upgradeToWebSocketByDefaulOrCallListener.bind(responsiveWebSocketServer)
-  });
-};
-
-const _createDefaultServerWithEventListeners = function(responsiveWebSocketServer) {
-  return new uWebSockets.App({}).ws("/*", {
-    compression: defaultIsCompressionUsed,
-    maxPayloadLength: defaultMaxPayloadLength,
-    idleTimeout: defaultIdleTimeout,
 
     open: _emitConnectionEvent.bind(responsiveWebSocketServer),
     close: _emitClientsCloseEvent,

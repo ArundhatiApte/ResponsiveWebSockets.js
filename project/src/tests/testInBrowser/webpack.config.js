@@ -1,5 +1,5 @@
 module.exports = {
-  entry: "./testSendingMessagesInBrowser.js",
+  entry: "./checkSendingMessagesInBrowser.js",
   output: {
     path: __dirname,
     filename: "webpackedScriptForBrowser.js"
