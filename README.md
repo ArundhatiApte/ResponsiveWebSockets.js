@@ -80,7 +80,8 @@ client|             |server
       |<------------|
 ```
 
-ResponsiveWebSocket server wraps [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/).
+ResponsiveWebSocket server wraps [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/)
+with major version 20.
 ResponsiveWebSocket client use class,
 that implements [W3C WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) interface.
 
@@ -150,8 +151,8 @@ client.setBinaryRequestListener((messageWithHeader, startIndex, responseSender) 
 ```
 
 Examples:
-[sendingBinaryRequests.mjs](/examples/sendingBinaryRequests.mjs),
-[sendingUnrequestingBinaryMessages.mjs](/examples/sendingUnrequestingBinaryMessages.mjs)
+[sendingBinaryRequests.mjs](project/examples/sendingBinaryRequests.mjs),
+[sendingUnrequestingBinaryMessages.mjs](project/examples/sendingUnrequestingBinaryMessages.mjs)
 
 #### Text messages
 
@@ -184,7 +185,6 @@ console.log("text in response: ", textDecoder.decode(new Uint8Array(
 )));
 ```
 
-
 Example of sending text in request by server connection:
 
 ```js
@@ -200,7 +200,7 @@ console.log("text in response: ", textDecoder.decode(new Uint8Array(
 )));
 ```
 
-Example: [sendingTextInBinaryRequests.mjs](/examples/sendingTextInBinaryRequests.mjs)
+Example: [sendingTextInBinaryRequests.mjs](project/examples/sendingTextInBinaryRequests.mjs)
 
 #### Usage in browser
 
@@ -231,12 +231,13 @@ The described problem will appear if:
 
 ### Compatible implementation in another language
 
-[Description of messages headers format](/doc/messagesHeadersFormat.md)
+- [Description of messages headers format](/doc/messagesHeadersFormat.md)
+- [ResponsiveWebSockets in Java](https://github.com/ArundhatiApte/ResponsiveWebSockets)
 
 ### Links:
 
 - [API documentation](/doc/API.md)
-- [examples of usage](/examples)
+- [examples of usage](project/examples)
 
 ### Launching tests
 
