@@ -27,11 +27,12 @@
 - [Class: ClientResponseSender](#class-clientresponsesender)
     * sendBinaryResponse(message)
 - [Class: ResponsiveWebSocketServer](#class-responsivewebsocketserver)
-    * new ResponsiveWebSocketServer([options])
+    * new ResponsiveWebSocketServer(options)
     * close()
     * listen(port)
     * setConnectionListener(listener)
     * setUpgradeListener(listener)
+    * static setUWebSockets(uWebSocketsImpl)
 - [Class: HandshakeAction](class-handshakeaction)
     * acceptConnection([userData])
     * rejectConnection()
@@ -301,7 +302,7 @@ Sends binary response. Example of usage: [sendingBinaryRequests.mjs](/examples/s
 
 ## Class ResponsiveWebSocketServer
 
-### new ResponsiveWebSocketServer([options])
+### new ResponsiveWebSocketServer(options)
 
 * `options <Object>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html)  
     * `compression <number>`
@@ -309,7 +310,7 @@ Sends binary response. Example of usage: [sendingBinaryRequests.mjs](/examples/s
     * `maxBackpressure <number>`
     * `maxPayloadLength <number>`
     * `sendPingsAutomatically `
-    * `server` `<App|SSLApp>` from uWebSockets.js. By default, the new http server will be created.
+    * `server` `<App|SSLApp>` from [uWebSockets.js]
     * `url <string>` Addres of the WebSocket server. Example: "/room/*". By default: "/*".
 
 Creates new ResponsiveWebSocketServer.
@@ -347,6 +348,23 @@ Sets the listener of event that occurs when server receive request to create a W
 By default, all connections are accepted.
 `this` link inside the handler points to the instance object `ResponsiveWebSocketServer'.
 `listener` can be `null`.
+
+### static setUWebSockets(uWebSocketsImpl)
+
+* `uWebSocketsImpl <Object>` Link to the used implementation of [uWebSockets.js] with version 20.x.x
+
+Sets version of [uWebSockets.js], on basis of which ResponsiveWebSocketServer runs.
+The function must be applied before the first call of the `ResponsiveWebSocketServer.close` method.
+Procedure provides opportunity to break a hard dependency from a specific version of [uWebSockets.js].  
+Example:
+
+```js
+import uWebSockets from "uWebSockets.js";
+
+import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
+
+ResponsiveWebSocketServer.setUWebSockets(uWebSockets);
+```
 
 ## Class HandshakeAction
 
@@ -478,3 +496,5 @@ Parts of response
 Sends binary response, similas as `sendBinaryResponse`.
 The method sends data in fragments, without connecting parts into one body,
 avoiding memory allocation for the entire message.
+
+[uWebSockets.js]: https://github.com/uNetworking/uWebSockets.js

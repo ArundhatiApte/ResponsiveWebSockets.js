@@ -27,11 +27,12 @@
 - [Клаcc: ClientResponseSender](#класс-clientresponsesender)
     * sendBinaryResponse(message)
 - [Класс: ResponsiveWebSocketServer](#класс-responsivewebsocketserver)
-    * new ResponsiveWebSocketServer([options])
+    * new ResponsiveWebSocketServer(options)
     * close()
     * listen(port)
     * setConnectionListener(listener)
     * setUpgradeListener(listener)
+    * static setUWebSockets(uWebSocketsImpl)
 - [Класс: HandshakeAction](класс-handshakeaction)
     * acceptConnection([userData])
     * rejectConnection()
@@ -259,7 +260,6 @@ Promise завершится исключением `TimeoutToReceiveResponseErr
 в node.js:
 
 ```js
-import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
 import W3CWebSocketClient from "ResponsiveWebSockets/W3CWebSocketClient";
 import ResponsiveWebSocketClient from "ResponsiveWebSockets/Client";
 
@@ -306,7 +306,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ## Класс ResponsiveWebSocketServer
 
-### new ResponsiveWebSocketServer([options])
+### new ResponsiveWebSocketServer(options)
 
 * `options <Object>` [uWebSockets.js doc](https://unetworking.github.io/uWebSockets.js/generated/interfaces/WebSocketBehavior.html)  
     * `compression <number>`
@@ -314,8 +314,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
     * `maxBackpressure <number>`
     * `maxPayloadLength <number>`
     * `sendPingsAutomatically `
-    * `server` `<App>` или `<SSLApp>` модуля uWebSockets.js
-    По умолчанию создается новый http сервер.
+    * `server` `<App>` или `<SSLApp>` модуля [uWebSockets.js]
     * `url <string>`
     Адрес подключения к webSocket серверу. Пример: "/wsAPI/*", "/room/*". По умолчанию "/*".
 
@@ -339,7 +338,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
     * `connection <ResponsiveWebSocketServerConnection>` Соединение с клиентом
 
 Событие connection возникает при подключении WebSocket клиента к серверу.
-Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebServer`.
+Ссылка `this` внутри обработчика указывает на экземпляр класса `ResponsiveWebSocketServer`.
 `listener` может быть равен `null`.
 
 ### setUpgradeListener(listener)
@@ -354,6 +353,23 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 По умолчанию все подключения принимаются.
 Ссылка `this` внутри обработчика указывает на объект экземпляра `ResponsiveWebSocketServer`.
 `listener` может быть равен `null`.
+
+### static setUWebSockets(uWebSocketsImpl)
+
+* `uWebSocketsImpl <Object>` Ссылка на используемую реализацию [uWebSockets.js] версии 20.x.x
+
+Устанавливает версию [uWebSockets.js], на основе которой функционирует ResponsiveWebSocketServer.
+Функцию нужно вызвать перед первым использованием  метода close класса отзывчивого WebSocket сервера.
+Процедура позволяет разорвать жёсткую зависимость от конкретной версии uWebSockets.  
+Пример:
+
+```js
+import uWebSockets from "uWebSockets.js";
+
+import ResponsiveWebSocketServer from "ResponsiveWebSockets/Server";
+
+ResponsiveWebSocketServer.setUWebSockets(uWebSockets);
+```
 
 ## Класс HandshakeAction
 
@@ -480,3 +496,5 @@ const responseData = await connection.sendFragmentsOfBinaryRequest(smallHeader, 
 
 Отправляет двоичный ответ, также как `sendBinaryResponse`.
 Метод посылает данные фрагментами, без соединения частей в одно тело, избегая выделения памяти для всего ответа.
+
+[uWebSockets.js]: https://github.com/uNetworking/uWebSockets.js
