@@ -7,10 +7,10 @@
     "./W3CWebSocketClient": "./src/W3CWebSocketClient.js"
   },
   "devDependencies": {
-    "mocha": "^9.1.2",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.0.0",
-    "webpack": "^5.68.0",
-    "webpack-cli": "^4.9.2"
+    "mocha": "9.1.2",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.4.0",
+    "webpack": "5.68.0",
+    "webpack-cli": "4.9.2"
   },
   "dependencies": {
     "createEnum": "github:ArundhatiApte/createEnum.js",
