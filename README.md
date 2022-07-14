@@ -87,7 +87,7 @@ that implements [W3C WebSocket](https://developer.mozilla.org/en-US/docs/Web/API
 
 ### Installation
 
-Download repo. In root folder of the module execute script createPackage.sh.
+Download repo. In project/buildingNpmPackage/ folder of the module execute script createPackage.sh.
 There will be file ResponsiveWebSockets.package.tar.gz.
 In directory of your project install module by package manager:
 `npm install path/to/ResponsiveWebSockets.package.tar.gz`.
