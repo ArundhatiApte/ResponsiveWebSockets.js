@@ -351,7 +351,7 @@ By default, all connections are accepted.
 
 ### static setUWebSockets(uWebSocketsImpl)
 
-* `uWebSocketsImpl <Object>` Link to the used implementation of [uWebSockets.js] with version 20.x.x
+* `uWebSocketsImpl <Object>` Link to the used implementation of [uWebSockets.js] with version ^20.4.x
 
 Sets version of [uWebSockets.js], on basis of which ResponsiveWebSocketServer runs.
 The function must be applied before the first call of the `ResponsiveWebSocketServer.close` method.

@@ -82,7 +82,7 @@ client|             |server
 ```
 
 ResponsiveWebSocket сервер обёртывает [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
-версии 20.x.x.
+версии ^20.4.x.
 ResponsiveWebSocket клиент использует класс,
 реализующий интерфейс [WebSocket от W3C](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket).
 

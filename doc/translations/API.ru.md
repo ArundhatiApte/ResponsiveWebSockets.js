@@ -356,7 +356,7 @@ ResponsiveWebSocketClient.setWebSocketClientClass(window.WebSocket);
 
 ### static setUWebSockets(uWebSocketsImpl)
 
-* `uWebSocketsImpl <Object>` Ссылка на используемую реализацию [uWebSockets.js] версии 20.x.x
+* `uWebSocketsImpl <Object>` Ссылка на используемую реализацию [uWebSockets.js] версии ^20.4.x
 
 Устанавливает версию [uWebSockets.js], на основе которой функционирует ResponsiveWebSocketServer.
 Функцию нужно вызвать перед первым использованием  метода close класса отзывчивого WebSocket сервера.
